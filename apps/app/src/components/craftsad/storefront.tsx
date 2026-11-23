@@ -1,5 +1,6 @@
 "use client";
 
+import { loginFormSchema } from "@acme/validators";
 import {
   ArrowDown,
   ArrowRight,
@@ -26,10 +27,13 @@ import {
 import {
   type CSSProperties,
   type FormEvent,
+  type ReactNode,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
+import { z } from "zod";
 import {
   colorPairs,
   popularVarieties,
@@ -47,19 +51,104 @@ type CartItem = {
 };
 type View = "front" | "side" | "rotate";
 const money = (value: number) => new Intl.NumberFormat("ru-RU").format(value);
-const formatPhone = (value: string) => {
+const localPhone = (value: string) => {
   const digits = value.replace(/\D/g, "");
-  const local = (
-    digits.startsWith("7") || digits.startsWith("8") ? digits.slice(1) : digits
-  ).slice(0, 10);
-  if (!local) return "";
-  let result = `+7 (${local.slice(0, 3)}`;
-  if (local.length >= 3) result += ") ";
-  if (local.length > 3) result += local.slice(3, 6);
-  if (local.length > 6) result += `-${local.slice(6, 8)}`;
-  if (local.length > 8) result += `-${local.slice(8, 10)}`;
-  return result;
+  return digits.length === 11 && /^[78]/.test(digits)
+    ? digits.slice(1)
+    : digits;
 };
+const formatPhone = (value: string) => {
+  const local = localPhone(value);
+  return `+7 (${local.slice(0, 3)}) ${local.slice(3, 6)}-${local.slice(6, 8)}-${local.slice(8)}`;
+};
+const phoneSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => /^\+?[\d ().-]+$/.test(value) && localPhone(value).length === 10,
+    "Введите номер телефона полностью",
+  );
+const checkoutSchema = z.object({
+  name: z.string().trim().min(1, "Введите имя"),
+  phone: phoneSchema,
+  city: z.string().trim().min(1, "Введите город"),
+  address: z.string().trim().min(1, "Введите адрес пункта выдачи"),
+});
+const scrollBehavior = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "instant"
+    : "smooth";
+const labelCounts = new Intl.PluralRules("ru-RU");
+const labelForms = { one: "бирка", few: "бирки", many: "бирок" };
+const accountTabs = [
+  { id: "orders", title: "Мои заказы" },
+  { id: "lists", title: "Мои списки сортов" },
+  { id: "help", title: "Помощь мастера" },
+] as const;
+
+function StorefrontDialog({
+  children,
+  drawer = false,
+  titleId,
+  onClose,
+}: {
+  children: ReactNode;
+  drawer?: boolean;
+  titleId: string;
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useLayoutEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    const opener = document.activeElement;
+    dialog.showModal();
+    return () => {
+      dialog.close();
+      if (opener instanceof HTMLElement) opener.focus({ preventScroll: true });
+    };
+  }, []);
+
+  return (
+    <dialog
+      ref={ref}
+      className={drawer ? "cs-overlay cs-drawer-overlay" : "cs-overlay"}
+      aria-labelledby={titleId}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Tab") return;
+        const controls = Array.from(
+          event.currentTarget.querySelectorAll<HTMLElement>(
+            "button:enabled, input:enabled, [tabindex='0']",
+          ),
+        ).filter(
+          (control) => control.tabIndex >= 0 && control.getClientRects().length,
+        );
+        const first = controls.at(0);
+        const last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }}
+    >
+      <button
+        type="button"
+        className="cs-backdrop"
+        tabIndex={-1}
+        aria-label="Закрыть окно"
+        onClick={onClose}
+      />
+      <div className={drawer ? "cs-drawer" : "cs-modal"}>{children}</div>
+    </dialog>
+  );
+}
 
 function LabelPreview({
   shape,
@@ -103,307 +192,310 @@ function LoginModal({
   onClose,
   savedNames,
   onRepeat,
+  done,
+  onLogin,
 }: {
   onClose: () => void;
   savedNames: string[];
   onRepeat: () => void;
+  done: boolean;
+  onLogin: () => void;
 }) {
   const [method, setMethod] = useState<"phone" | "email">("phone");
   const [contact, setContact] = useState("");
   const [sent, setSent] = useState(false);
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(59);
-  const [done, setDone] = useState(false);
   const [accountTab, setAccountTab] = useState<"orders" | "lists" | "help">(
     "orders",
   );
   const [error, setError] = useState("");
-  const first = useRef<HTMLInputElement>(null);
+  const contactInput = useRef<HTMLInputElement>(null);
+  const codeInput = useRef<HTMLInputElement>(null);
+  const accountHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    first.current?.focus();
-  }, []);
+    if (done) accountHeading.current?.focus();
+    else if (sent) codeInput.current?.focus();
+    else contactInput.current?.focus();
+  }, [done, sent]);
   useEffect(() => {
     if (!sent || seconds === 0) return;
     const timer = window.setTimeout(() => setSeconds(seconds - 1), 1000);
     return () => window.clearTimeout(timer);
   }, [sent, seconds]);
-  useEffect(() => {
-    function keydown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", keydown);
-    return () => window.removeEventListener("keydown", keydown);
-  }, [onClose]);
   const submitContact = (event: FormEvent) => {
     event.preventDefault();
-    const valid =
+    const result =
       method === "email"
-        ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)
-        : contact.replace(/\D/g, "").length >= 11;
-    if (!valid) {
+        ? loginFormSchema.safeParse({ email: contact.trim() })
+        : phoneSchema.safeParse(contact);
+    if (!result.success) {
       setError(
-        method === "email"
-          ? "Введите адрес электронной почты"
-          : "Введите номер телефона полностью",
+        result.error.issues[0]?.message ?? "Проверьте контактные данные",
       );
       return;
     }
+    setContact(method === "phone" ? formatPhone(contact) : contact.trim());
     setError("");
     setSent(true);
     setSeconds(59);
   };
   return (
-    <div className="cs-overlay">
+    <StorefrontDialog titleId="login-title" onClose={onClose}>
       <button
         type="button"
-        className="cs-backdrop"
-        aria-label="Закрыть окно"
+        className="cs-icon-button cs-close"
+        aria-label="Закрыть"
         onClick={onClose}
-      />
-      <section
-        className="cs-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="login-title"
       >
-        <button
-          type="button"
-          className="cs-icon-button cs-close"
-          aria-label="Закрыть"
-          onClick={onClose}
-        >
-          <X />
-        </button>
-        {done ? (
-          <div className="cs-account">
-            <span className="cs-eyebrow">Личный кабинет</span>
-            <h2 id="login-title">Вы вошли</h2>
-            <p>Ваши заказы и названия сортов — в одном месте.</p>
-            <div
-              className="cs-account-tabs"
-              role="tablist"
-              aria-label="Разделы личного кабинета"
-            >
+        <X />
+      </button>
+      {done ? (
+        <div className="cs-account">
+          <span className="cs-eyebrow">Личный кабинет</span>
+          <h2 id="login-title" ref={accountHeading} tabIndex={-1}>
+            Вы вошли
+          </h2>
+          <p>Ваши заказы и названия сортов — в одном месте.</p>
+          <div
+            className="cs-account-tabs"
+            role="tablist"
+            aria-label="Разделы личного кабинета"
+          >
+            {accountTabs.map(({ id, title }, index) => (
               <button
+                key={id}
+                id={`cs-tab-${id}`}
                 type="button"
                 role="tab"
-                aria-selected={accountTab === "orders"}
-                className={accountTab === "orders" ? "active" : ""}
-                onClick={() => setAccountTab("orders")}
-              >
-                Мои заказы
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={accountTab === "lists"}
-                className={accountTab === "lists" ? "active" : ""}
-                onClick={() => setAccountTab("lists")}
-              >
-                Мои списки сортов
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={accountTab === "help"}
-                className={accountTab === "help" ? "active" : ""}
-                onClick={() => setAccountTab("help")}
-              >
-                Помощь мастера
-              </button>
-            </div>
-            {accountTab === "orders" && (
-              <div className="cs-account-panel" role="tabpanel">
-                <strong>Заказ № 1042</strong>
-                <p>
-                  Статус: <b>Печатаем</b>
-                </p>
-                <div className="cs-order-progress">
-                  <span className="active">Печатаем</span>
-                  <span>Передано в Ozon</span>
-                  <span>Готово к выдаче</span>
-                </div>
-                <p>
-                  Трек-номер Ozon: <b>CS-1042-2026</b>
-                </p>
-                <button
-                  type="button"
-                  className="cs-text-button"
-                  onClick={() => navigator.clipboard?.writeText("CS-1042-2026")}
-                >
-                  <Copy /> Скопировать номер
-                </button>
-                <small>Это пример заказа для демонстрации.</small>
-              </div>
-            )}
-            {accountTab === "lists" && (
-              <div className="cs-account-panel" role="tabpanel">
-                <strong>Текущий список сортов</strong>
-                <p>
-                  {savedNames.length
-                    ? savedNames.slice(0, 5).join(", ")
-                    : "Пока нет сохранённых названий"}
-                  {savedNames.length > 5 ? " и другие" : ""}
-                </p>
-                <button
-                  type="button"
-                  className="cs-button cs-button-primary"
-                  onClick={onRepeat}
-                >
-                  Заказать такие же снова <ArrowRight />
-                </button>
-              </div>
-            )}
-            {accountTab === "help" && (
-              <div className="cs-account-panel" role="tabpanel">
-                <strong>Помощь мастера</strong>
-                <p>Если понадобится помощь с выбором бирок, мы подскажем.</p>
-                <button type="button" disabled className="cs-help-button">
-                  <Phone /> Позвонить
-                </button>
-                <button type="button" disabled className="cs-help-button">
-                  <Send /> Написать в Telegram
-                </button>
-                <small>Контакты появятся при запуске магазина.</small>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <span className="cs-eyebrow">Личный кабинет</span>
-            <h2 id="login-title">
-              {sent ? "Введите код" : "Войдите без пароля"}
-            </h2>
-            <p className="cs-modal-lead">
-              {sent
-                ? `Код для входа на ${contact}. В этой демонстрации используйте 123456.`
-                : "Выберите удобный способ. Пароль запоминать не нужно."}
-            </p>
-            {!sent ? (
-              <>
-                <fieldset className="cs-segmented" aria-label="Способ входа">
-                  <button
-                    type="button"
-                    className={method === "phone" ? "active" : ""}
-                    onClick={() => {
-                      setMethod("phone");
-                      setContact("");
-                      setError("");
-                    }}
-                  >
-                    <Phone /> По телефону
-                  </button>
-                  <button
-                    type="button"
-                    className={method === "email" ? "active" : ""}
-                    onClick={() => {
-                      setMethod("email");
-                      setContact("");
-                      setError("");
-                    }}
-                  >
-                    <Mail /> По эл. почте
-                  </button>
-                </fieldset>
-                <form onSubmit={submitContact} className="cs-form">
-                  <label htmlFor="login-contact">
-                    {method === "phone"
-                      ? "Номер телефона"
-                      : "Электронная почта"}
-                  </label>
-                  <input
-                    ref={first}
-                    id="login-contact"
-                    type={method === "phone" ? "tel" : "email"}
-                    inputMode={method === "phone" ? "tel" : "email"}
-                    autoComplete={method === "phone" ? "tel" : "email"}
-                    placeholder={
-                      method === "phone"
-                        ? "+7 (999) 123-45-67"
-                        : "example@mail.ru"
-                    }
-                    value={contact}
-                    onChange={(e) =>
-                      setContact(
-                        method === "phone"
-                          ? formatPhone(e.target.value)
-                          : e.target.value,
-                      )
-                    }
-                    aria-invalid={!!error}
-                  />
-                  {error && (
-                    <p className="cs-error" role="alert">
-                      {error}
-                    </p>
-                  )}
-                  <button className="cs-button cs-button-primary" type="submit">
-                    Получить код <ArrowRight />
-                  </button>
-                </form>
-              </>
-            ) : (
-              <form
-                className="cs-form"
-                onSubmit={(event) => {
+                tabIndex={accountTab === id ? 0 : -1}
+                aria-controls={`cs-panel-${id}`}
+                aria-selected={accountTab === id}
+                className={accountTab === id ? "active" : ""}
+                onClick={() => setAccountTab(id)}
+                onKeyDown={(event) => {
+                  const offset =
+                    event.key === "ArrowRight"
+                      ? 1
+                      : event.key === "ArrowLeft"
+                        ? -1
+                        : 0;
+                  if (!offset) return;
                   event.preventDefault();
-                  if (code === "123456") {
-                    setDone(true);
-                    setError("");
-                  } else setError("Проверьте код. Для демонстрации: 123456");
+                  const next = accountTabs.at(
+                    (index + offset) % accountTabs.length,
+                  );
+                  if (!next) return;
+                  setAccountTab(next.id);
+                  document.getElementById(`cs-tab-${next.id}`)?.focus();
                 }}
               >
-                <label htmlFor="login-code">Код из 6 цифр</label>
+                {title}
+              </button>
+            ))}
+          </div>
+          <div
+            className="cs-account-panel"
+            id="cs-panel-orders"
+            role="tabpanel"
+            aria-labelledby="cs-tab-orders"
+            hidden={accountTab !== "orders"}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
+            tabIndex={0}
+          >
+            <strong>Заказ № 1042</strong>
+            <p>
+              Статус: <b>Печатаем</b>
+            </p>
+            <div className="cs-order-progress">
+              <span className="active">Печатаем</span>
+              <span>Передано в Ozon</span>
+              <span>Готово к выдаче</span>
+            </div>
+            <p>
+              Трек-номер Ozon: <b>CS-1042-2026</b>
+            </p>
+            <button
+              type="button"
+              className="cs-text-button"
+              onClick={() => navigator.clipboard?.writeText("CS-1042-2026")}
+            >
+              <Copy /> Скопировать номер
+            </button>
+            <small>Это пример заказа для демонстрации.</small>
+          </div>
+          <div
+            className="cs-account-panel"
+            id="cs-panel-lists"
+            role="tabpanel"
+            aria-labelledby="cs-tab-lists"
+            hidden={accountTab !== "lists"}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
+            tabIndex={0}
+          >
+            <strong>Текущий список сортов</strong>
+            <p>
+              {savedNames.length
+                ? savedNames.slice(0, 5).join(", ")
+                : "Пока нет сохранённых названий"}
+              {savedNames.length > 5 ? " и другие" : ""}
+            </p>
+            <button
+              type="button"
+              className="cs-button cs-button-primary"
+              onClick={onRepeat}
+            >
+              Заказать такие же снова <ArrowRight />
+            </button>
+          </div>
+          <div
+            className="cs-account-panel"
+            id="cs-panel-help"
+            role="tabpanel"
+            aria-labelledby="cs-tab-help"
+            hidden={accountTab !== "help"}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
+            tabIndex={0}
+          >
+            <strong>Помощь мастера</strong>
+            <p>Если понадобится помощь с выбором бирок, мы подскажем.</p>
+            <button type="button" disabled className="cs-help-button">
+              <Phone /> Позвонить
+            </button>
+            <button type="button" disabled className="cs-help-button">
+              <Send /> Написать в Telegram
+            </button>
+            <small>Контакты появятся при запуске магазина.</small>
+          </div>
+        </div>
+      ) : (
+        <>
+          <span className="cs-eyebrow">Личный кабинет</span>
+          <h2 id="login-title">
+            {sent ? "Введите код" : "Войдите без пароля"}
+          </h2>
+          <p className="cs-modal-lead">
+            {sent
+              ? `Код для входа на ${contact}. В этой демонстрации используйте 123456.`
+              : "Выберите удобный способ. Пароль запоминать не нужно."}
+          </p>
+          {!sent ? (
+            <>
+              <fieldset className="cs-segmented" aria-label="Способ входа">
+                <button
+                  type="button"
+                  className={method === "phone" ? "active" : ""}
+                  onClick={() => {
+                    setMethod("phone");
+                    setContact("");
+                    setError("");
+                  }}
+                >
+                  <Phone /> По телефону
+                </button>
+                <button
+                  type="button"
+                  className={method === "email" ? "active" : ""}
+                  onClick={() => {
+                    setMethod("email");
+                    setContact("");
+                    setError("");
+                  }}
+                >
+                  <Mail /> По эл. почте
+                </button>
+              </fieldset>
+              <form onSubmit={submitContact} className="cs-form" noValidate>
+                <label htmlFor="login-contact">
+                  {method === "phone" ? "Номер телефона" : "Электронная почта"}
+                </label>
                 <input
-                  ref={first}
-                  id="login-code"
-                  className="cs-code-input"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={6}
-                  pattern="[0-9]{6}"
-                  placeholder="· · · · · ·"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  ref={contactInput}
+                  id="login-contact"
+                  type={method === "phone" ? "tel" : "email"}
+                  inputMode={method === "phone" ? "tel" : "email"}
+                  autoComplete={method === "phone" ? "tel" : "email"}
+                  placeholder={
+                    method === "phone"
+                      ? "+7 (999) 123-45-67"
+                      : "example@mail.ru"
+                  }
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  aria-invalid={!!error}
+                  aria-describedby={error ? "login-contact-error" : undefined}
                 />
                 {error && (
-                  <p className="cs-error" role="alert">
+                  <p id="login-contact-error" className="cs-error" role="alert">
                     {error}
                   </p>
                 )}
                 <button className="cs-button cs-button-primary" type="submit">
-                  Войти <ArrowRight />
-                </button>
-                <button
-                  type="button"
-                  className="cs-text-button"
-                  disabled={seconds > 0}
-                  onClick={() => {
-                    setSeconds(59);
-                    setCode("");
-                  }}
-                >
-                  {seconds > 0
-                    ? `Отправить снова через ${seconds} сек.`
-                    : "Отправить код снова"}
-                </button>
-                <button
-                  type="button"
-                  className="cs-text-button"
-                  onClick={() => {
-                    setSent(false);
-                    setCode("");
-                    setError("");
-                  }}
-                >
-                  Изменить номер или почту
+                  Получить код <ArrowRight />
                 </button>
               </form>
-            )}
-          </>
-        )}
-      </section>
-    </div>
+            </>
+          ) : (
+            <form
+              className="cs-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (code === "123456") {
+                  onLogin();
+                  setError("");
+                } else setError("Проверьте код. Для демонстрации: 123456");
+              }}
+            >
+              <label htmlFor="login-code">Код из 6 цифр</label>
+              <input
+                ref={codeInput}
+                id="login-code"
+                className="cs-code-input"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                pattern="[0-9]{6}"
+                placeholder="· · · · · ·"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              />
+              {error && (
+                <p className="cs-error" role="alert">
+                  {error}
+                </p>
+              )}
+              <button className="cs-button cs-button-primary" type="submit">
+                Войти <ArrowRight />
+              </button>
+              <button
+                type="button"
+                className="cs-text-button"
+                disabled={seconds > 0}
+                onClick={() => {
+                  setSeconds(59);
+                  setCode("");
+                }}
+              >
+                {seconds > 0
+                  ? `Отправить снова через ${seconds} сек.`
+                  : "Отправить код снова"}
+              </button>
+              <button
+                type="button"
+                className="cs-text-button"
+                onClick={() => {
+                  setSent(false);
+                  setCode("");
+                  setError("");
+                }}
+              >
+                Изменить номер или почту
+              </button>
+            </form>
+          )}
+        </>
+      )}
+    </StorefrontDialog>
   );
 }
 
@@ -418,200 +510,268 @@ function CartDrawer({
 }) {
   const [checkout, setCheckout] = useState(false);
   const [delivery, setDelivery] = useState<"list" | "map">("list");
-  const [submitted, setSubmitted] = useState(false);
+  const [demoComplete, setDemoComplete] = useState(false);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof z.infer<typeof checkoutSchema>, string>>
+  >({});
+  const nameInput = useRef<HTMLInputElement>(null);
+  const completion = useRef<HTMLHeadingElement>(null);
   const total = items.reduce((sum, item) => sum + item.price, 0);
   useEffect(() => {
-    const fn = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", fn);
-    return () => window.removeEventListener("keydown", fn);
-  }, [onClose]);
+    if (demoComplete) completion.current?.focus();
+    else if (checkout) nameInput.current?.focus();
+  }, [checkout, demoComplete]);
+  const submitCheckout = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const fields = new FormData(event.currentTarget);
+    const result = checkoutSchema.safeParse({
+      name: fields.get("name"),
+      phone: fields.get("phone"),
+      city: fields.get("city"),
+      address: fields.get("address"),
+    });
+    if (!result.success) {
+      const { fieldErrors } = z.flattenError(result.error);
+      setErrors({
+        name: fieldErrors.name?.[0],
+        phone: fieldErrors.phone?.[0],
+        city: fieldErrors.city?.[0],
+        address: fieldErrors.address?.[0],
+      });
+      return;
+    }
+    setErrors({});
+    setDemoComplete(true);
+  };
   return (
-    <div className="cs-overlay cs-drawer-overlay">
-      <button
-        type="button"
-        className="cs-backdrop"
-        aria-label="Закрыть корзину"
-        onClick={onClose}
-      />
-      <aside
-        className="cs-drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cart-title"
-      >
-        <div className="cs-drawer-head">
-          <div>
-            <span className="cs-eyebrow">Ваш заказ</span>
-            <h2 id="cart-title">
-              {submitted ? "Спасибо!" : checkout ? "Оформление" : "Корзина"}
-            </h2>
-          </div>
+    <StorefrontDialog titleId="cart-title" onClose={onClose} drawer>
+      <div className="cs-drawer-head">
+        <div>
+          <span className="cs-eyebrow">Ваш заказ</span>
+          <h2 id="cart-title">
+            {demoComplete
+              ? "Результат оформления"
+              : checkout
+                ? "Оформление"
+                : "Корзина"}
+          </h2>
+        </div>
+        <button
+          type="button"
+          className="cs-icon-button"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >
+          <X />
+        </button>
+      </div>
+      {demoComplete ? (
+        <div className="cs-empty">
+          <PackageCheck />
+          <h3 ref={completion} tabIndex={-1}>
+            Демонстрация завершена
+          </h3>
+          <p>Заказ не создан. Данные не сохранены и не отправлены.</p>
           <button
             type="button"
-            className="cs-icon-button"
+            className="cs-button cs-button-primary"
             onClick={onClose}
-            aria-label="Закрыть"
           >
-            <X />
+            Вернуться в магазин
           </button>
         </div>
-        {submitted ? (
-          <div className="cs-empty">
-            <PackageCheck />
-            <h3>Заявка сохранена</h3>
-            <p>
-              Это демонстрация магазина. Для настоящего заказа потребуется
-              подключить оплату и доставку.
-            </p>
-            <button
-              type="button"
-              className="cs-button cs-button-primary"
-              onClick={onClose}
-            >
-              Вернуться в магазин
-            </button>
+      ) : items.length === 0 ? (
+        <div className="cs-empty">
+          <ShoppingBag />
+          <h3>Пока пусто</h3>
+          <p>Добавьте бирки со своими названиями — они появятся здесь.</p>
+          <button
+            type="button"
+            className="cs-button cs-button-primary"
+            onClick={onClose}
+          >
+            Выбрать бирки
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="cs-delivery-note">
+            <Truck />
+            <span>
+              Доставка в пункт выдачи Ozon по всей России — обычно 2–4 дня
+            </span>
           </div>
-        ) : items.length === 0 ? (
-          <div className="cs-empty">
-            <ShoppingBag />
-            <h3>Пока пусто</h3>
-            <p>Добавьте бирки со своими названиями — они появятся здесь.</p>
-            <button
-              type="button"
-              className="cs-button cs-button-primary"
-              onClick={onClose}
-            >
-              Выбрать бирки
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="cs-delivery-note">
-              <Truck />
-              <span>
-                Доставка в пункт выдачи Ozon по всей России — обычно 2–4 дня
-              </span>
-            </div>
-            <div className="cs-cart-items">
-              {items.map((item) => (
-                <article className="cs-cart-item" key={item.id}>
-                  <LabelPreview
-                    shape={item.shape}
-                    color={item.color}
-                    name={item.names[0] ?? ""}
-                    small
-                  />
-                  <div>
-                    <strong>
-                      {shapes.find((shape) => shape.id === item.shape)?.title}
-                    </strong>
-                    <p>
-                      {item.names.length} шт. ·{" "}
-                      {(colorPairs[item.color] ?? colorPairs[0]).name}
-                    </p>
-                    <b>{money(item.price)} ₽</b>
-                    <button
-                      type="button"
-                      className="cs-text-button"
-                      onClick={() => onRemove(item.id)}
-                    >
-                      Убрать
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-            {checkout && (
-              <form
-                id="cs-checkout"
-                className="cs-form cs-checkout"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSubmitted(true);
-                }}
-              >
-                <label htmlFor="customer-name">Имя</label>
-                <input
-                  id="customer-name"
-                  autoComplete="name"
-                  required
-                  placeholder="Как к вам обращаться"
+          <div className="cs-cart-items">
+            {items.map((item) => (
+              <article className="cs-cart-item" key={item.id}>
+                <LabelPreview
+                  shape={item.shape}
+                  color={item.color}
+                  name={item.names[0] ?? ""}
+                  small
                 />
-                <label htmlFor="customer-phone">Телефон</label>
-                <input
-                  id="customer-phone"
-                  type="tel"
-                  autoComplete="tel"
-                  required
-                  placeholder="+7 (999) 123-45-67"
-                />
-                <label htmlFor="customer-city">Город</label>
-                <input id="customer-city" required placeholder="Ваш город" />
-                <fieldset
-                  className="cs-segmented"
-                  aria-label="Способ выбора пункта выдачи"
-                >
+                <div>
+                  <strong>
+                    {shapes.find((shape) => shape.id === item.shape)?.title}
+                  </strong>
+                  <p>
+                    {item.names.length} шт. ·{" "}
+                    {(colorPairs[item.color] ?? colorPairs[0]).name}
+                  </p>
+                  <b>{money(item.price)} ₽</b>
                   <button
                     type="button"
-                    className={delivery === "list" ? "active" : ""}
-                    onClick={() => setDelivery("list")}
+                    className="cs-text-button"
+                    onClick={() => onRemove(item.id)}
                   >
-                    Из списка
+                    Убрать
                   </button>
-                  <button
-                    type="button"
-                    className={delivery === "map" ? "active" : ""}
-                    onClick={() => setDelivery("map")}
-                  >
-                    На карте
-                  </button>
-                </fieldset>
-                <label htmlFor="ozon-address">Адрес удобного пункта Ozon</label>
-                <input
-                  id="ozon-address"
-                  required
-                  placeholder={
-                    delivery === "map"
-                      ? "Напишите адрес пункта с карты Ozon"
-                      : "Улица и номер пункта выдачи"
-                  }
-                />
-                <p className="cs-helper">
-                  Выбор на карте станет доступен после подключения службы
-                  доставки.
+                </div>
+              </article>
+            ))}
+          </div>
+          {checkout && (
+            <form
+              id="cs-checkout"
+              className="cs-form cs-checkout"
+              noValidate
+              onSubmit={submitCheckout}
+            >
+              <p className="cs-helper">
+                Это демонстрация оформления. Введённые данные не сохраняются и
+                не отправляются. Можно использовать вымышленные данные.
+              </p>
+              <label htmlFor="customer-name">Имя</label>
+              <input
+                ref={nameInput}
+                id="customer-name"
+                name="name"
+                autoComplete="name"
+                required
+                aria-invalid={!!errors.name}
+                aria-describedby={
+                  errors.name ? "checkout-name-error" : undefined
+                }
+                placeholder="Как к вам обращаться"
+              />
+              {errors.name && (
+                <p id="checkout-name-error" className="cs-error" role="alert">
+                  {errors.name}
                 </p>
-              </form>
-            )}
-            <div className="cs-cart-footer">
-              <div className="cs-total">
-                <span>Итого</span>
-                <strong>{money(total)} ₽</strong>
-              </div>
-              <button
-                className="cs-button cs-button-primary"
-                type={checkout ? "submit" : "button"}
-                form={checkout ? "cs-checkout" : undefined}
-                onClick={checkout ? undefined : () => setCheckout(true)}
+              )}
+              <label htmlFor="customer-phone">Телефон</label>
+              <input
+                id="customer-phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                required
+                aria-invalid={!!errors.phone}
+                aria-describedby={
+                  errors.phone ? "checkout-phone-error" : undefined
+                }
+                placeholder="+7 (999) 123-45-67"
+              />
+              {errors.phone && (
+                <p id="checkout-phone-error" className="cs-error" role="alert">
+                  {errors.phone}
+                </p>
+              )}
+              <label htmlFor="customer-city">Город</label>
+              <input
+                id="customer-city"
+                name="city"
+                required
+                placeholder="Ваш город"
+                aria-invalid={!!errors.city}
+                aria-describedby={
+                  errors.city ? "checkout-city-error" : undefined
+                }
+              />
+              {errors.city && (
+                <p id="checkout-city-error" className="cs-error" role="alert">
+                  {errors.city}
+                </p>
+              )}
+              <fieldset
+                className="cs-segmented"
+                aria-label="Способ выбора пункта выдачи"
               >
-                {checkout ? "Оставить заявку" : "Оформить заказ"}
-                <ArrowRight />
-              </button>
-              {checkout && (
                 <button
                   type="button"
-                  className="cs-text-button"
-                  onClick={() => setCheckout(false)}
+                  className={delivery === "list" ? "active" : ""}
+                  onClick={() => setDelivery("list")}
                 >
-                  Вернуться в корзину
+                  Из списка
                 </button>
+                <button
+                  type="button"
+                  className={delivery === "map" ? "active" : ""}
+                  onClick={() => setDelivery("map")}
+                >
+                  На карте
+                </button>
+              </fieldset>
+              <label htmlFor="ozon-address">Адрес удобного пункта Ozon</label>
+              <input
+                id="ozon-address"
+                name="address"
+                aria-invalid={!!errors.address}
+                aria-describedby={
+                  errors.address ? "checkout-address-error" : undefined
+                }
+                required
+                placeholder={
+                  delivery === "map"
+                    ? "Напишите адрес пункта с карты Ozon"
+                    : "Улица и номер пункта выдачи"
+                }
+              />
+              {errors.address && (
+                <p
+                  id="checkout-address-error"
+                  className="cs-error"
+                  role="alert"
+                >
+                  {errors.address}
+                </p>
               )}
+              <p className="cs-helper">
+                Выбор на карте станет доступен после подключения службы
+                доставки.
+              </p>
+            </form>
+          )}
+          <div className="cs-cart-footer">
+            <div className="cs-total">
+              <span>Итого</span>
+              <strong>{money(total)} ₽</strong>
             </div>
-          </>
-        )}
-      </aside>
-    </div>
+            <button
+              className="cs-button cs-button-primary"
+              type={checkout ? "submit" : "button"}
+              form={checkout ? "cs-checkout" : undefined}
+              onClick={checkout ? undefined : () => setCheckout(true)}
+            >
+              {checkout ? "Завершить демонстрацию" : "Оформить заказ"}
+              <ArrowRight />
+            </button>
+            {checkout && (
+              <button
+                type="button"
+                className="cs-text-button"
+                onClick={() => {
+                  setErrors({});
+                  setCheckout(false);
+                }}
+              >
+                Вернуться в корзину
+              </button>
+            )}
+          </div>
+        </>
+      )}
+    </StorefrontDialog>
   );
 }
 
@@ -626,8 +786,8 @@ export function Storefront() {
   );
   const [view, setView] = useState<View>("front");
   const [previewIndex, setPreviewIndex] = useState(0);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const [dialog, setDialog] = useState<"login" | "cart" | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [added, setAdded] = useState(false);
@@ -639,10 +799,11 @@ export function Storefront() {
     .filter(Boolean);
   const chosenShape = shapes.find((entry) => entry.id === shape) ?? shapes[0];
   const price = names.length * chosenShape.price;
+  const countForm = labelCounts.select(names.length);
   const cartCount = cart.reduce((sum, item) => sum + item.names.length, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior() });
     setMenuOpen(false);
   };
   const applyPreset = (preset: (typeof presets)[number]) => {
@@ -663,7 +824,7 @@ export function Storefront() {
       { id: Date.now(), shape, color, names: [...names], price },
     ]);
     setAdded(true);
-    setCartOpen(true);
+    setDialog("cart");
   };
   return (
     <div className="cs-site">
@@ -672,7 +833,9 @@ export function Storefront() {
           <button
             type="button"
             className="cs-brand"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() =>
+              window.scrollTo({ top: 0, behavior: scrollBehavior() })
+            }
             aria-label="CraftSad — на главную"
           >
             <span className="cs-brand-mark">
@@ -722,7 +885,7 @@ export function Storefront() {
               type="button"
               className="cs-login-button"
               aria-label="Войти"
-              onClick={() => setLoginOpen(true)}
+              onClick={() => setDialog("login")}
             >
               <UserRound />
               <span>Войти</span>
@@ -731,7 +894,7 @@ export function Storefront() {
               type="button"
               className="cs-cart-button"
               aria-label={`Корзина: ${cartCount} шт., ${money(cartTotal)} ₽`}
-              onClick={() => setCartOpen(true)}
+              onClick={() => setDialog("cart")}
             >
               <ShoppingBag />
               <span>
@@ -987,7 +1150,7 @@ export function Storefront() {
                     >
                       <ChevronLeft />
                     </button>
-                    <span>
+                    <span aria-live="polite">
                       {names[previewIndex % Math.max(names.length, 1)] ||
                         "Ваша надпись"}
                     </span>
@@ -1169,11 +1332,9 @@ export function Storefront() {
                   <div className="cs-summary">
                     <span>
                       {names.length}{" "}
-                      {names.length === 1
-                        ? "бирка"
-                        : names.length >= 2 && names.length <= 4
-                          ? "бирки"
-                          : "бирок"}{" "}
+                      {countForm === "one" || countForm === "few"
+                        ? labelForms[countForm]
+                        : labelForms.many}{" "}
                       · {chosenShape.size}
                     </span>
                     <strong>{money(price)} ₽</strong>
@@ -1240,7 +1401,7 @@ export function Storefront() {
               <br />
               по всей России
             </p>
-            <button type="button" onClick={() => setLoginOpen(true)}>
+            <button type="button" onClick={() => setDialog("login")}>
               Личный кабинет
             </button>
           </div>
@@ -1250,20 +1411,22 @@ export function Storefront() {
           <span>Пусть всё растёт 🌱</span>
         </div>
       </footer>
-      {loginOpen && (
+      {dialog === "login" && (
         <LoginModal
-          onClose={() => setLoginOpen(false)}
+          onClose={() => setDialog(null)}
+          done={loggedIn}
+          onLogin={() => setLoggedIn(true)}
           savedNames={names}
           onRepeat={() => {
-            setLoginOpen(false);
+            setDialog(null);
             scrollTo("constructor");
           }}
         />
       )}
-      {cartOpen && (
+      {dialog === "cart" && (
         <CartDrawer
           items={cart}
-          onClose={() => setCartOpen(false)}
+          onClose={() => setDialog(null)}
           onRemove={(id) =>
             setCart((items) => items.filter((item) => item.id !== id))
           }

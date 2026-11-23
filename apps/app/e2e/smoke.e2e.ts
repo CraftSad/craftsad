@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("redirects anonymous visitors to the login page", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/dashboard");
 
   await expect(page).toHaveURL(/\/auth\/login$/);
 });
