@@ -28,6 +28,14 @@ test("signs up, keeps the session and signs back in", async ({
   await page.reload();
   await expect(page).toHaveURL("/");
 
+  await page.goto("/dashboard");
+  await page.getByRole("button", { name: "Сменить тему" }).click();
+  await page.getByRole("menuitem", { name: "Тёмная" }).click();
+  const html = page.locator("html");
+  await expect(html).toHaveClass(/\bdark\b/);
+  await page.reload();
+  await expect(html).toHaveClass(/\bdark\b/);
+
   // A fresh browser context has no cookies: sign in with the same account.
   const context = await browser.newContext();
   const fresh = await context.newPage();

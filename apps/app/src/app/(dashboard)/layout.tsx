@@ -5,6 +5,7 @@ import {
   SidebarInset,
   SidebarProvider,
   Skeleton,
+  ThemeToggle,
 } from "@acme/ui";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
@@ -23,7 +24,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <Suspense fallback={<SidebarSkeleton />}>
         <SessionSidebar />
       </Suspense>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <div className="flex justify-end px-4 py-2">
+          <ThemeToggle />
+        </div>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }
