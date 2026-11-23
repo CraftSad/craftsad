@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./sms": "./src/sms.ts",
     "./roles": "./src/roles.ts",
     "./env": "./env.ts"
   },

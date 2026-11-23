@@ -1,8 +1,8 @@
 import type { orders } from "@acme/db";
-import { db, user } from "@acme/db";
+import { type Database, db, user } from "@acme/db";
+import { smsProvider } from "@acme/auth/sms";
 import { sendEmailHtml } from "@acme/emails";
 import { eq } from "drizzle-orm";
-import { smsProvider } from "./auth";
 
 type Order = typeof orders.$inferSelect;
 const messages: Record<Order["status"], string> = {
@@ -16,9 +16,9 @@ const messages: Record<Order["status"], string> = {
   cancelled: "отменён",
 };
 
-export async function notifyOrderStatus(order: Order) {
+export async function notifyOrderStatus(order: Order, database: Database = db) {
   const text = `CraftSad: заказ ${order.orderNumber} ${messages[order.status]}.${order.ozonTrackingNumber ? ` Трек-номер Ozon: ${order.ozonTrackingNumber}.` : ""}`;
-  const [customer] = await db
+  const [customer] = await database
     .select({ email: user.email })
     .from(user)
     .where(eq(user.id, order.userId));

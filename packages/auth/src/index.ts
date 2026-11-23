@@ -1,11 +1,15 @@
+import { createHash } from "node:crypto";
 import { logger } from "@acme/config";
 import { type Database, db } from "@acme/db";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, emailOTP } from "better-auth/plugins";
+import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 
 import { ADMIN_ROLE, hasAdminRole, isAdminEmail } from "./roles";
+import { smsProvider } from "./sms";
+
+const tempEmail = (phone: string) => `${createHash("sha256").update(phone).digest("hex")}@phone.craftsad.invalid`;
 
 export function initAuth<
   TExtraPlugins extends BetterAuthPlugin[] = [],
@@ -80,6 +84,14 @@ export function initAuth<
             });
           }
         },
+      }),
+      phoneNumber({
+        otpLength: 6,
+        allowedAttempts: 5,
+        expiresIn: 300,
+        phoneNumberValidator: (phone) => /^\+7\d{10}$/.test(phone),
+        signUpOnVerification: { getTempEmail: tempEmail, getTempName: () => "Покупатель" },
+        sendOTP: ({ phoneNumber: phone, code }) => smsProvider.send(phone, `Ваш код для входа в CraftSad: ${code}. Никому его не сообщайте.`),
       }),
       /**
        * Roles, bans and impersonation; endpoints under /api/auth/admin/*
