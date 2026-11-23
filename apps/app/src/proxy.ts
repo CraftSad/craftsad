@@ -2,6 +2,12 @@ import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  if (
+    request.nextUrl.pathname === "/" ||
+    request.nextUrl.pathname.startsWith("/images/")
+  ) {
+    return NextResponse.next();
+  }
   const sessionCookie = getSessionCookie(request);
 
   // THIS IS NOT SECURE!

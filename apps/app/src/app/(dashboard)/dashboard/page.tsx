@@ -4,7 +4,7 @@ import {
   SectionCards,
 } from "~/components/dashboard";
 import { SiteHeader } from "~/components/layout";
-import data from "./data.json";
+import data from "../data.json";
 
 export default function Page() {
   return (

@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@acme/config";
-import { cn, ThemeProvider, ThemeToggle, Toaster } from "@acme/ui";
+import { cn, ThemeProvider, Toaster } from "@acme/ui";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -12,23 +12,20 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production" ? APP_CONFIG.url : "http://localhost:3000",
   ),
-  title: "Bun Turbo Starter",
+  title: "CraftSad — садовые бирки с вашими названиями",
   description:
-    "Простой монорепозиторий с общим бэкендом для веб- и мобильных приложений",
+    "Прочные садовые бирки для рассады и грядок. Выберите форму, цвет и названия сортов. Доставка в пункты Ozon по России.",
   openGraph: {
-    title: "Bun Turbo Starter",
+    title: "CraftSad — садовые бирки с вашими названиями",
     description:
-      "Простой монорепозиторий с общим бэкендом для веб- и мобильных приложений",
+      "Прочные садовые бирки для рассады и грядок с доставкой в Ozon.",
     url: APP_CONFIG.url,
-    siteName: "Bun Turbo Starter",
+    siteName: "CraftSad",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  themeColor: "#faf8f5",
 };
 
 const geistSans = Geist({
@@ -52,9 +49,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       >
         <ThemeProvider>
           <ORPCReactProvider>{props.children}</ORPCReactProvider>
-          <div className="absolute right-4 bottom-4">
-            <ThemeToggle />
-          </div>
           <Toaster />
         </ThemeProvider>
         <Analytics />
