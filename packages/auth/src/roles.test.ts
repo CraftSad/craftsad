@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { eq, user } from "@acme/db";
 import { createTestDb } from "@acme/db/testing";
 
@@ -7,7 +7,6 @@ import { hasAdminRole, isAdmin } from "./roles";
 
 // ADMIN_EMAILS is pinned by test/setup.ts (and packages/api/test/setup.ts).
 const ADMIN_EMAIL = "admin@test.local";
-const PASSWORD = "test-password-123";
 
 describe("hasAdminRole / isAdmin", () => {
   it("reads comma-separated Better Auth roles", () => {
@@ -26,17 +25,31 @@ describe("hasAdminRole / isAdmin", () => {
 describe("ADMIN_EMAILS bootstrap hooks", () => {
   let testDb: Awaited<ReturnType<typeof createTestDb>>;
   let auth: ReturnType<typeof initAuth>;
+  const codes = new Map<string, string>();
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     testDb = await createTestDb();
     auth = initAuth({
       baseUrl: "http://localhost:3000",
       productionUrl: "http://localhost:3000",
       secret: "test-secret-0123456789-0123456789-abcdef",
       database: testDb.db,
+      sendEmail: async ({ email, otp }) => {
+        if (otp) codes.set(email, otp);
+      },
     });
   });
-  afterAll(() => testDb.close());
+  afterEach(() => {
+    codes.clear();
+    return testDb.close();
+  });
+
+  async function signInWithCode(email: string) {
+    await auth.api.sendVerificationOTP({ body: { email, type: "sign-in" } });
+    const otp = codes.get(email);
+    if (!otp) throw new Error("OTP was not sent");
+    await auth.api.signInEmailOTP({ body: { email, otp } });
+  }
 
   async function roleOf(email: string) {
     const [row] = await testDb.db
@@ -47,26 +60,24 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
   }
 
   it("gives new users the default role and listed emails the admin role", async () => {
-    await auth.api.signUpEmail({
-      body: { email: "regular@test.local", password: PASSWORD, name: "R" },
-    });
-    await auth.api.signUpEmail({
-      body: { email: ADMIN_EMAIL, password: PASSWORD, name: "A" },
-    });
+    await signInWithCode("regular@test.local");
+    await signInWithCode(ADMIN_EMAIL);
 
-    expect(await roleOf("regular@test.local")).toBe("user");
+    expect(await roleOf("regular@test.local")).toBe("customer");
     expect(await roleOf(ADMIN_EMAIL)).toBe("admin");
   });
 
   it("promotes a listed account on sign-in", async () => {
+    await signInWithCode(ADMIN_EMAIL);
     await testDb.db
       .update(user)
       .set({ role: "user" })
       .where(eq(user.email, ADMIN_EMAIL));
 
-    await auth.api.signInEmail({
-      body: { email: ADMIN_EMAIL, password: PASSWORD },
-    });
+    // A fresh code is required for the next sign-in; clear only the send limit.
+    const { rateLimit } = await import("@acme/db");
+    await testDb.db.delete(rateLimit);
+    await signInWithCode(ADMIN_EMAIL);
 
     expect(await roleOf(ADMIN_EMAIL)).toBe("admin");
   });

@@ -3,7 +3,7 @@ import { type Database, db } from "@acme/db";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, emailOTP, oAuthProxy } from "better-auth/plugins";
+import { admin, emailOTP } from "better-auth/plugins";
 
 import { ADMIN_ROLE, hasAdminRole, isAdminEmail } from "./roles";
 
@@ -63,24 +63,14 @@ export function initAuth<
       window: 60,
       max: 100,
     },
-    emailAndPassword: {
-      enabled: true,
-      requireEmailVerification: false,
-      sendResetPassword: async ({ user, url }) => {
-        if (options.sendEmail) {
-          await options.sendEmail({
-            email: user.email,
-            url,
-            type: "forget-password",
-          });
-        }
-      },
-    },
+    emailAndPassword: { enabled: false },
     plugins: [
-      oAuthProxy({
-        productionURL: options.productionUrl,
-      }),
       emailOTP({
+        otpLength: 6,
+        allowedAttempts: 5,
+        expiresIn: 300,
+        storeOTP: "hashed",
+        rateLimit: { window: 60, max: 1 },
         async sendVerificationOTP(data) {
           if (options.sendEmail) {
             await options.sendEmail({
@@ -96,7 +86,7 @@ export function initAuth<
        * (`authClient.admin.*`). `adminProcedure` checks the same role.
        * @see https://www.better-auth.com/docs/plugins/admin
        */
-      admin({ adminRoles: [ADMIN_ROLE] }),
+      admin({ defaultRole: "customer", adminRoles: [ADMIN_ROLE] }),
       ...(options.extraPlugins ?? []),
     ],
     // ADMIN_EMAILS bootstrap: listed emails sign up as admins, and existing
@@ -124,16 +114,6 @@ export function initAuth<
         },
       },
     },
-    socialProviders:
-      options.googleClientId && options.googleClientSecret
-        ? {
-            google: {
-              clientId: options.googleClientId,
-              clientSecret: options.googleClientSecret,
-              redirectURI: `${options.productionUrl}/api/auth/callback/google`,
-            },
-          }
-        : {},
     onAPIError: {
       onError(error) {
         logger.error("auth.api_error", error);
