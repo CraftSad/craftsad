@@ -71,8 +71,10 @@ describe("explainMigrationError", () => {
     const error = await migrate(db, { migrationsFolder }).catch((e) => e);
     const { message, hint } = explainMigrationError(error);
 
-    expect(message).toContain('relation "accounts" already exists');
-    expect(message).toContain("(42P07)");
+    // 0000 opens with the `order_status` enum, so a pushed database trips
+    // over the type before it can reach any table.
+    expect(message).toContain('type "order_status" already exists');
+    expect(message).toContain("(42710)");
     expect(hint).toContain("bun db:baseline");
     await client.close();
   });
