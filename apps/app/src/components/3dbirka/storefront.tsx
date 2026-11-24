@@ -63,7 +63,7 @@ const reveal = {
 };
 function RollingNumber({ value }: { value: number }) {
   return (
-    <span className="cs-rolling">
+    <span className="birka-rolling">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={value}
@@ -81,7 +81,7 @@ function RollingNumber({ value }: { value: number }) {
 function Pill({ active, group }: { active: boolean; group: string }) {
   return active ? (
     <motion.span
-      className="cs-active-pill"
+      className="birka-active-pill"
       layoutId={group}
       transition={{ type: "spring", stiffness: 360, damping: 32 }}
     />
@@ -158,7 +158,9 @@ function StorefrontDialog({
   return (
     <dialog
       ref={ref}
-      className={drawer ? "cs-overlay cs-drawer-overlay" : "cs-overlay"}
+      className={
+        drawer ? "birka-overlay birka-drawer-overlay" : "birka-overlay"
+      }
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
@@ -186,7 +188,7 @@ function StorefrontDialog({
     >
       <button
         type="button"
-        className="cs-backdrop"
+        className="birka-backdrop"
         tabIndex={-1}
         aria-label="Закрыть окно"
         onClick={onClose}
@@ -196,7 +198,7 @@ function StorefrontDialog({
         animate={{ x: 0, opacity: 1, y: 0, scale: 1 }}
         exit={drawer ? { x: "100%" } : { opacity: 0, y: 22, scale: 0.97 }}
         transition={{ type: "spring", damping: 32, stiffness: 270 }}
-        className={drawer ? "cs-drawer" : "cs-modal"}
+        className={drawer ? "birka-drawer" : "birka-modal"}
       >
         {children}
       </motion.div>
@@ -220,12 +222,12 @@ function LabelPreview({
   const pair = colorPairs[color] ?? colorPairs[0];
   return (
     <div
-      className={`cs-preview ${small ? "cs-preview-small" : ""} cs-preview-${view}`}
+      className={`birka-preview ${small ? "birka-preview-small" : ""} birka-preview-${view}`}
       role="img"
       aria-label={`Бирка: ${name || "ваша надпись"}`}
     >
       <div
-        className={`cs-label cs-label-${shape}`}
+        className={`birka-label birka-label-${shape}`}
         style={
           {
             "--label-base": pair.base,
@@ -233,11 +235,11 @@ function LabelPreview({
           } as CSSProperties
         }
       >
-        {shape === "hanging" && <span className="cs-label-hole" />}
-        <span className="cs-label-text">{name || "Ваш сорт"}</span>
-        {shape !== "hanging" && <span className="cs-label-stem" />}
+        {shape === "hanging" && <span className="birka-label-hole" />}
+        <span className="birka-label-text">{name || "Ваш сорт"}</span>
+        {shape !== "hanging" && <span className="birka-label-stem" />}
       </div>
-      {!small && <div className="cs-preview-shadow" />}
+      {!small && <div className="birka-preview-shadow" />}
     </div>
   );
 }
@@ -298,32 +300,32 @@ function LoginModal({
     <StorefrontDialog titleId="login-title" onClose={onClose}>
       <button
         type="button"
-        className="cs-icon-button cs-close"
+        className="birka-icon-button birka-close"
         aria-label="Закрыть"
         onClick={onClose}
       >
         <X />
       </button>
       {done ? (
-        <div className="cs-account">
-          <span className="cs-eyebrow">Личный кабинет</span>
+        <div className="birka-account">
+          <span className="birka-eyebrow">Личный кабинет</span>
           <h2 id="login-title" ref={accountHeading} tabIndex={-1}>
             Вы вошли
           </h2>
           <p>Ваши заказы и названия сортов — в одном месте.</p>
           <div
-            className="cs-account-tabs"
+            className="birka-account-tabs"
             role="tablist"
             aria-label="Разделы личного кабинета"
           >
             {accountTabs.map(({ id, title }, index) => (
               <button
                 key={id}
-                id={`cs-tab-${id}`}
+                id={`birka-tab-${id}`}
                 type="button"
                 role="tab"
                 tabIndex={accountTab === id ? 0 : -1}
-                aria-controls={`cs-panel-${id}`}
+                aria-controls={`birka-panel-${id}`}
                 aria-selected={accountTab === id}
                 className={accountTab === id ? "active" : ""}
                 onClick={() => setAccountTab(id)}
@@ -341,7 +343,7 @@ function LoginModal({
                   );
                   if (!next) return;
                   setAccountTab(next.id);
-                  document.getElementById(`cs-tab-${next.id}`)?.focus();
+                  document.getElementById(`birka-tab-${next.id}`)?.focus();
                 }}
               >
                 {title}
@@ -349,10 +351,10 @@ function LoginModal({
             ))}
           </div>
           <div
-            className="cs-account-panel"
-            id="cs-panel-orders"
+            className="birka-account-panel"
+            id="birka-panel-orders"
             role="tabpanel"
-            aria-labelledby="cs-tab-orders"
+            aria-labelledby="birka-tab-orders"
             hidden={accountTab !== "orders"}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
             tabIndex={0}
@@ -361,7 +363,7 @@ function LoginModal({
             <p>
               Статус: <b>Печатаем</b>
             </p>
-            <div className="cs-order-progress">
+            <div className="birka-order-progress">
               <span className="active">Печатаем</span>
               <span>Передано в Ozon</span>
               <span>Готово к выдаче</span>
@@ -371,7 +373,7 @@ function LoginModal({
             </p>
             <button
               type="button"
-              className="cs-text-button"
+              className="birka-text-button"
               onClick={() => navigator.clipboard?.writeText("CS-1042-2026")}
             >
               <Copy /> Скопировать номер
@@ -379,10 +381,10 @@ function LoginModal({
             <small>Это пример заказа для демонстрации.</small>
           </div>
           <div
-            className="cs-account-panel"
-            id="cs-panel-lists"
+            className="birka-account-panel"
+            id="birka-panel-lists"
             role="tabpanel"
-            aria-labelledby="cs-tab-lists"
+            aria-labelledby="birka-tab-lists"
             hidden={accountTab !== "lists"}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
             tabIndex={0}
@@ -396,27 +398,27 @@ function LoginModal({
             </p>
             <button
               type="button"
-              className="cs-button cs-button-primary"
+              className="birka-button birka-button-primary"
               onClick={onRepeat}
             >
               Заказать такие же снова <ArrowRight />
             </button>
           </div>
           <div
-            className="cs-account-panel"
-            id="cs-panel-help"
+            className="birka-account-panel"
+            id="birka-panel-help"
             role="tabpanel"
-            aria-labelledby="cs-tab-help"
+            aria-labelledby="birka-tab-help"
             hidden={accountTab !== "help"}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: The panel starts with text that keyboard users need to reach.
             tabIndex={0}
           >
             <strong>Помощь мастера</strong>
             <p>Если понадобится помощь с выбором бирок, мы подскажем.</p>
-            <button type="button" disabled className="cs-help-button">
+            <button type="button" disabled className="birka-help-button">
               <Phone /> Позвонить
             </button>
-            <button type="button" disabled className="cs-help-button">
+            <button type="button" disabled className="birka-help-button">
               <Send /> Написать в Telegram
             </button>
             <small>Контакты появятся при запуске магазина.</small>
@@ -424,18 +426,18 @@ function LoginModal({
         </div>
       ) : (
         <>
-          <span className="cs-eyebrow">Личный кабинет</span>
+          <span className="birka-eyebrow">Личный кабинет</span>
           <h2 id="login-title">
             {sent ? "Введите код" : "Войдите без пароля"}
           </h2>
-          <p className="cs-modal-lead">
+          <p className="birka-modal-lead">
             {sent
               ? `Код для входа на ${contact}. В этой демонстрации используйте 1234.`
               : "Выберите удобный способ. Пароль запоминать не нужно."}
           </p>
           {!sent ? (
             <>
-              <fieldset className="cs-segmented" aria-label="Способ входа">
+              <fieldset className="birka-segmented" aria-label="Способ входа">
                 <button
                   type="button"
                   className={method === "phone" ? "active" : ""}
@@ -461,7 +463,7 @@ function LoginModal({
                   <Mail /> По эл. почте
                 </button>
               </fieldset>
-              <form onSubmit={submitContact} className="cs-form" noValidate>
+              <form onSubmit={submitContact} className="birka-form" noValidate>
                 <label htmlFor="login-contact">
                   {method === "phone" ? "Номер телефона" : "Электронная почта"}
                 </label>
@@ -482,18 +484,25 @@ function LoginModal({
                   aria-describedby={error ? "login-contact-error" : undefined}
                 />
                 {error && (
-                  <p id="login-contact-error" className="cs-error" role="alert">
+                  <p
+                    id="login-contact-error"
+                    className="birka-error"
+                    role="alert"
+                  >
                     {error}
                   </p>
                 )}
-                <button className="cs-button cs-button-primary" type="submit">
+                <button
+                  className="birka-button birka-button-primary"
+                  type="submit"
+                >
                   Получить код <ArrowRight />
                 </button>
               </form>
             </>
           ) : (
             <form
-              className="cs-form"
+              className="birka-form"
               onSubmit={(event) => {
                 event.preventDefault();
                 if (code === "1234") {
@@ -503,8 +512,8 @@ function LoginModal({
               }}
             >
               <label htmlFor="login-code">Код из 4 цифр</label>
-              <div className="cs-otp">
-                <div className="cs-otp-cells" aria-hidden="true">
+              <div className="birka-otp">
+                <div className="birka-otp-cells" aria-hidden="true">
                   {[0, 1, 2, 3].map((index) => (
                     <motion.span
                       key={index}
@@ -521,7 +530,7 @@ function LoginModal({
                 <input
                   ref={codeInput}
                   id="login-code"
-                  className="cs-code-input"
+                  className="birka-code-input"
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   maxLength={4}
@@ -531,16 +540,19 @@ function LoginModal({
                 />
               </div>
               {error && (
-                <p className="cs-error" role="alert">
+                <p className="birka-error" role="alert">
                   {error}
                 </p>
               )}
-              <button className="cs-button cs-button-primary" type="submit">
+              <button
+                className="birka-button birka-button-primary"
+                type="submit"
+              >
                 Войти <ArrowRight />
               </button>
               <button
                 type="button"
-                className="cs-text-button"
+                className="birka-text-button"
                 disabled={seconds > 0}
                 onClick={() => {
                   setSeconds(59);
@@ -553,7 +565,7 @@ function LoginModal({
               </button>
               <button
                 type="button"
-                className="cs-text-button"
+                className="birka-text-button"
                 onClick={() => {
                   setSent(false);
                   setCode("");
@@ -616,9 +628,9 @@ function CartDrawer({
   };
   return (
     <StorefrontDialog titleId="cart-title" onClose={onClose} drawer>
-      <div className="cs-drawer-head">
+      <div className="birka-drawer-head">
         <div>
-          <span className="cs-eyebrow">Ваш заказ</span>
+          <span className="birka-eyebrow">Ваш заказ</span>
           <h2 id="cart-title">
             {demoComplete
               ? "Результат оформления"
@@ -629,7 +641,7 @@ function CartDrawer({
         </div>
         <button
           type="button"
-          className="cs-icon-button"
+          className="birka-icon-button"
           onClick={onClose}
           aria-label="Закрыть"
         >
@@ -637,7 +649,7 @@ function CartDrawer({
         </button>
       </div>
       {demoComplete ? (
-        <div className="cs-empty">
+        <div className="birka-empty">
           <PackageCheck />
           <h3 ref={completion} tabIndex={-1}>
             Демонстрация завершена
@@ -645,20 +657,20 @@ function CartDrawer({
           <p>Заказ не создан. Данные не сохранены и не отправлены.</p>
           <button
             type="button"
-            className="cs-button cs-button-primary"
+            className="birka-button birka-button-primary"
             onClick={onClose}
           >
             Вернуться в магазин
           </button>
         </div>
       ) : items.length === 0 ? (
-        <div className="cs-empty">
+        <div className="birka-empty">
           <ShoppingBag />
           <h3>Пока пусто</h3>
           <p>Добавьте бирки со своими названиями — они появятся здесь.</p>
           <button
             type="button"
-            className="cs-button cs-button-primary"
+            className="birka-button birka-button-primary"
             onClick={onClose}
           >
             Выбрать бирки
@@ -666,15 +678,15 @@ function CartDrawer({
         </div>
       ) : (
         <>
-          <div className="cs-delivery-note">
+          <div className="birka-delivery-note">
             <Truck />
             <span>
               Доставка в пункт выдачи Ozon по всей России — обычно 2–4 дня
             </span>
           </div>
-          <div className="cs-cart-items">
+          <div className="birka-cart-items">
             {items.map((item) => (
-              <article className="cs-cart-item" key={item.id}>
+              <article className="birka-cart-item" key={item.id}>
                 <LabelPreview
                   shape={item.shape}
                   color={item.color}
@@ -692,7 +704,7 @@ function CartDrawer({
                   <b>{money(item.price)} ₽</b>
                   <button
                     type="button"
-                    className="cs-text-button"
+                    className="birka-text-button"
                     onClick={() => onRemove(item.id)}
                   >
                     Убрать
@@ -703,12 +715,12 @@ function CartDrawer({
           </div>
           {checkout && (
             <form
-              id="cs-checkout"
-              className="cs-form cs-checkout"
+              id="birka-checkout"
+              className="birka-form birka-checkout"
               noValidate
               onSubmit={submitCheckout}
             >
-              <p className="cs-helper">
+              <p className="birka-helper">
                 Это демонстрация оформления. Введённые данные не сохраняются и
                 не отправляются. Можно использовать вымышленные данные.
               </p>
@@ -726,7 +738,11 @@ function CartDrawer({
                 placeholder="Как к вам обращаться"
               />
               {errors.name && (
-                <p id="checkout-name-error" className="cs-error" role="alert">
+                <p
+                  id="checkout-name-error"
+                  className="birka-error"
+                  role="alert"
+                >
                   {errors.name}
                 </p>
               )}
@@ -744,7 +760,11 @@ function CartDrawer({
                 placeholder="+7 (999) 123-45-67"
               />
               {errors.phone && (
-                <p id="checkout-phone-error" className="cs-error" role="alert">
+                <p
+                  id="checkout-phone-error"
+                  className="birka-error"
+                  role="alert"
+                >
                   {errors.phone}
                 </p>
               )}
@@ -760,12 +780,16 @@ function CartDrawer({
                 }
               />
               {errors.city && (
-                <p id="checkout-city-error" className="cs-error" role="alert">
+                <p
+                  id="checkout-city-error"
+                  className="birka-error"
+                  role="alert"
+                >
                   {errors.city}
                 </p>
               )}
               <fieldset
-                className="cs-segmented"
+                className="birka-segmented"
                 aria-label="Способ выбора пункта выдачи"
               >
                 <button
@@ -801,27 +825,27 @@ function CartDrawer({
               {errors.address && (
                 <p
                   id="checkout-address-error"
-                  className="cs-error"
+                  className="birka-error"
                   role="alert"
                 >
                   {errors.address}
                 </p>
               )}
-              <p className="cs-helper">
+              <p className="birka-helper">
                 Выбор на карте станет доступен после подключения службы
                 доставки.
               </p>
             </form>
           )}
-          <div className="cs-cart-footer">
-            <div className="cs-total">
+          <div className="birka-cart-footer">
+            <div className="birka-total">
               <span>Итого</span>
               <strong>{money(total)} ₽</strong>
             </div>
             <button
-              className="cs-button cs-button-primary"
+              className="birka-button birka-button-primary"
               type={checkout ? "submit" : "button"}
-              form={checkout ? "cs-checkout" : undefined}
+              form={checkout ? "birka-checkout" : undefined}
               onClick={
                 checkout
                   ? undefined
@@ -837,7 +861,7 @@ function CartDrawer({
             {checkout && (
               <button
                 type="button"
-                className="cs-text-button"
+                className="birka-text-button"
                 onClick={() => {
                   setErrors({});
                   setCheckout(false);
@@ -912,18 +936,18 @@ export function Storefront() {
   };
   return (
     <MotionConfig reducedMotion="user">
-      <div className="cs-site">
-        <header className="cs-header">
-          <div className="cs-header-inner">
+      <div className="birka-site">
+        <header className="birka-header">
+          <div className="birka-header-inner">
             <button
               type="button"
-              className="cs-brand"
+              className="birka-brand"
               onClick={() =>
                 window.scrollTo({ top: 0, behavior: scrollBehavior() })
               }
-              aria-label="CraftSad — на главную"
+              aria-label="3dbirka — на главную"
             >
-              <span className="cs-brand-mark">
+              <span className="birka-brand-mark">
                 <Leaf />
               </span>
               <span>
@@ -932,14 +956,14 @@ export function Storefront() {
               </span>
             </button>
             <nav
-              className={menuOpen ? "cs-nav is-open" : "cs-nav"}
+              className={menuOpen ? "birka-nav is-open" : "birka-nav"}
               aria-label="Главное меню"
             >
-              <div className="cs-nav-dropdown">
+              <div className="birka-nav-dropdown">
                 <button type="button" onClick={() => scrollTo("catalog")}>
                   Каталог <ChevronDown />
                 </button>
-                <div className="cs-nav-menu">
+                <div className="birka-nav-menu">
                   <button
                     type="button"
                     onClick={() => {
@@ -965,10 +989,10 @@ export function Storefront() {
                 Конструктор
               </button>
             </nav>
-            <div className="cs-header-actions">
+            <div className="birka-header-actions">
               <button
                 type="button"
-                className="cs-login-button"
+                className="birka-login-button"
                 aria-label="Войти"
                 onClick={() => setDialog("login")}
               >
@@ -977,7 +1001,7 @@ export function Storefront() {
               </button>
               <button
                 type="button"
-                className="cs-cart-button"
+                className="birka-cart-button"
                 aria-label={`Корзина: ${cartCount} шт., ${money(cartTotal)} ₽`}
                 onClick={() => setDialog("cart")}
               >
@@ -991,7 +1015,7 @@ export function Storefront() {
               </button>
               <button
                 type="button"
-                className="cs-menu-toggle cs-icon-button"
+                className="birka-menu-toggle birka-icon-button"
                 aria-label="Открыть меню"
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -1002,15 +1026,15 @@ export function Storefront() {
           </div>
         </header>
         <main>
-          <section className="cs-hero">
-            <div className="cs-container cs-hero-grid">
+          <section className="birka-hero">
+            <div className="birka-container birka-hero-grid">
               <motion.div
-                className="cs-hero-copy"
+                className="birka-hero-copy"
                 initial="hidden"
                 animate="visible"
                 variants={reveal}
               >
-                <motion.div variants={reveal} className="cs-hero-edition">
+                <motion.div variants={reveal} className="birka-hero-edition">
                   <span /> Маленькие детали. Большой сад.
                 </motion.div>
                 <motion.h1 variants={reveal}>
@@ -1019,35 +1043,35 @@ export function Storefront() {
                   бирки с названиями
                   <br />
                   <em>ваших сортов</em>
-                  <span className="cs-title-dot">.</span>
+                  <span className="birka-title-dot">.</span>
                 </motion.h1>
                 <motion.p variants={reveal}>
                   Вы растите любимые растения.
                   <br />
                   Мы сохраняем их имена — в объёмных
-                  <br className="cs-desktop-break" /> буквах, красивых цветах и
-                  надолго.
+                  <br className="birka-desktop-break" /> буквах, красивых цветах
+                  и надолго.
                 </motion.p>
-                <motion.div variants={reveal} className="cs-hero-actions">
+                <motion.div variants={reveal} className="birka-hero-actions">
                   <motion.button
                     whileHover={{ y: -4, scale: 1.01 }}
                     whileTap={{ scale: 0.97 }}
                     type="button"
-                    className="cs-button cs-button-primary"
+                    className="birka-button birka-button-primary"
                     onClick={() => scrollTo("constructor")}
                   >
                     Создать свой набор <ArrowRight />
                   </motion.button>
                   <button
                     type="button"
-                    className="cs-button cs-button-light"
+                    className="birka-button birka-button-light"
                     onClick={() => scrollTo("catalog")}
                   >
                     Готовые коллекции <span>↗</span>
                   </button>
                 </motion.div>
-                <motion.div variants={reveal} className="cs-hero-caption">
-                  <span className="cs-mini-leaves">
+                <motion.div variants={reveal} className="birka-hero-caption">
+                  <span className="birka-mini-leaves">
                     <Leaf />
                     <Leaf />
                     <Leaf />
@@ -1060,18 +1084,18 @@ export function Storefront() {
                 </motion.div>
               </motion.div>
               <div
-                className="cs-hero-art"
+                className="birka-hero-art"
                 role="img"
                 aria-label="Коллекция садовых бирок в молочном, хвойном и терракотовом цветах"
               >
-                <div className="cs-orbit cs-orbit-one" />
-                <div className="cs-orbit cs-orbit-two" />
-                <span className="cs-art-coordinate">
-                  CRAFTSAD OBJECTS — 01 / 03
+                <div className="birka-orbit birka-orbit-one" />
+                <div className="birka-orbit birka-orbit-two" />
+                <span className="birka-art-coordinate">
+                  3DBIRKA OBJECTS — 01 / 03
                 </span>
-                <div className="cs-art-leaf cs-art-leaf-one" />
-                <div className="cs-art-leaf cs-art-leaf-two" />
-                <div className="cs-art-leaf cs-art-leaf-three" />
+                <div className="birka-art-leaf birka-art-leaf-one" />
+                <div className="birka-art-leaf birka-art-leaf-two" />
+                <div className="birka-art-leaf birka-art-leaf-three" />
                 {[
                   { color: 1, name: "БАЗИЛИК\nЗелёный аромат" },
                   { color: 0, name: "ТОМАТ\nБычье сердце" },
@@ -1079,7 +1103,7 @@ export function Storefront() {
                 ].map((tag, i) => (
                   <motion.div
                     key={tag.color}
-                    className={`cs-hero-tag cs-hero-tag-${i}`}
+                    className={`birka-hero-tag birka-hero-tag-${i}`}
                     animate={
                       reducedMotion
                         ? {}
@@ -1099,7 +1123,7 @@ export function Storefront() {
                     />
                   </motion.div>
                 ))}
-                <div className="cs-hero-delivery">
+                <div className="birka-hero-delivery">
                   <span>
                     <Truck />
                   </span>
@@ -1109,12 +1133,12 @@ export function Storefront() {
                   </div>
                   <ArrowRight />
                 </div>
-                <span className="cs-art-material">
+                <span className="birka-art-material">
                   МАТОВЫЙ ПЛАСТИК · ОБЪЁМНАЯ ПЕЧАТЬ
                 </span>
               </div>
             </div>
-            <div className="cs-hero-rule cs-container">
+            <div className="birka-hero-rule birka-container">
               <span>Красота, которая остаётся на сезоны</span>
               <span>
                 Сделано в России <span>↗</span>
@@ -1123,14 +1147,14 @@ export function Storefront() {
           </section>
           <motion.section
             id="how"
-            className="cs-section cs-how"
+            className="birka-section birka-how"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.15 }}
             variants={reveal}
           >
-            <div className="cs-container">
-              <div className="cs-section-top">
+            <div className="birka-container">
+              <div className="birka-section-top">
                 <h2>
                   Природа меняется.
                   <br />
@@ -1142,14 +1166,14 @@ export function Storefront() {
                   просто наслаждались своим садом.
                 </p>
               </div>
-              <div className="cs-bento">
+              <div className="birka-bento">
                 <motion.article
                   variants={reveal}
                   whileHover={{ y: -4 }}
-                  className="cs-bento-weather"
+                  className="birka-bento-weather"
                 >
-                  <div className="cs-bento-photo" />
-                  <div className="cs-bento-text">
+                  <div className="birka-bento-photo" />
+                  <div className="birka-bento-text">
                     <ShieldCheck />
                     <h3>
                       Не выгорают на солнце.
@@ -1162,9 +1186,9 @@ export function Storefront() {
                 <motion.article
                   variants={reveal}
                   whileHover={{ y: -4 }}
-                  className="cs-bento-type"
+                  className="birka-bento-type"
                 >
-                  <div className="cs-relief">
+                  <div className="birka-relief">
                     Базилик<span>ОБЪЁМ ИМЕЕТ ЗНАЧЕНИЕ</span>
                   </div>
                   <div>
@@ -1179,9 +1203,9 @@ export function Storefront() {
                 <motion.article
                   variants={reveal}
                   whileHover={{ y: -4 }}
-                  className="cs-bento-delivery"
+                  className="birka-bento-delivery"
                 >
-                  <div className="cs-two-days">
+                  <div className="birka-two-days">
                     2<span>дня</span>
                     <ArrowRight />
                   </div>
@@ -1196,9 +1220,9 @@ export function Storefront() {
               </div>
             </div>
           </motion.section>
-          <section id="constructor" className="cs-section cs-constructor">
-            <div className="cs-container">
-              <div className="cs-section-top">
+          <section id="constructor" className="birka-section birka-constructor">
+            <div className="birka-container">
+              <div className="birka-section-top">
                 <div>
                   <h2>
                     Ваша маленькая <em>дизайн-студия</em>
@@ -1210,12 +1234,12 @@ export function Storefront() {
                   Покрутите её — она уже почти настоящая.
                 </p>
               </div>
-              <div className="cs-builder">
-                <div className="cs-builder-left">
-                  <div className="cs-builder-preview">
-                    <div className="cs-preview-top">
+              <div className="birka-builder">
+                <div className="birka-builder-left">
+                  <div className="birka-builder-preview">
+                    <div className="birka-preview-top">
                       <span>
-                        <span className="cs-live-dot" /> Живой просмотр
+                        <span className="birka-live-dot" /> Живой просмотр
                       </span>
                       <span>
                         {Math.min(previewIndex + 1, Math.max(names.length, 1))}{" "}
@@ -1243,7 +1267,7 @@ export function Storefront() {
                         />
                       }
                     />
-                    <div className="cs-preview-pager">
+                    <div className="birka-preview-pager">
                       <button
                         type="button"
                         aria-label="Предыдущая надпись"
@@ -1276,7 +1300,7 @@ export function Storefront() {
                     </div>
                   </div>
                   <fieldset
-                    className="cs-view-controls"
+                    className="birka-view-controls"
                     aria-label="Ракурс бирки"
                   >
                     <button
@@ -1304,27 +1328,29 @@ export function Storefront() {
                       <RotateCcw /> 360°
                     </button>
                   </fieldset>
-                  <p className="cs-preview-note">
+                  <p className="birka-preview-note">
                     Изображение помогает представить изделие. Готовая бирка
                     может немного отличаться.
                   </p>
                 </div>
-                <div className="cs-builder-right">
-                  <div className="cs-builder-step">
-                    <div className="cs-builder-heading">
+                <div className="birka-builder-right">
+                  <div className="birka-builder-step">
+                    <div className="birka-builder-heading">
                       <span>1</span>
                       <div>
                         <h3>Форма</h3>
                         <p>Для стаканчиков, грядок или теплицы</p>
                       </div>
                     </div>
-                    <div className="cs-shapes">
+                    <div className="birka-shapes">
                       {shapes.map((item) => (
                         <button
                           type="button"
                           key={item.id}
                           className={
-                            shape === item.id ? "cs-shape active" : "cs-shape"
+                            shape === item.id
+                              ? "birka-shape active"
+                              : "birka-shape"
                           }
                           aria-pressed={shape === item.id}
                           onClick={() => {
@@ -1333,7 +1359,7 @@ export function Storefront() {
                           }}
                         >
                           <span
-                            className={`cs-shape-icon cs-shape-icon-${item.id}`}
+                            className={`birka-shape-icon birka-shape-icon-${item.id}`}
                           >
                             <i />
                           </span>
@@ -1353,15 +1379,15 @@ export function Storefront() {
                       ))}
                     </div>
                   </div>
-                  <div className="cs-builder-step">
-                    <div className="cs-builder-heading">
+                  <div className="birka-builder-step">
+                    <div className="birka-builder-heading">
                       <span>2</span>
                       <div>
                         <h3>Цвет</h3>
                         <p>Шесть сочетаний, которые хорошо читаются</p>
                       </div>
                     </div>
-                    <div className="cs-colors">
+                    <div className="birka-colors">
                       {colorPairs.map((pair, index) => (
                         <button
                           type="button"
@@ -1369,7 +1395,9 @@ export function Storefront() {
                           title={`${pair.name} — ${pair.label}`}
                           aria-label={`${pair.name} — ${pair.label}`}
                           className={
-                            color === index ? "cs-color active" : "cs-color"
+                            color === index
+                              ? "birka-color active"
+                              : "birka-color"
                           }
                           aria-pressed={color === index}
                           onClick={() => {
@@ -1378,7 +1406,7 @@ export function Storefront() {
                           }}
                         >
                           <span
-                            className="cs-color-swatch"
+                            className="birka-color-swatch"
                             style={{
                               background: `linear-gradient(135deg, ${pair.base} 0% 64%, ${pair.ink} 64% 100%)`,
                             }}
@@ -1392,15 +1420,15 @@ export function Storefront() {
                       ))}
                     </div>
                   </div>
-                  <div className="cs-builder-step">
-                    <div className="cs-builder-heading">
+                  <div className="birka-builder-step">
+                    <div className="birka-builder-heading">
                       <span>3</span>
                       <div>
                         <h3>Ваши сорта</h3>
                         <p>Одно название — одна бирка</p>
                       </div>
                     </div>
-                    <label htmlFor="varieties" className="cs-field-label">
+                    <label htmlFor="varieties" className="birka-field-label">
                       Названия сортов, каждое с новой строки
                     </label>
                     <textarea
@@ -1416,7 +1444,7 @@ export function Storefront() {
                         "Томат Бычье сердце\nОгурец Зозуля\nПерец Сладкий"
                       }
                     />
-                    <div className="cs-variety-help">
+                    <div className="birka-variety-help">
                       <span>Можно добавить популярные сорта:</span>
                       <div>
                         {popularVarieties.map((name) => (
@@ -1438,15 +1466,15 @@ export function Storefront() {
                       </div>
                     </div>
                   </div>
-                  <div className="cs-builder-step cs-builder-final">
-                    <div className="cs-builder-heading">
+                  <div className="birka-builder-step birka-builder-final">
+                    <div className="birka-builder-heading">
                       <span>4</span>
                       <div>
                         <h3>Ваш набор готов</h3>
                         <p>Проверьте количество и стоимость</p>
                       </div>
                     </div>
-                    <div className="cs-summary">
+                    <div className="birka-summary">
                       <span>
                         <RollingNumber value={names.length} />{" "}
                         {countForm === "one" || countForm === "few"
@@ -1460,14 +1488,14 @@ export function Storefront() {
                     </div>
                     <button
                       type="button"
-                      className="cs-button cs-button-primary"
+                      className="birka-button birka-button-primary"
                       disabled={!names.length}
                       onClick={addToCart}
                     >
                       {added ? "Добавить ещё один набор" : "Добавить в корзину"}
                       <ShoppingBag />
                     </button>
-                    <p className="cs-helper">
+                    <p className="birka-helper">
                       Оплатить можно будет после подтверждения заказа.
                     </p>
                   </div>
@@ -1475,9 +1503,9 @@ export function Storefront() {
               </div>
             </div>
           </section>
-          <section id="catalog" className="cs-section cs-catalog">
-            <div className="cs-container">
-              <div className="cs-section-top">
+          <section id="catalog" className="birka-section birka-catalog">
+            <div className="birka-container">
+              <div className="birka-section-top">
                 <div>
                   <h2>
                     Собраны с <em>чувством сада</em>
@@ -1488,7 +1516,7 @@ export function Storefront() {
                   надпись можно изменить.
                 </p>
               </div>
-              <fieldset className="cs-filters" aria-label="Категории">
+              <fieldset className="birka-filters" aria-label="Категории">
                 <button
                   type="button"
                   className={category === "all" ? "active" : ""}
@@ -1514,7 +1542,7 @@ export function Storefront() {
                   Для грядок
                 </button>
               </fieldset>
-              <div className="cs-products">
+              <div className="birka-products">
                 {presets
                   .filter(
                     (preset) =>
@@ -1531,11 +1559,13 @@ export function Storefront() {
                         stiffness: 100,
                         damping: 20,
                       }}
-                      className="cs-product"
+                      className="birka-product"
                       key={preset.title}
                     >
-                      <div className={`cs-product-art cs-art-${index % 3}`}>
-                        <span className="cs-product-badge">
+                      <div
+                        className={`birka-product-art birka-art-${index % 3}`}
+                      >
+                        <span className="birka-product-badge">
                           {preset.count} бирок
                         </span>
                         <LabelPreview
@@ -1545,8 +1575,8 @@ export function Storefront() {
                           small
                         />
                       </div>
-                      <div className="cs-product-body">
-                        <span className="cs-product-category">
+                      <div className="birka-product-body">
+                        <span className="birka-product-category">
                           {preset.category === "seedling"
                             ? "Для рассады"
                             : "Для грядок"}{" "}
@@ -1561,7 +1591,7 @@ export function Storefront() {
                           {preset.names.slice(0, 3).join(", ")}
                           {preset.names.length > 3 ? " и другие" : ""}
                         </p>
-                        <div className="cs-product-footer">
+                        <div className="birka-product-footer">
                           <strong>{money(preset.price)} ₽</strong>
                           <button
                             type="button"
@@ -1576,8 +1606,8 @@ export function Storefront() {
               </div>
             </div>
           </section>
-          <section className="cs-promise">
-            <div className="cs-container">
+          <section className="birka-promise">
+            <div className="birka-container">
               <div>
                 <h2>
                   Чтобы помнить каждый сорт
@@ -1586,7 +1616,7 @@ export function Storefront() {
               </div>
               <button
                 type="button"
-                className="cs-button cs-button-light"
+                className="birka-button birka-button-light"
                 onClick={() => scrollTo("constructor")}
               >
                 Создать свои бирки <ArrowRight />
@@ -1594,10 +1624,10 @@ export function Storefront() {
             </div>
           </section>
         </main>
-        <footer className="cs-footer">
-          <div className="cs-container">
+        <footer className="birka-footer">
+          <div className="birka-container">
             <div>
-              <strong>CraftSad</strong>
+              <strong>3dbirka</strong>
               <p>
                 Мастерская садовых бирок.
                 <br />
@@ -1625,8 +1655,8 @@ export function Storefront() {
               </button>
             </div>
           </div>
-          <div className="cs-footer-bottom cs-container">
-            <span>© {year} CraftSad</span>
+          <div className="birka-footer-bottom birka-container">
+            <span>© {year} 3dbirka</span>
             <span>Пусть всё растёт 🌱</span>
           </div>
         </footer>

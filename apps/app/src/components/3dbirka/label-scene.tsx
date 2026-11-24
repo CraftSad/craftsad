@@ -179,7 +179,7 @@ export default function LabelScene({
   return (
     <SceneBoundary fallback={fallback}>
       <div
-        className="cs-three"
+        className="birka-three"
         role="img"
         aria-label={`Объёмная бирка: ${tagProps.name}. Вращайте мышью или пальцем.`}
       >

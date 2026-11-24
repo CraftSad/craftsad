@@ -9,7 +9,8 @@ import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 import { ADMIN_ROLE, hasAdminRole, isAdminEmail } from "./roles";
 import { smsProvider } from "./sms";
 
-const tempEmail = (phone: string) => `${createHash("sha256").update(phone).digest("hex")}@phone.craftsad.invalid`;
+const tempEmail = (phone: string) =>
+  `${createHash("sha256").update(phone).digest("hex")}@phone.3dbirka.invalid`;
 
 export function initAuth<
   TExtraPlugins extends BetterAuthPlugin[] = [],
@@ -90,8 +91,15 @@ export function initAuth<
         allowedAttempts: 5,
         expiresIn: 300,
         phoneNumberValidator: (phone) => /^\+7\d{10}$/.test(phone),
-        signUpOnVerification: { getTempEmail: tempEmail, getTempName: () => "Покупатель" },
-        sendOTP: ({ phoneNumber: phone, code }) => smsProvider.send(phone, `Ваш код для входа в CraftSad: ${code}. Никому его не сообщайте.`),
+        signUpOnVerification: {
+          getTempEmail: tempEmail,
+          getTempName: () => "Покупатель",
+        },
+        sendOTP: ({ phoneNumber: phone, code }) =>
+          smsProvider.send(
+            phone,
+            `Ваш код для входа в 3dbirka: ${code}. Никому его не сообщайте.`,
+          ),
       }),
       /**
        * Roles, bans and impersonation; endpoints under /api/auth/admin/*

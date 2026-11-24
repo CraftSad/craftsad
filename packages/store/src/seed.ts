@@ -29,4 +29,4 @@ await db
       scadTemplate: "tag.scad",
     },
   });
-console.log("Каталог CraftSad готов");
+console.log("Каталог 3dbirka готов");

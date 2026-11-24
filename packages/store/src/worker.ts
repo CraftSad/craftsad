@@ -32,7 +32,7 @@ async function processJob(job: { id: string; order_id: string }) {
     .from(orderItems)
     .innerJoin(products, eq(products.id, orderItems.productId))
     .where(eq(orderItems.orderId, order.id));
-  const temp = await mkdtemp(join(tmpdir(), "craftsad-"));
+  const temp = await mkdtemp(join(tmpdir(), "3dbirka-"));
   const heartbeat = setInterval(() => {
     void db
       .update(printJobs)
