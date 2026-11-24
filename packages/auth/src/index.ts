@@ -98,7 +98,7 @@ export function initAuth<
         sendOTP: ({ phoneNumber: phone, code }) =>
           smsProvider.send(
             phone,
-            `Ваш код для входа в 3dbirka: ${code}. Никому его не сообщайте.`,
+            `Ваш код для входа в 3D Бирка: ${code}. Никому его не сообщайте.`,
           ),
       }),
       /**

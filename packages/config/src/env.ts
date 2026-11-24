@@ -28,7 +28,7 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().optional(),
     EMAIL_SANDBOX_ENABLED: z.coerce.boolean().optional().default(false),
     EMAIL_SANDBOX_HOST: z.string().default("localhost"),
-    EMAIL_FROM: z.string().default("Acme <onboarding@resend.dev>"),
+    EMAIL_FROM: z.string().default("3D Бирка <onboarding@resend.dev>"),
 
     // Auth
     AUTH_SECRET: z.string().optional(),
@@ -58,8 +58,8 @@ export const env = createEnv({
     AWS_S3_BUCKET: z.string().default("acme-bucket"),
   },
   client: {
-    NEXT_PUBLIC_APP_NAME: z.string().default("3dbirka"),
-    NEXT_PUBLIC_APP_SHORT_NAME: z.string().default("Acme"),
+    NEXT_PUBLIC_APP_NAME: z.string().default("3D Бирка"),
+    NEXT_PUBLIC_APP_SHORT_NAME: z.string().default("3D Бирка"),
     NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3000"),
   },
   clientPrefix: "NEXT_PUBLIC_",
