@@ -11,9 +11,12 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import {
   Component,
+  type ComponentRef,
   type ReactNode,
+  type Ref,
   Suspense,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -25,7 +28,6 @@ type Props = {
   color: number;
   name: string;
   view: "front" | "side" | "rotate";
-  fallback: ReactNode;
 };
 
 class SceneBoundary extends Component<
@@ -41,7 +43,7 @@ class SceneBoundary extends Component<
   }
 }
 
-function Tag({ shape, color, name, view }: Omit<Props, "fallback">) {
+function Tag({ shape, color, name, view }: Props) {
   const group = useRef<Group>(null);
   const reduced = useReducedMotion();
   const pair = colorPairs[color] ?? colorPairs[0];
@@ -121,6 +123,7 @@ function Tag({ shape, color, name, view }: Omit<Props, "fallback">) {
       {lines.map((line, index) => (
         <Center
           key={index === 0 ? "first-line" : "second-line"}
+          cacheKey={line}
           position={[0, lines.length === 1 ? 0.02 : 0.21 - index * 0.36, 0.13]}
         >
           <Text3D
@@ -141,7 +144,26 @@ function Tag({ shape, color, name, view }: Omit<Props, "fallback">) {
   );
 }
 
-export default function LabelScene(props: Props) {
+export default function LabelScene({
+  fallback,
+  resetViewRef,
+  ...tagProps
+}: Props & { fallback: ReactNode; resetViewRef: Ref<() => void> }) {
+  const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
+  useImperativeHandle(
+    resetViewRef,
+    () => () => {
+      const orbit = controls.current;
+      if (!orbit) return;
+      // Clear any remaining drag momentum before restoring the saved camera.
+      const damping = orbit.enableDamping;
+      orbit.enableDamping = false;
+      orbit.update();
+      orbit.reset();
+      orbit.enableDamping = damping;
+    },
+    [],
+  );
   const [supported, setSupported] = useState(false);
   useEffect(() => {
     try {
@@ -153,24 +175,24 @@ export default function LabelScene(props: Props) {
       setSupported(false);
     }
   }, []);
-  if (!supported) return props.fallback;
+  if (!supported) return fallback;
   return (
-    <SceneBoundary fallback={props.fallback}>
+    <SceneBoundary fallback={fallback}>
       <div
         className="cs-three"
         role="img"
-        aria-label={`Объёмная бирка: ${props.name}. Вращайте мышью или пальцем.`}
+        aria-label={`Объёмная бирка: ${tagProps.name}. Вращайте мышью или пальцем.`}
       >
         <Canvas
           shadows
           dpr={[1, 1.5]}
           camera={{ position: [0, 0.3, 6.5], fov: 40 }}
-          fallback={props.fallback}
+          fallback={fallback}
         >
           <ambientLight intensity={0.8} />
           <directionalLight position={[3, 5, 5]} intensity={2.5} castShadow />
           <Suspense fallback={null}>
-            <Tag {...props} />
+            <Tag {...tagProps} />
           </Suspense>
           <Suspense fallback={null}>
             <Environment preset="studio" />
@@ -183,6 +205,7 @@ export default function LabelScene(props: Props) {
             far={4}
           />
           <OrbitControls
+            ref={controls}
             enableDamping
             enablePan={false}
             enableZoom={false}

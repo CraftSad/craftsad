@@ -864,6 +864,7 @@ export function Storefront() {
     "Томат Бычье сердце\nОгурец Зозуля\nПерец Калифорнийское чудо",
   );
   const [view, setView] = useState<View>("front");
+  const resetView = useRef<(() => void) | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [dialog, setDialog] = useState<"login" | "cart" | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -872,6 +873,10 @@ export function Storefront() {
   const [added, setAdded] = useState(false);
   const [year, setYear] = useState(2026);
   useEffect(() => setYear(new Date().getFullYear()), []);
+  function selectView(nextView: View) {
+    resetView.current?.();
+    setView(nextView);
+  }
   const names = namesText
     .split("\n")
     .map((name) => name.trim())
@@ -1225,6 +1230,7 @@ export function Storefront() {
                         "Ваш сорт"
                       }
                       view={view}
+                      resetViewRef={resetView}
                       fallback={
                         <LabelPreview
                           shape={shape}
@@ -1276,7 +1282,7 @@ export function Storefront() {
                     <button
                       type="button"
                       className={view === "front" ? "active" : ""}
-                      onClick={() => setView("front")}
+                      onClick={() => selectView("front")}
                     >
                       <Pill active={view === "front"} group="view" />
                       Спереди
@@ -1284,7 +1290,7 @@ export function Storefront() {
                     <button
                       type="button"
                       className={view === "side" ? "active" : ""}
-                      onClick={() => setView("side")}
+                      onClick={() => selectView("side")}
                     >
                       <Pill active={view === "side"} group="view" />
                       Сбоку
@@ -1292,7 +1298,7 @@ export function Storefront() {
                     <button
                       type="button"
                       className={view === "rotate" ? "active" : ""}
-                      onClick={() => setView("rotate")}
+                      onClick={() => selectView("rotate")}
                     >
                       <Pill active={view === "rotate"} group="view" />
                       <RotateCcw /> 360°
