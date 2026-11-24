@@ -45,24 +45,40 @@ export const orderSchema = cartSchema.extend({
 
 export async function priceCart(database: Database, cart: Cart) {
   const ids = [...new Set(cart.items.map((item) => item.productId))];
-  const rows = await database.select().from(products).where(and(inArray(products.id, ids), eq(products.active, true)));
+  const rows = await database
+    .select()
+    .from(products)
+    .where(and(inArray(products.id, ids), eq(products.active, true)));
   const byId = new Map(rows.map((row) => [row.id, row]));
   let totalAmount = 0;
   let modelCount = 0;
   const items = cart.items.map((item) => {
-    const product = byId.get(item.productId);
+    const product = byId.get(item.productId.toLowerCase());
     if (!product) throw new Error("Товар не найден или недоступен");
-    if (product.isCustomizable !== !!item.customization) throw new Error("Неверные параметры товара");
+    if (product.isCustomizable !== !!item.customization)
+      throw new Error("Неверные параметры товара");
     const count = item.customization?.varieties.length ?? 1;
     if (item.customization) {
       modelCount += item.quantity * count;
-      for (const variety of item.customization.varieties) layoutText(variety, item.customization.lengthMm, item.customization.heightMm);
+      for (const variety of item.customization.varieties)
+        layoutText(
+          variety,
+          item.customization.lengthMm,
+          item.customization.heightMm,
+        );
     }
     const lineTotal = itemTotal(product.priceKopecks, item.quantity, count);
     totalAmount += lineTotal;
-    return { productId: product.id, quantity: item.quantity, unitPrice: product.priceKopecks, customizationJson: item.customization ?? null, lineTotal };
+    return {
+      productId: product.id,
+      quantity: item.quantity,
+      unitPrice: product.priceKopecks,
+      customizationJson: item.customization ?? null,
+      lineTotal,
+    };
   });
   if (totalAmount > 100_000_000) throw new Error("Сумма заказа слишком велика");
-  if (modelCount > 500) throw new Error("В одном заказе можно заказать не более 500 бирок");
+  if (modelCount > 500)
+    throw new Error("В одном заказе можно заказать не более 500 бирок");
   return { totalAmount, items };
 }
