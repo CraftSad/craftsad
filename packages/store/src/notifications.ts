@@ -1,6 +1,6 @@
+import { smsProvider } from "@acme/auth/sms";
 import type { orders } from "@acme/db";
 import { type Database, db, user } from "@acme/db";
-import { smsProvider } from "@acme/auth/sms";
 import { sendEmailHtml } from "@acme/emails";
 import { eq } from "drizzle-orm";
 
@@ -17,7 +17,7 @@ const messages: Record<Order["status"], string> = {
 };
 
 export async function notifyOrderStatus(order: Order, database: Database = db) {
-  const text = `CraftSad: заказ ${order.orderNumber} ${messages[order.status]}.${order.ozonTrackingNumber ? ` Трек-номер Ozon: ${order.ozonTrackingNumber}.` : ""}`;
+  const text = `3dbirka: заказ ${order.orderNumber} ${messages[order.status]}.${order.ozonTrackingNumber ? ` Трек-номер Ozon: ${order.ozonTrackingNumber}.` : ""}`;
   const [customer] = await database
     .select({ email: user.email })
     .from(user)
@@ -26,11 +26,11 @@ export async function notifyOrderStatus(order: Order, database: Database = db) {
   const actions: Promise<unknown>[] = [
     smsProvider.send(order.customerPhone, text),
   ];
-  if (email && !email.endsWith("@phone.craftsad.invalid"))
+  if (email && !email.endsWith("@phone.3dbirka.invalid"))
     actions.push(
       sendEmailHtml({
         to: [email],
-        subject: `Заказ ${order.orderNumber} — CraftSad`,
+        subject: `Заказ ${order.orderNumber} — 3dbirka`,
         html: `<p>${text.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] ?? char)}</p>`,
       }),
     );

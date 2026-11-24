@@ -69,7 +69,7 @@ test("shows the full inscription and validates checkout on a short viewport", as
   await names.click();
   await names.fill([name, ...Array(20).fill("Томат")].join("\n"));
   const fullName = page
-    .locator(".cs-preview-pager")
+    .locator(".birka-preview-pager")
     .getByText(name, { exact: true });
   await expect(fullName).toBeVisible();
   await expect(fullName).toHaveCSS("white-space", "normal");
@@ -77,7 +77,7 @@ test("shows the full inscription and validates checkout on a short viewport", as
   await page.getByRole("button", { name: "Добавить в корзину" }).click();
 
   const cart = page.getByRole("dialog");
-  const thumbnail = cart.locator(".cs-preview");
+  const thumbnail = cart.locator(".birka-preview");
   await expect(thumbnail).toHaveCSS("width", "95px");
   await expect(thumbnail).toHaveCSS("height", "95px");
   await expect(thumbnail).toHaveCSS("transform", "none");

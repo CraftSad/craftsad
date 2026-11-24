@@ -1,4 +1,4 @@
-import { Storefront } from "~/components/craftsad/storefront";
+import { Storefront } from "~/components/3dbirka/storefront";
 
 export default function HomePage() {
   return <Storefront />;

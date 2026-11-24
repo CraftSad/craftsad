@@ -12,21 +12,21 @@ import { env } from "~/env";
 import { ORPCReactProvider } from "~/orpc/react";
 
 import "~/app/styles.css";
-import "~/app/craftsad.css";
+import "~/app/3dbirka.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production" ? APP_CONFIG.url : "http://localhost:3000",
   ),
-  title: "CraftSad — садовые бирки с вашими названиями",
+  title: "3dbirka — садовые бирки с вашими названиями",
   description:
     "Прочные садовые бирки для рассады и грядок. Выберите форму, цвет и названия сортов. Доставка в пункты Ozon по России.",
   openGraph: {
-    title: "CraftSad — садовые бирки с вашими названиями",
+    title: "3dbirka — садовые бирки с вашими названиями",
     description:
       "Прочные садовые бирки для рассады и грядок с доставкой в Ozon.",
     url: APP_CONFIG.url,
-    siteName: "CraftSad",
+    siteName: "3dbirka",
   },
 };
 
