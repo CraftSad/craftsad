@@ -65,6 +65,14 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     services:
+      inbucket:
+        image: inbucket/inbucket@sha256:48063d73be66889d95c43a6ee18ed5db08e3ad01196d8f7aa1e7f1e6e4625d93
+        env:
+          INBUCKET_WEB_ADDR: 0.0.0.0:9000
+          INBUCKET_SMTP_ADDR: 0.0.0.0:2500
+        ports:
+          - 9000:9000
+          - 2500:2500
       postgres:
         image: postgres:18-alpine
         env:

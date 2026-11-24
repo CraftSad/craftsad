@@ -37,7 +37,7 @@ export const auth = initAuth({
       void promise;
     }
   },
-  // Used by the emailOTP plugin and password reset. Goes through the Hatchet
+  // Used by the emailOTP plugin, verification and password reset. Goes through the Hatchet
   // `send-email` task when HATCHET_CLIENT_TOKEN is set, inline otherwise.
   sendEmail: async ({
     email,
@@ -62,6 +62,13 @@ export const auth = initAuth({
         to: [email],
         subject: "Сброс пароля",
         props: { resetLink: url },
+      });
+    } else if (type === "email-verification" && url) {
+      await dispatchEmail({
+        template: "verify-email",
+        to: [email],
+        subject: "Подтвердите адрес электронной почты",
+        props: { verificationLink: url },
       });
     } else {
       if (!otp) {

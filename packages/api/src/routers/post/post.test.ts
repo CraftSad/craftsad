@@ -107,18 +107,29 @@ describe("post.delete", () => {
     expect(result.success).toBe(true);
   });
 
-  it("lets ADMIN_EMAILS accounts delete a post", async () => {
+  it("allows ADMIN_EMAILS access only after verification", async () => {
     const admin = await createSession(api.db, { email: ADMIN_EMAIL });
+    await expect(
+      call(
+        postRouter.delete,
+        { id: crypto.randomUUID() },
+        { context: api.context(admin) },
+      ),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
+    const context = api.context({
+      ...admin,
+      user: { ...admin.user, emailVerified: true },
+    });
     const post = await call(
       postRouter.create,
       { title: "Doomed", content: "Post" },
-      { context: api.context(admin) },
+      { context },
     );
 
     const result = await call(
       postRouter.delete,
       { id: post?.id ?? "" },
-      { context: api.context(admin) },
+      { context },
     );
     expect(result).toEqual({ success: true, id: post?.id ?? "" });
   });

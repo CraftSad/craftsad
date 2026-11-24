@@ -61,10 +61,11 @@ export function ResetPasswordForm({
 
     setLoading(true);
     try {
-      await authClient.resetPassword({
+      const { error } = await authClient.resetPassword({
         newPassword: data.password,
         token,
       });
+      if (error) throw error;
       toast.success("Пароль успешно сброшен!");
       router.push(paths.auth.login);
     } catch (_error) {
