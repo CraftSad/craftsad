@@ -4,9 +4,13 @@
     "exports": "warn",
     "types": "warn"
   },
+  "ignoreBinaries": ["generate"],
   "workspaces": {
     ".": {
       "entry": [".claude/hooks/*.ts", "scripts/*.mjs"]
+    },
+    "apps/admin": {
+      "ignoreDependencies": ["@tailwindcss/postcss"]
     },
     "apps/app": {
       "ignoreDependencies": ["@acme/db", "@tailwindcss/postcss"]
