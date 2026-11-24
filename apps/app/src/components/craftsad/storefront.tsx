@@ -2,7 +2,12 @@
 
 import { loginFormSchema } from "@acme/validators";
 import {
-  ArrowDown,
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
+import {
   ArrowRight,
   Check,
   ChevronDown,
@@ -19,11 +24,11 @@ import {
   Send,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Truck,
   UserRound,
   X,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import {
   type CSSProperties,
   type FormEvent,
@@ -41,6 +46,47 @@ import {
   type ShapeId,
   shapes,
 } from "./data";
+
+const LabelScene = dynamic(() => import("./label-scene"), { ssr: false });
+const reveal = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 65,
+      damping: 20,
+      staggerChildren: 0.1,
+    },
+  },
+};
+function RollingNumber({ value }: { value: number }) {
+  return (
+    <span className="cs-rolling">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={value}
+          initial={{ y: "65%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "-65%", opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          {money(value)}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+function Pill({ active, group }: { active: boolean; group: string }) {
+  return active ? (
+    <motion.span
+      className="cs-active-pill"
+      layoutId={group}
+      transition={{ type: "spring", stiffness: 360, damping: 32 }}
+    />
+  ) : null;
+}
 
 type CartItem = {
   id: number;
@@ -145,7 +191,15 @@ function StorefrontDialog({
         aria-label="Закрыть окно"
         onClick={onClose}
       />
-      <div className={drawer ? "cs-drawer" : "cs-modal"}>{children}</div>
+      <motion.div
+        initial={drawer ? { x: "100%" } : { opacity: 0, y: 22, scale: 0.97 }}
+        animate={{ x: 0, opacity: 1, y: 0, scale: 1 }}
+        exit={drawer ? { x: "100%" } : { opacity: 0, y: 22, scale: 0.97 }}
+        transition={{ type: "spring", damping: 32, stiffness: 270 }}
+        className={drawer ? "cs-drawer" : "cs-modal"}
+      >
+        {children}
+      </motion.div>
     </dialog>
   );
 }
@@ -376,7 +430,7 @@ function LoginModal({
           </h2>
           <p className="cs-modal-lead">
             {sent
-              ? `Код для входа на ${contact}. В этой демонстрации используйте 123456.`
+              ? `Код для входа на ${contact}. В этой демонстрации используйте 1234.`
               : "Выберите удобный способ. Пароль запоминать не нужно."}
           </p>
           {!sent ? (
@@ -391,6 +445,7 @@ function LoginModal({
                     setError("");
                   }}
                 >
+                  <Pill active={method === "phone"} group="login-method" />
                   <Phone /> По телефону
                 </button>
                 <button
@@ -402,6 +457,7 @@ function LoginModal({
                     setError("");
                   }}
                 >
+                  <Pill active={method === "email"} group="login-method" />
                   <Mail /> По эл. почте
                 </button>
               </fieldset>
@@ -440,25 +496,40 @@ function LoginModal({
               className="cs-form"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (code === "123456") {
+                if (code === "1234") {
                   onLogin();
                   setError("");
-                } else setError("Проверьте код. Для демонстрации: 123456");
+                } else setError("Проверьте код. Для демонстрации: 1234");
               }}
             >
-              <label htmlFor="login-code">Код из 6 цифр</label>
-              <input
-                ref={codeInput}
-                id="login-code"
-                className="cs-code-input"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                pattern="[0-9]{6}"
-                placeholder="· · · · · ·"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              />
+              <label htmlFor="login-code">Код из 4 цифр</label>
+              <div className="cs-otp">
+                <div className="cs-otp-cells" aria-hidden="true">
+                  {[0, 1, 2, 3].map((index) => (
+                    <motion.span
+                      key={index}
+                      animate={{
+                        borderColor:
+                          code.length === index ? "#718568" : "#d8decd",
+                        scale: code.length === index ? 1.03 : 1,
+                      }}
+                    >
+                      {code[index] ?? ""}
+                    </motion.span>
+                  ))}
+                </div>
+                <input
+                  ref={codeInput}
+                  id="login-code"
+                  className="cs-code-input"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                />
+              </div>
               {error && (
                 <p className="cs-error" role="alert">
                   {error}
@@ -751,7 +822,14 @@ function CartDrawer({
               className="cs-button cs-button-primary"
               type={checkout ? "submit" : "button"}
               form={checkout ? "cs-checkout" : undefined}
-              onClick={checkout ? undefined : () => setCheckout(true)}
+              onClick={
+                checkout
+                  ? undefined
+                  : (event) => {
+                      event.preventDefault();
+                      setCheckout(true);
+                    }
+              }
             >
               {checkout ? "Завершить демонстрацию" : "Оформить заказ"}
               <ArrowRight />
@@ -776,6 +854,7 @@ function CartDrawer({
 }
 
 export function Storefront() {
+  const reducedMotion = useReducedMotion();
   const [category, setCategory] = useState<"all" | "seedling" | "garden">(
     "all",
   );
@@ -827,611 +906,750 @@ export function Storefront() {
     setDialog("cart");
   };
   return (
-    <div className="cs-site">
-      <header className="cs-header">
-        <div className="cs-header-inner">
-          <button
-            type="button"
-            className="cs-brand"
-            onClick={() =>
-              window.scrollTo({ top: 0, behavior: scrollBehavior() })
-            }
-            aria-label="CraftSad — на главную"
-          >
-            <span className="cs-brand-mark">
-              <Leaf />
-            </span>
-            <span>
-              Craft<span>Sad</span>
-              <small>мастерская садовых бирок</small>
-            </span>
-          </button>
-          <nav
-            className={menuOpen ? "cs-nav is-open" : "cs-nav"}
-            aria-label="Главное меню"
-          >
-            <div className="cs-nav-dropdown">
-              <button type="button" onClick={() => scrollTo("catalog")}>
-                Каталог <ChevronDown />
+    <MotionConfig reducedMotion="user">
+      <div className="cs-site">
+        <header className="cs-header">
+          <div className="cs-header-inner">
+            <button
+              type="button"
+              className="cs-brand"
+              onClick={() =>
+                window.scrollTo({ top: 0, behavior: scrollBehavior() })
+              }
+              aria-label="CraftSad — на главную"
+            >
+              <span className="cs-brand-mark">
+                <Leaf />
+              </span>
+              <span>
+                Craft<span>Sad</span>
+                <small>мастерская садовых бирок</small>
+              </span>
+            </button>
+            <nav
+              className={menuOpen ? "cs-nav is-open" : "cs-nav"}
+              aria-label="Главное меню"
+            >
+              <div className="cs-nav-dropdown">
+                <button type="button" onClick={() => scrollTo("catalog")}>
+                  Каталог <ChevronDown />
+                </button>
+                <div className="cs-nav-menu">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCategory("seedling");
+                      scrollTo("catalog");
+                    }}
+                  >
+                    Бирки для рассады
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCategory("garden");
+                      scrollTo("catalog");
+                    }}
+                  >
+                    Бирки для грядок
+                  </button>
+                  <span>Скоро: опоры и кашпо</span>
+                </div>
+              </div>
+              <button type="button" onClick={() => scrollTo("constructor")}>
+                Конструктор
               </button>
-              <div className="cs-nav-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCategory("seedling");
-                    scrollTo("catalog");
-                  }}
-                >
-                  Бирки для рассады
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCategory("garden");
-                    scrollTo("catalog");
-                  }}
-                >
-                  Бирки для грядок
-                </button>
-                <span>Скоро: опоры и кашпо</span>
+            </nav>
+            <div className="cs-header-actions">
+              <button
+                type="button"
+                className="cs-login-button"
+                aria-label="Войти"
+                onClick={() => setDialog("login")}
+              >
+                <UserRound />
+                <span>Войти</span>
+              </button>
+              <button
+                type="button"
+                className="cs-cart-button"
+                aria-label={`Корзина: ${cartCount} шт., ${money(cartTotal)} ₽`}
+                onClick={() => setDialog("cart")}
+              >
+                <ShoppingBag />
+                <span>
+                  Корзина{" "}
+                  <small>
+                    <RollingNumber value={cartTotal} /> ₽
+                  </small>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="cs-menu-toggle cs-icon-button"
+                aria-label="Открыть меню"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                {menuOpen ? <X /> : <Menu />}
+              </button>
+            </div>
+          </div>
+        </header>
+        <main>
+          <section className="cs-hero">
+            <div className="cs-container cs-hero-grid">
+              <motion.div
+                className="cs-hero-copy"
+                initial="hidden"
+                animate="visible"
+                variants={reveal}
+              >
+                <motion.div variants={reveal} className="cs-hero-edition">
+                  <span /> Маленькие детали. Большой сад.
+                </motion.div>
+                <motion.h1 variants={reveal}>
+                  Вечные садовые
+                  <br />
+                  бирки с названиями
+                  <br />
+                  <em>ваших сортов</em>
+                  <span className="cs-title-dot">.</span>
+                </motion.h1>
+                <motion.p variants={reveal}>
+                  Вы растите любимые растения.
+                  <br />
+                  Мы сохраняем их имена — в объёмных
+                  <br className="cs-desktop-break" /> буквах, красивых цветах и
+                  надолго.
+                </motion.p>
+                <motion.div variants={reveal} className="cs-hero-actions">
+                  <motion.button
+                    whileHover={{ y: -4, scale: 1.01 }}
+                    whileTap={{ scale: 0.97 }}
+                    type="button"
+                    className="cs-button cs-button-primary"
+                    onClick={() => scrollTo("constructor")}
+                  >
+                    Создать свой набор <ArrowRight />
+                  </motion.button>
+                  <button
+                    type="button"
+                    className="cs-button cs-button-light"
+                    onClick={() => scrollTo("catalog")}
+                  >
+                    Готовые коллекции <span>↗</span>
+                  </button>
+                </motion.div>
+                <motion.div variants={reveal} className="cs-hero-caption">
+                  <span className="cs-mini-leaves">
+                    <Leaf />
+                    <Leaf />
+                    <Leaf />
+                  </span>
+                  <span>
+                    Для тех, кто знает
+                    <br />
+                    <b>каждое растение по имени</b>
+                  </span>
+                </motion.div>
+              </motion.div>
+              <div
+                className="cs-hero-art"
+                role="img"
+                aria-label="Коллекция садовых бирок в молочном, хвойном и терракотовом цветах"
+              >
+                <div className="cs-orbit cs-orbit-one" />
+                <div className="cs-orbit cs-orbit-two" />
+                <span className="cs-art-coordinate">
+                  CRAFTSAD OBJECTS — 01 / 03
+                </span>
+                <div className="cs-art-leaf cs-art-leaf-one" />
+                <div className="cs-art-leaf cs-art-leaf-two" />
+                <div className="cs-art-leaf cs-art-leaf-three" />
+                {[
+                  { color: 1, name: "БАЗИЛИК\nЗелёный аромат" },
+                  { color: 0, name: "ТОМАТ\nБычье сердце" },
+                  { color: 2, name: "КЛУБНИКА\nЕлизавета" },
+                ].map((tag, i) => (
+                  <motion.div
+                    key={tag.color}
+                    className={`cs-hero-tag cs-hero-tag-${i}`}
+                    animate={
+                      reducedMotion
+                        ? {}
+                        : { y: [0, -12, 0], rotate: [0, 1.5, 0] }
+                    }
+                    transition={{
+                      duration: 6 + i,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: i * 0.7,
+                    }}
+                  >
+                    <LabelPreview
+                      shape="stake"
+                      color={tag.color}
+                      name={tag.name}
+                    />
+                  </motion.div>
+                ))}
+                <div className="cs-hero-delivery">
+                  <span>
+                    <Truck />
+                  </span>
+                  <div>
+                    Из мастерской — к вам
+                    <small>В пункты Ozon по всей России</small>
+                  </div>
+                  <ArrowRight />
+                </div>
+                <span className="cs-art-material">
+                  МАТОВЫЙ ПЛАСТИК · ОБЪЁМНАЯ ПЕЧАТЬ
+                </span>
               </div>
             </div>
-            <button type="button" onClick={() => scrollTo("constructor")}>
-              Создать свою бирку
-            </button>
-          </nav>
-          <div className="cs-header-actions">
-            <button
-              type="button"
-              className="cs-login-button"
-              aria-label="Войти"
-              onClick={() => setDialog("login")}
-            >
-              <UserRound />
-              <span>Войти</span>
-            </button>
-            <button
-              type="button"
-              className="cs-cart-button"
-              aria-label={`Корзина: ${cartCount} шт., ${money(cartTotal)} ₽`}
-              onClick={() => setDialog("cart")}
-            >
-              <ShoppingBag />
+            <div className="cs-hero-rule cs-container">
+              <span>Красота, которая остаётся на сезоны</span>
               <span>
-                Корзина{" "}
-                <small>
-                  {cartCount} шт. · {money(cartTotal)} ₽
-                </small>
-              </span>
-            </button>
-            <button
-              type="button"
-              className="cs-menu-toggle cs-icon-button"
-              aria-label="Открыть меню"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
-      </header>
-      <main>
-        <section className="cs-hero">
-          <div className="cs-hero-image" />
-          <div className="cs-hero-shade" />
-          <div className="cs-container cs-hero-content">
-            <span className="cs-hero-kicker">
-              <span /> Вещи, которые растут вместе с садом
-            </span>
-            <h1>
-              Вечные садовые бирки
-              <br /> с названиями
-              <br /> <em>ваших сортов</em>
-            </h1>
-            <p>
-              Прочные бирки с вашими надписями. Не боятся дождя и солнца,
-              помогают сохранить каждый сорт. Доставим в пункт Ozon рядом с
-              домом.
-            </p>
-            <div className="cs-hero-actions">
-              <button
-                type="button"
-                className="cs-button cs-button-primary"
-                onClick={() => scrollTo("constructor")}
-              >
-                Собрать свой набор <ArrowRight />
-              </button>
-              <button
-                type="button"
-                className="cs-button cs-button-light"
-                onClick={() => scrollTo("catalog")}
-              >
-                Готовые наборы
-              </button>
-            </div>
-            <div className="cs-hero-bottom">
-              <span>
-                <ShieldCheck /> Сделано для сада и теплицы
-              </span>
-              <span>
-                <Truck /> Доставка по всей России
+                Сделано в России <span>↗</span>
               </span>
             </div>
-          </div>
-          <button
-            type="button"
-            className="cs-scroll-hint"
-            onClick={() => scrollTo("how")}
+          </section>
+          <motion.section
+            id="how"
+            className="cs-section cs-how"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={reveal}
           >
-            Листайте вниз <ArrowDown />
-          </button>
-        </section>
-        <section id="how" className="cs-section cs-how">
-          <div className="cs-container">
-            <div className="cs-section-top">
-              <div>
-                <span className="cs-eyebrow">Всё просто</span>
+            <div className="cs-container">
+              <div className="cs-section-top">
                 <h2>
-                  От названия сорта
+                  Природа меняется.
                   <br />
-                  до готовой бирки
+                  <em>Имена остаются.</em>
                 </h2>
-              </div>
-              <p>
-                Всего три шага — и на грядках будет порядок, который радует
-                глаз.
-              </p>
-            </div>
-            <div className="cs-steps">
-              <article>
-                <span className="cs-step-number">01</span>
-                <div className="cs-step-icon">
-                  <Sparkles />
-                </div>
-                <h3>
-                  Выберите форму
-                  <br />и впишите сорта
-                </h3>
                 <p>
-                  Каждое название — на отдельной бирке. Цвет тоже можно выбрать.
+                  Продумали каждую деталь, чтобы вы
+                  <br />
+                  просто наслаждались своим садом.
                 </p>
-              </article>
-              <article>
-                <span className="cs-step-number">02</span>
-                <div className="cs-step-icon">
-                  <Leaf />
-                </div>
-                <h3>
-                  Мы напечатаем
-                  <br />
-                  за 2 дня
-                </h3>
-                <p>Из прочного пластика, с аккуратными объёмными буквами.</p>
-              </article>
-              <article>
-                <span className="cs-step-number">03</span>
-                <div className="cs-step-icon">
-                  <PackageCheck />
-                </div>
-                <h3>
-                  Заберите в Ozon
-                  <br />
-                  рядом с домом
-                </h3>
-                <p>Выберите удобный пункт выдачи в своём городе.</p>
-              </article>
-            </div>
-          </div>
-        </section>
-        <section id="catalog" className="cs-section cs-catalog">
-          <div className="cs-container">
-            <div className="cs-section-top">
-              <div>
-                <span className="cs-eyebrow">Для каждого сезона</span>
-                <h2>Готовые наборы</h2>
               </div>
-              <p>
-                Подобрали удобные наборы для рассады, грядок и теплицы. Любую
-                надпись можно изменить.
-              </p>
+              <div className="cs-bento">
+                <motion.article
+                  variants={reveal}
+                  whileHover={{ y: -4 }}
+                  className="cs-bento-weather"
+                >
+                  <div className="cs-bento-photo" />
+                  <div className="cs-bento-text">
+                    <ShieldCheck />
+                    <h3>
+                      Не выгорают на солнце.
+                      <br />
+                      Не боятся дождя.
+                    </h3>
+                    <p>Прочный пластик для жизни под открытым небом.</p>
+                  </div>
+                </motion.article>
+                <motion.article
+                  variants={reveal}
+                  whileHover={{ y: -4 }}
+                  className="cs-bento-type"
+                >
+                  <div className="cs-relief">
+                    Базилик<span>ОБЪЁМ ИМЕЕТ ЗНАЧЕНИЕ</span>
+                  </div>
+                  <div>
+                    <h3>Читаются за метр</h3>
+                    <p>
+                      Буквы напечатаны вместе с биркой.
+                      <br />
+                      Надпись не сотрётся со временем.
+                    </p>
+                  </div>
+                </motion.article>
+                <motion.article
+                  variants={reveal}
+                  whileHover={{ y: -4 }}
+                  className="cs-bento-delivery"
+                >
+                  <div className="cs-two-days">
+                    2<span>дня</span>
+                    <ArrowRight />
+                  </div>
+                  <div>
+                    <h3>И уже на пути к вам</h3>
+                    <p>
+                      Напечатаем ваш набор и отправим
+                      <br />в удобный пункт Ozon.
+                    </p>
+                  </div>
+                </motion.article>
+              </div>
             </div>
-            <fieldset className="cs-filters" aria-label="Категории">
-              <button
-                type="button"
-                className={category === "all" ? "active" : ""}
-                onClick={() => setCategory("all")}
-              >
-                Все наборы
-              </button>
-              <button
-                type="button"
-                className={category === "seedling" ? "active" : ""}
-                onClick={() => setCategory("seedling")}
-              >
-                Для рассады
-              </button>
-              <button
-                type="button"
-                className={category === "garden" ? "active" : ""}
-                onClick={() => setCategory("garden")}
-              >
-                Для грядок
-              </button>
-            </fieldset>
-            <div className="cs-products">
-              {presets
-                .filter(
-                  (preset) =>
-                    category === "all" || preset.category === category,
-                )
-                .map((preset, index) => (
-                  <article className="cs-product" key={preset.title}>
-                    <div className={`cs-product-art cs-art-${index % 3}`}>
-                      <span className="cs-product-badge">
-                        {preset.count} бирок
+          </motion.section>
+          <section id="constructor" className="cs-section cs-constructor">
+            <div className="cs-container">
+              <div className="cs-section-top">
+                <div>
+                  <h2>
+                    Ваша маленькая <em>дизайн-студия</em>
+                  </h2>
+                </div>
+                <p>
+                  Ваши сорта. Ваши цвета. Ваша бирка.
+                  <br />
+                  Покрутите её — она уже почти настоящая.
+                </p>
+              </div>
+              <div className="cs-builder">
+                <div className="cs-builder-left">
+                  <div className="cs-builder-preview">
+                    <div className="cs-preview-top">
+                      <span>
+                        <span className="cs-live-dot" /> Живой просмотр
                       </span>
-                      <LabelPreview
-                        shape={preset.shape}
-                        color={preset.color}
-                        name={preset.names[0] ?? ""}
-                        small
-                      />
+                      <span>
+                        {Math.min(previewIndex + 1, Math.max(names.length, 1))}{" "}
+                        из {Math.max(names.length, 1)}
+                      </span>
                     </div>
-                    <div className="cs-product-body">
-                      <span className="cs-product-category">
-                        {preset.category === "seedling"
-                          ? "Для рассады"
-                          : "Для грядок"}{" "}
-                        ·{" "}
-                        {shapes.find((item) => item.id === preset.shape)?.size}
+                    <LabelScene
+                      shape={shape}
+                      color={color}
+                      name={
+                        names[previewIndex % Math.max(names.length, 1)] ??
+                        "Ваш сорт"
+                      }
+                      view={view}
+                      fallback={
+                        <LabelPreview
+                          shape={shape}
+                          color={color}
+                          name={
+                            names[previewIndex % Math.max(names.length, 1)] ??
+                            "Ваш сорт"
+                          }
+                          view={view}
+                        />
+                      }
+                    />
+                    <div className="cs-preview-pager">
+                      <button
+                        type="button"
+                        aria-label="Предыдущая надпись"
+                        onClick={() =>
+                          setPreviewIndex(
+                            (current) =>
+                              (current - 1 + Math.max(names.length, 1)) %
+                              Math.max(names.length, 1),
+                          )
+                        }
+                      >
+                        <ChevronLeft />
+                      </button>
+                      <span aria-live="polite">
+                        {names[previewIndex % Math.max(names.length, 1)] ||
+                          "Ваша надпись"}
                       </span>
-                      <h3>{preset.title}</h3>
-                      <p>
-                        {preset.names.slice(0, 3).join(", ")}
-                        {preset.names.length > 3 ? " и другие" : ""}
-                      </p>
-                      <div className="cs-product-footer">
-                        <strong>{money(preset.price)} ₽</strong>
-                        <button
-                          type="button"
-                          onClick={() => applyPreset(preset)}
-                        >
-                          Настроить надпись <ArrowRight />
-                        </button>
+                      <button
+                        type="button"
+                        aria-label="Следующая надпись"
+                        onClick={() =>
+                          setPreviewIndex(
+                            (current) =>
+                              (current + 1) % Math.max(names.length, 1),
+                          )
+                        }
+                      >
+                        <ChevronRight />
+                      </button>
+                    </div>
+                  </div>
+                  <fieldset
+                    className="cs-view-controls"
+                    aria-label="Ракурс бирки"
+                  >
+                    <button
+                      type="button"
+                      className={view === "front" ? "active" : ""}
+                      onClick={() => setView("front")}
+                    >
+                      <Pill active={view === "front"} group="view" />
+                      Спереди
+                    </button>
+                    <button
+                      type="button"
+                      className={view === "side" ? "active" : ""}
+                      onClick={() => setView("side")}
+                    >
+                      <Pill active={view === "side"} group="view" />
+                      Сбоку
+                    </button>
+                    <button
+                      type="button"
+                      className={view === "rotate" ? "active" : ""}
+                      onClick={() => setView("rotate")}
+                    >
+                      <Pill active={view === "rotate"} group="view" />
+                      <RotateCcw /> 360°
+                    </button>
+                  </fieldset>
+                  <p className="cs-preview-note">
+                    Изображение помогает представить изделие. Готовая бирка
+                    может немного отличаться.
+                  </p>
+                </div>
+                <div className="cs-builder-right">
+                  <div className="cs-builder-step">
+                    <div className="cs-builder-heading">
+                      <span>1</span>
+                      <div>
+                        <h3>Форма</h3>
+                        <p>Для стаканчиков, грядок или теплицы</p>
                       </div>
                     </div>
-                  </article>
-                ))}
-            </div>
-          </div>
-        </section>
-        <section id="constructor" className="cs-section cs-constructor">
-          <div className="cs-container">
-            <div className="cs-section-top">
-              <div>
-                <span className="cs-eyebrow">Сделайте по-своему</span>
-                <h2>Бирки с вашими названиями</h2>
-              </div>
-              <p>Вы выбираете — мы покажем, как будет выглядеть ваша бирка.</p>
-            </div>
-            <div className="cs-builder">
-              <div className="cs-builder-left">
-                <div className="cs-builder-preview">
-                  <div className="cs-preview-top">
-                    <span>
-                      <span className="cs-live-dot" /> Как будет выглядеть бирка
-                    </span>
-                    <span>
-                      {Math.min(previewIndex + 1, Math.max(names.length, 1))} из{" "}
-                      {Math.max(names.length, 1)}
-                    </span>
-                  </div>
-                  <LabelPreview
-                    shape={shape}
-                    color={color}
-                    name={
-                      names[previewIndex % Math.max(names.length, 1)] ??
-                      "Ваш сорт"
-                    }
-                    view={view}
-                  />
-                  <div className="cs-preview-pager">
-                    <button
-                      type="button"
-                      aria-label="Предыдущая надпись"
-                      onClick={() =>
-                        setPreviewIndex(
-                          (current) =>
-                            (current - 1 + Math.max(names.length, 1)) %
-                            Math.max(names.length, 1),
-                        )
-                      }
-                    >
-                      <ChevronLeft />
-                    </button>
-                    <span aria-live="polite">
-                      {names[previewIndex % Math.max(names.length, 1)] ||
-                        "Ваша надпись"}
-                    </span>
-                    <button
-                      type="button"
-                      aria-label="Следующая надпись"
-                      onClick={() =>
-                        setPreviewIndex(
-                          (current) =>
-                            (current + 1) % Math.max(names.length, 1),
-                        )
-                      }
-                    >
-                      <ChevronRight />
-                    </button>
-                  </div>
-                </div>
-                <fieldset
-                  className="cs-view-controls"
-                  aria-label="Ракурс бирки"
-                >
-                  <button
-                    type="button"
-                    className={view === "front" ? "active" : ""}
-                    onClick={() => setView("front")}
-                  >
-                    Спереди
-                  </button>
-                  <button
-                    type="button"
-                    className={view === "side" ? "active" : ""}
-                    onClick={() => setView("side")}
-                  >
-                    Сбоку
-                  </button>
-                  <button
-                    type="button"
-                    className={view === "rotate" ? "active" : ""}
-                    onClick={() => setView("rotate")}
-                  >
-                    <RotateCcw /> Покрутить
-                  </button>
-                </fieldset>
-                <p className="cs-preview-note">
-                  Изображение помогает представить изделие. Готовая бирка может
-                  немного отличаться.
-                </p>
-              </div>
-              <div className="cs-builder-right">
-                <div className="cs-builder-step">
-                  <div className="cs-builder-heading">
-                    <span>1</span>
-                    <div>
-                      <h3>Выберите форму и размер</h3>
-                      <p>Для стаканчиков, грядок или теплицы</p>
-                    </div>
-                  </div>
-                  <div className="cs-shapes">
-                    {shapes.map((item) => (
-                      <button
-                        type="button"
-                        key={item.id}
-                        className={
-                          shape === item.id ? "cs-shape active" : "cs-shape"
-                        }
-                        aria-pressed={shape === item.id}
-                        onClick={() => {
-                          setShape(item.id);
-                          setAdded(false);
-                        }}
-                      >
-                        <span
-                          className={`cs-shape-icon cs-shape-icon-${item.id}`}
-                        >
-                          <i />
-                        </span>
-                        <span>
-                          <strong>{item.title}</strong>
-                          <small>
-                            {item.size} · {item.price} ₽ за штуку
-                          </small>
-                        </span>
-                        {shape === item.id && <Check />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="cs-builder-step">
-                  <div className="cs-builder-heading">
-                    <span>2</span>
-                    <div>
-                      <h3>Выберите цвет бирки и букв</h3>
-                      <p>Шесть сочетаний, которые хорошо читаются</p>
-                    </div>
-                  </div>
-                  <div className="cs-colors">
-                    {colorPairs.map((pair, index) => (
-                      <button
-                        type="button"
-                        key={pair.name}
-                        className={
-                          color === index ? "cs-color active" : "cs-color"
-                        }
-                        aria-pressed={color === index}
-                        onClick={() => {
-                          setColor(index);
-                          setAdded(false);
-                        }}
-                      >
-                        <span
-                          className="cs-color-swatch"
-                          style={{ background: pair.base, color: pair.ink }}
-                        >
-                          Аа
-                        </span>
-                        <span>
-                          <strong>{pair.name}</strong>
-                          <small>{pair.label}</small>
-                        </span>
-                        {color === index && <Check />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="cs-builder-step">
-                  <div className="cs-builder-heading">
-                    <span>3</span>
-                    <div>
-                      <h3>Впишите названия сортов</h3>
-                      <p>Одно название — одна бирка</p>
-                    </div>
-                  </div>
-                  <label htmlFor="varieties" className="cs-field-label">
-                    Названия сортов, каждое с новой строки
-                  </label>
-                  <textarea
-                    id="varieties"
-                    rows={5}
-                    value={namesText}
-                    onChange={(event) => {
-                      setNamesText(event.target.value);
-                      setPreviewIndex(0);
-                      setAdded(false);
-                    }}
-                    placeholder={
-                      "Томат Бычье сердце\nОгурец Зозуля\nПерец Сладкий"
-                    }
-                  />
-                  <div className="cs-variety-help">
-                    <span>Можно добавить популярные сорта:</span>
-                    <div>
-                      {popularVarieties.map((name) => (
+                    <div className="cs-shapes">
+                      {shapes.map((item) => (
                         <button
                           type="button"
-                          key={name}
+                          key={item.id}
+                          className={
+                            shape === item.id ? "cs-shape active" : "cs-shape"
+                          }
+                          aria-pressed={shape === item.id}
                           onClick={() => {
-                            if (!names.includes(name))
-                              setNamesText(
-                                (text) =>
-                                  `${text.trim()}${text.trim() ? "\n" : ""}${name}`,
-                              );
+                            setShape(item.id);
                             setAdded(false);
                           }}
                         >
-                          <Plus /> {name}
+                          <span
+                            className={`cs-shape-icon cs-shape-icon-${item.id}`}
+                          >
+                            <i />
+                          </span>
+                          <span>
+                            <Pill active={shape === item.id} group="shape" />
+                            <strong>
+                              {item.id === "stake"
+                                ? "Колышек"
+                                : item.id === "flag"
+                                  ? "Флажок"
+                                  : "Подвесная"}
+                            </strong>
+                            <small>{item.size}</small>
+                          </span>
+                          {shape === item.id && <Check />}
                         </button>
                       ))}
                     </div>
                   </div>
-                </div>
-                <div className="cs-builder-step cs-builder-final">
-                  <div className="cs-builder-heading">
-                    <span>4</span>
-                    <div>
-                      <h3>Ваш набор готов</h3>
-                      <p>Проверьте количество и стоимость</p>
+                  <div className="cs-builder-step">
+                    <div className="cs-builder-heading">
+                      <span>2</span>
+                      <div>
+                        <h3>Цвет</h3>
+                        <p>Шесть сочетаний, которые хорошо читаются</p>
+                      </div>
+                    </div>
+                    <div className="cs-colors">
+                      {colorPairs.map((pair, index) => (
+                        <button
+                          type="button"
+                          key={pair.name}
+                          title={`${pair.name} — ${pair.label}`}
+                          aria-label={`${pair.name} — ${pair.label}`}
+                          className={
+                            color === index ? "cs-color active" : "cs-color"
+                          }
+                          aria-pressed={color === index}
+                          onClick={() => {
+                            setColor(index);
+                            setAdded(false);
+                          }}
+                        >
+                          <span
+                            className="cs-color-swatch"
+                            style={{
+                              background: `linear-gradient(135deg, ${pair.base} 0% 64%, ${pair.ink} 64% 100%)`,
+                            }}
+                          ></span>
+                          <span>
+                            <strong>{pair.name}</strong>
+                            <small>{pair.label}</small>
+                          </span>
+                          {color === index && <Check />}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  <div className="cs-summary">
-                    <span>
-                      {names.length}{" "}
-                      {countForm === "one" || countForm === "few"
-                        ? labelForms[countForm]
-                        : labelForms.many}{" "}
-                      · {chosenShape.size}
-                    </span>
-                    <strong>{money(price)} ₽</strong>
+                  <div className="cs-builder-step">
+                    <div className="cs-builder-heading">
+                      <span>3</span>
+                      <div>
+                        <h3>Ваши сорта</h3>
+                        <p>Одно название — одна бирка</p>
+                      </div>
+                    </div>
+                    <label htmlFor="varieties" className="cs-field-label">
+                      Названия сортов, каждое с новой строки
+                    </label>
+                    <textarea
+                      id="varieties"
+                      rows={3}
+                      value={namesText}
+                      onChange={(event) => {
+                        setNamesText(event.target.value);
+                        setPreviewIndex(0);
+                        setAdded(false);
+                      }}
+                      placeholder={
+                        "Томат Бычье сердце\nОгурец Зозуля\nПерец Сладкий"
+                      }
+                    />
+                    <div className="cs-variety-help">
+                      <span>Можно добавить популярные сорта:</span>
+                      <div>
+                        {popularVarieties.map((name) => (
+                          <button
+                            type="button"
+                            key={name}
+                            onClick={() => {
+                              if (!names.includes(name))
+                                setNamesText(
+                                  (text) =>
+                                    `${text.trim()}${text.trim() ? "\n" : ""}${name}`,
+                                );
+                              setAdded(false);
+                            }}
+                          >
+                            <Plus /> {name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    className="cs-button cs-button-primary"
-                    disabled={!names.length}
-                    onClick={addToCart}
-                  >
-                    {added ? "Добавить ещё один набор" : "Добавить в корзину"}
-                    <ShoppingBag />
-                  </button>
-                  <p className="cs-helper">
-                    Оплатить можно будет после подтверждения заказа.
-                  </p>
+                  <div className="cs-builder-step cs-builder-final">
+                    <div className="cs-builder-heading">
+                      <span>4</span>
+                      <div>
+                        <h3>Ваш набор готов</h3>
+                        <p>Проверьте количество и стоимость</p>
+                      </div>
+                    </div>
+                    <div className="cs-summary">
+                      <span>
+                        <RollingNumber value={names.length} />{" "}
+                        {countForm === "one" || countForm === "few"
+                          ? labelForms[countForm]
+                          : labelForms.many}{" "}
+                        · {chosenShape.size}
+                      </span>
+                      <strong>
+                        <RollingNumber value={price} /> ₽
+                      </strong>
+                    </div>
+                    <button
+                      type="button"
+                      className="cs-button cs-button-primary"
+                      disabled={!names.length}
+                      onClick={addToCart}
+                    >
+                      {added ? "Добавить ещё один набор" : "Добавить в корзину"}
+                      <ShoppingBag />
+                    </button>
+                    <p className="cs-helper">
+                      Оплатить можно будет после подтверждения заказа.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-        <section className="cs-promise">
+          </section>
+          <section id="catalog" className="cs-section cs-catalog">
+            <div className="cs-container">
+              <div className="cs-section-top">
+                <div>
+                  <h2>
+                    Собраны с <em>чувством сада</em>
+                  </h2>
+                </div>
+                <p>
+                  Подобрали удобные наборы для рассады, грядок и теплицы. Любую
+                  надпись можно изменить.
+                </p>
+              </div>
+              <fieldset className="cs-filters" aria-label="Категории">
+                <button
+                  type="button"
+                  className={category === "all" ? "active" : ""}
+                  onClick={() => setCategory("all")}
+                >
+                  <Pill active={category === "all"} group="catalog" />
+                  Все наборы
+                </button>
+                <button
+                  type="button"
+                  className={category === "seedling" ? "active" : ""}
+                  onClick={() => setCategory("seedling")}
+                >
+                  <Pill active={category === "seedling"} group="catalog" />
+                  Для рассады
+                </button>
+                <button
+                  type="button"
+                  className={category === "garden" ? "active" : ""}
+                  onClick={() => setCategory("garden")}
+                >
+                  <Pill active={category === "garden"} group="catalog" />
+                  Для грядок
+                </button>
+              </fieldset>
+              <div className="cs-products">
+                {presets
+                  .filter(
+                    (preset) =>
+                      category === "all" || preset.category === category,
+                  )
+                  .map((preset, index) => (
+                    <motion.article
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -4 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 20,
+                      }}
+                      className="cs-product"
+                      key={preset.title}
+                    >
+                      <div className={`cs-product-art cs-art-${index % 3}`}>
+                        <span className="cs-product-badge">
+                          {preset.count} бирок
+                        </span>
+                        <LabelPreview
+                          shape={preset.shape}
+                          color={preset.color}
+                          name={preset.names[0] ?? ""}
+                          small
+                        />
+                      </div>
+                      <div className="cs-product-body">
+                        <span className="cs-product-category">
+                          {preset.category === "seedling"
+                            ? "Для рассады"
+                            : "Для грядок"}{" "}
+                          ·{" "}
+                          {
+                            shapes.find((item) => item.id === preset.shape)
+                              ?.size
+                          }
+                        </span>
+                        <h3>{preset.title}</h3>
+                        <p>
+                          {preset.names.slice(0, 3).join(", ")}
+                          {preset.names.length > 3 ? " и другие" : ""}
+                        </p>
+                        <div className="cs-product-footer">
+                          <strong>{money(preset.price)} ₽</strong>
+                          <button
+                            type="button"
+                            onClick={() => applyPreset(preset)}
+                          >
+                            Настроить надпись <ArrowRight />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.article>
+                  ))}
+              </div>
+            </div>
+          </section>
+          <section className="cs-promise">
+            <div className="cs-container">
+              <div>
+                <h2>
+                  Чтобы помнить каждый сорт
+                  <br />и радоваться каждому ростку
+                </h2>
+              </div>
+              <button
+                type="button"
+                className="cs-button cs-button-light"
+                onClick={() => scrollTo("constructor")}
+              >
+                Создать свои бирки <ArrowRight />
+              </button>
+            </div>
+          </section>
+        </main>
+        <footer className="cs-footer">
           <div className="cs-container">
             <div>
-              <span className="cs-eyebrow">С заботой о вашем саде</span>
-              <h2>
-                Чтобы помнить каждый сорт
-                <br />и радоваться каждому ростку
-              </h2>
+              <strong>CraftSad</strong>
+              <p>
+                Мастерская садовых бирок.
+                <br />
+                Сделано с любовью к вашим растениям.
+              </p>
             </div>
-            <button
-              type="button"
-              className="cs-button cs-button-light"
-              onClick={() => scrollTo("constructor")}
-            >
-              Создать свои бирки <ArrowRight />
-            </button>
+            <div>
+              <span>Магазин</span>
+              <button type="button" onClick={() => scrollTo("catalog")}>
+                Готовые наборы
+              </button>
+              <button type="button" onClick={() => scrollTo("constructor")}>
+                Создать свои бирки
+              </button>
+            </div>
+            <div>
+              <span>Помощь</span>
+              <p>
+                Доставка в пункты Ozon
+                <br />
+                по всей России
+              </p>
+              <button type="button" onClick={() => setDialog("login")}>
+                Личный кабинет
+              </button>
+            </div>
           </div>
-        </section>
-      </main>
-      <footer className="cs-footer">
-        <div className="cs-container">
-          <div>
-            <strong>CraftSad</strong>
-            <p>
-              Мастерская садовых бирок.
-              <br />
-              Сделано с любовью к вашим растениям.
-            </p>
+          <div className="cs-footer-bottom cs-container">
+            <span>© {year} CraftSad</span>
+            <span>Пусть всё растёт 🌱</span>
           </div>
-          <div>
-            <span>Магазин</span>
-            <button type="button" onClick={() => scrollTo("catalog")}>
-              Готовые наборы
-            </button>
-            <button type="button" onClick={() => scrollTo("constructor")}>
-              Создать свои бирки
-            </button>
-          </div>
-          <div>
-            <span>Помощь</span>
-            <p>
-              Доставка в пункты Ozon
-              <br />
-              по всей России
-            </p>
-            <button type="button" onClick={() => setDialog("login")}>
-              Личный кабинет
-            </button>
-          </div>
-        </div>
-        <div className="cs-footer-bottom cs-container">
-          <span>© {year} CraftSad</span>
-          <span>Пусть всё растёт 🌱</span>
-        </div>
-      </footer>
-      {dialog === "login" && (
-        <LoginModal
-          onClose={() => setDialog(null)}
-          done={loggedIn}
-          onLogin={() => setLoggedIn(true)}
-          savedNames={names}
-          onRepeat={() => {
-            setDialog(null);
-            scrollTo("constructor");
-          }}
-        />
-      )}
-      {dialog === "cart" && (
-        <CartDrawer
-          items={cart}
-          onClose={() => setDialog(null)}
-          onRemove={(id) =>
-            setCart((items) => items.filter((item) => item.id !== id))
-          }
-        />
-      )}
-    </div>
+        </footer>
+        <AnimatePresence>
+          {dialog === "login" && (
+            <LoginModal
+              key="login"
+              onClose={() => setDialog(null)}
+              done={loggedIn}
+              onLogin={() => setLoggedIn(true)}
+              savedNames={names}
+              onRepeat={() => {
+                setDialog(null);
+                scrollTo("constructor");
+              }}
+            />
+          )}
+          {dialog === "cart" && (
+            <CartDrawer
+              key="cart"
+              items={cart}
+              onClose={() => setDialog(null)}
+              onRemove={(id) =>
+                setCart((items) => items.filter((item) => item.id !== id))
+              }
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </MotionConfig>
   );
 }

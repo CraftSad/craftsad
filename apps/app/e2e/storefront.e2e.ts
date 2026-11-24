@@ -25,7 +25,7 @@ test("validates demo login and keeps the account openable with the keyboard", as
     await phone.fill(value);
     await requestCode.click();
     await expect(dialog.getByText(/\+7 \(812\) 345-67-89/)).toBeVisible();
-    await expect(dialog.getByLabel("Код из 6 цифр")).toBeFocused();
+    await expect(dialog.getByLabel("Код из 4 цифр")).toBeFocused();
     if (value === "8123456789") {
       await dialog
         .getByRole("button", { name: "Изменить номер или почту" })
@@ -33,7 +33,7 @@ test("validates demo login and keeps the account openable with the keyboard", as
       await expect(phone).toBeFocused();
     }
   }
-  await dialog.getByLabel("Код из 6 цифр").fill("123456");
+  await dialog.getByLabel("Код из 4 цифр").fill("1234");
   await dialog.getByRole("button", { name: "Войти", exact: true }).click();
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
@@ -59,12 +59,10 @@ test("shows the full inscription and validates checkout on a short viewport", as
   await page.setViewportSize({ width: 390, height: 510 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.getByRole("button", { name: "Покрутить" }).click();
-  const rotatingLabel = page.locator(".cs-preview-rotate .cs-label");
-  await expect(rotatingLabel).toHaveCSS("animation-name", "none");
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(rotatingLabel).toHaveCSS("animation-name", "cs-spin");
-  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.getByRole("button", { name: "360°" }).click();
+  await expect(
+    page.getByRole("img", { name: /Объёмная бирка:|Бирка:/ }).last(),
+  ).toBeVisible();
 
   const name = "Очень длинное название сорта ".repeat(12).trim();
   const names = page.getByLabel("Названия сортов, каждое с новой строки");
