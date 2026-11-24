@@ -31,25 +31,21 @@ export const createOrder = protectedProcedure
         })
         .returning();
       if (!order) throw new Error("Не удалось создать заказ");
-      await tx
-        .insert(orderItems)
-        .values(
-          priced.items.map(({ lineTotal: _, ...item }) => ({
-            ...item,
-            orderId: order.id,
-          })),
-        );
+      await tx.insert(orderItems).values(
+        priced.items.map(({ lineTotal: _, ...item }) => ({
+          ...item,
+          orderId: order.id,
+        })),
+      );
       const varieties = priced.items.flatMap(
         (item) => item.customizationJson?.varieties ?? [],
       );
       if (varieties.length)
-        await tx
-          .insert(savedVarietyLists)
-          .values({
-            userId: context.session.user.id,
-            name: input.varietyListName ?? number,
-            varieties,
-          });
+        await tx.insert(savedVarietyLists).values({
+          userId: context.session.user.id,
+          name: input.varietyListName ?? number,
+          varieties,
+        });
       return order;
     });
     return { order: created };
