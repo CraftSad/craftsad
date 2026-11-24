@@ -31,7 +31,7 @@ export const printJobStatus = pgEnum("print_job_status", [
   "done",
   "failed",
 ]);
-export const orderNumberSequence = pgSequence("craftsad_order_number_seq", {
+export const orderNumberSequence = pgSequence("birka_order_number_seq", {
   startWith: 1001,
 });
 

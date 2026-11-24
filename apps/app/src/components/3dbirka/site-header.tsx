@@ -39,13 +39,13 @@ export function SiteHeader({
           type="button"
           className="birka-brand"
           onClick={onHome}
-          aria-label="3dbirka — на главную"
+          aria-label="3D Бирка — на главную"
         >
           <span className="birka-brand-mark">
             <Leaf />
           </span>
           <span>
-            Craft<span>Sad</span>
+            3D<span> Бирка</span>
             <small>мастерская садовых бирок</small>
           </span>
         </button>

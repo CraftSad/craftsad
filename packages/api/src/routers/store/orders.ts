@@ -14,7 +14,7 @@ export const createOrder = protectedProcedure
     }
     const created = await context.db.transaction(async (tx) => {
       const seq = (await tx.execute(
-        sql`select nextval('craftsad_order_number_seq') as number`,
+        sql`select nextval('birka_order_number_seq') as number`,
       )) as { rows: { number: string }[] };
       const number = `CS-${String(seq.rows[0]?.number)}`;
       const [order] = await tx

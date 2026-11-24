@@ -83,7 +83,7 @@ export function HeroSection({
           <div className="birka-orbit birka-orbit-one" />
           <div className="birka-orbit birka-orbit-two" />
           <span className="birka-art-coordinate">
-            3DBIRKA OBJECTS — 01 / 03
+            3D БИРКА · КОЛЛЕКЦИЯ — 01 / 03
           </span>
           <div className="birka-art-leaf birka-art-leaf-one" />
           <div className="birka-art-leaf birka-art-leaf-two" />
