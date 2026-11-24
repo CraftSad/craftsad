@@ -17,7 +17,7 @@ const messages: Record<Order["status"], string> = {
 };
 
 export async function notifyOrderStatus(order: Order, database: Database = db) {
-  const text = `3dbirka: заказ ${order.orderNumber} ${messages[order.status]}.${order.ozonTrackingNumber ? ` Трек-номер Ozon: ${order.ozonTrackingNumber}.` : ""}`;
+  const text = `3D Бирка: заказ ${order.orderNumber} ${messages[order.status]}.${order.ozonTrackingNumber ? ` Трек-номер Ozon: ${order.ozonTrackingNumber}.` : ""}`;
   const [customer] = await database
     .select({ email: user.email })
     .from(user)
@@ -30,7 +30,7 @@ export async function notifyOrderStatus(order: Order, database: Database = db) {
     actions.push(
       sendEmailHtml({
         to: [email],
-        subject: `Заказ ${order.orderNumber} — 3dbirka`,
+        subject: `Заказ ${order.orderNumber} — 3D Бирка`,
         html: `<p>${text.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] ?? char)}</p>`,
       }),
     );

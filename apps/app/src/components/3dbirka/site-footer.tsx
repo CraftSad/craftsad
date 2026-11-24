@@ -1,5 +1,7 @@
 "use client";
 
+import { Leaf } from "lucide-react";
+
 export function SiteFooter({
   year,
   onNavigate,
@@ -13,7 +15,12 @@ export function SiteFooter({
     <footer className="birka-footer">
       <div className="birka-container">
         <div>
-          <strong>3dbirka</strong>
+          <strong className="birka-footer-brand">
+            <i className="birka-footer-mark" aria-hidden="true">
+              <Leaf />
+            </i>
+            3D <em>Бирка</em>
+          </strong>
           <p>
             Мастерская садовых бирок.
             <br />
@@ -42,7 +49,7 @@ export function SiteFooter({
         </div>
       </div>
       <div className="birka-footer-bottom birka-container">
-        <span>© {year} 3dbirka</span>
+        <span>© {year} 3D Бирка</span>
         <span>Пусть всё растёт 🌱</span>
       </div>
     </footer>

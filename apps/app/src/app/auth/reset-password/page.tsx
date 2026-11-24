@@ -1,5 +1,5 @@
 import { APP_CONFIG, paths } from "@acme/config";
-import { GalleryVerticalEnd } from "lucide-react";
+import { Leaf } from "lucide-react";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ResetPasswordForm } from "~/components/auth";
@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
           className="flex items-center gap-2 self-center font-medium"
         >
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-4" aria-label="Company logo" />
+            <Leaf className="size-4" aria-label="Логотип 3D Бирка" />
           </div>
           {APP_CONFIG.name}
         </a>
