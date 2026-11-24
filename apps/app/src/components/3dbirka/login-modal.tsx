@@ -1,8 +1,10 @@
 "use client";
 
+import { paths } from "@acme/config";
 import { loginFormSchema } from "@acme/validators";
 import { motion } from "framer-motion";
 import { ArrowRight, Copy, Mail, Phone, Send, X } from "lucide-react";
+import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { formatPhone, phoneSchema } from "./shared";
 import { Pill, StorefrontDialog } from "./ui";
@@ -267,6 +269,23 @@ export function LoginModal({
                 >
                   Получить код <ArrowRight />
                 </button>
+                <p className="birka-helper">
+                  Продолжая, вы соглашаетесь с{" "}
+                  <Link
+                    href={paths.legal.privacy}
+                    className="underline underline-offset-2"
+                  >
+                    политикой конфиденциальности
+                  </Link>{" "}
+                  и даёте{" "}
+                  <Link
+                    href={paths.legal.consent}
+                    className="underline underline-offset-2"
+                  >
+                    согласие на обработку персональных данных
+                  </Link>
+                  .
+                </p>
               </form>
             </>
           ) : (
