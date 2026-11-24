@@ -4,9 +4,10 @@ import { type Database, db } from "@acme/db";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { APIError } from "better-auth/api";
 import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 
-import { ADMIN_ROLE, hasAdminRole, isAdminEmail } from "./roles";
+import { ADMIN_ROLE, hasAdminRole, isAdmin, isAdminEmail } from "./roles";
 import { smsProvider } from "./sms";
 
 const tempEmail = (phone: string) =>
@@ -32,6 +33,7 @@ export function initAuth<
    */
   runInBackground?: (promise: Promise<unknown>) => void;
   extraPlugins?: TExtraPlugins;
+  adminOnly?: boolean;
   /** Defaults to the app database; tests pass an in-memory PGlite one. */
   database?: Database;
 }) {
@@ -122,6 +124,18 @@ export function initAuth<
       },
       session: {
         create: {
+          async before(session, ctx) {
+            if (!options.adminOnly) return;
+            const account = await ctx?.context.internalAdapter.findUserById(
+              session.userId,
+            );
+            if (!account || !isAdmin(account)) {
+              throw APIError.from("FORBIDDEN", {
+                code: "ADMIN_REQUIRED",
+                message: "Требуются права администратора",
+              });
+            }
+          },
           async after(session, ctx) {
             if (!ctx) return;
             const adapter = ctx.context.internalAdapter;

@@ -23,7 +23,10 @@ export const overview = adminProcedure.handler(async ({ context }) => {
     context.db
       .select({
         count: sql<number>`count(*)::int`,
-        revenue: sql<number>`coalesce(sum(${orders.totalAmount}) filter (where ${orders.status} <> 'cancelled'), 0)::int`,
+        revenue:
+          sql<number>`coalesce(sum(${orders.totalAmount}) filter (where ${orders.status} <> 'cancelled'), 0)`.mapWith(
+            Number,
+          ),
       })
       .from(orders),
     context.db

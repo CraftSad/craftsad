@@ -1,4 +1,4 @@
-import { desc, eq, ilike, or, orders, sql, user } from "@acme/db";
+import { desc, eq, ilike, or, orders, type SQL, sql, user } from "@acme/db";
 import { z } from "zod";
 
 import { adminProcedure } from "../../orpc";
@@ -27,17 +27,18 @@ export const list = adminProcedure
         )
       : undefined;
 
+    const lastOrderAt: SQL<Date | null> = sql`max(${orders.createdAt})`.mapWith(
+      orders.createdAt,
+    );
     const orderStats = context.db
       .select({
         userId: orders.userId,
         orderCount: sql<number>`count(*)::int`.as("order_count"),
         totalSpent:
-          sql<number>`coalesce(sum(${orders.totalAmount}) filter (where ${orders.status} <> 'cancelled'), 0)::int`.as(
+          sql<number>`coalesce(sum(${orders.totalAmount}) filter (where ${orders.status} <> 'cancelled'), 0)`.as(
             "total_spent",
           ),
-        lastOrderAt: sql<Date | null>`max(${orders.createdAt})`.as(
-          "last_order_at",
-        ),
+        lastOrderAt: lastOrderAt.as("last_order_at"),
       })
       .from(orders)
       .groupBy(orders.userId)
@@ -56,13 +57,15 @@ export const list = adminProcedure
           banned: user.banned,
           createdAt: user.createdAt,
           orderCount: sql<number>`coalesce(${orderStats.orderCount}, 0)::int`,
-          totalSpent: sql<number>`coalesce(${orderStats.totalSpent}, 0)::int`,
+          totalSpent: sql`coalesce(${orderStats.totalSpent}, 0)`.mapWith(
+            Number,
+          ),
           lastOrderAt: orderStats.lastOrderAt,
         })
         .from(user)
         .leftJoin(orderStats, eq(orderStats.userId, user.id))
         .where(where)
-        .orderBy(desc(user.createdAt))
+        .orderBy(desc(user.createdAt), desc(user.id))
         .limit(input.limit)
         .offset(input.offset),
       context.db

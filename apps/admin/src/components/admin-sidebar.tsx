@@ -46,7 +46,16 @@ export function AdminSidebar({
     .toUpperCase();
 
   async function handleSignOut() {
-    await authClient.signOut();
+    try {
+      const { error } = await authClient.signOut();
+      if (error) {
+        toast.error(error.message || "Не удалось выйти из админки");
+        return;
+      }
+    } catch {
+      toast.error("Не удалось выйти из админки");
+      return;
+    }
     toast.success("Вы вышли из админки");
     router.push("/login");
     router.refresh();

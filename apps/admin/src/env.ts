@@ -26,7 +26,8 @@ export const env = createEnv({
   },
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_ADMIN_API_URL: process.env.NEXT_PUBLIC_ADMIN_API_URL,
+    NEXT_PUBLIC_ADMIN_API_URL:
+      process.env.NEXT_PUBLIC_ADMIN_API_URL || undefined,
   },
   skipValidation:
     !!process.env.CI || process.env.npm_lifecycle_event === "lint",

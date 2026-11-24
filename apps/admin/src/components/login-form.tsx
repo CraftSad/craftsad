@@ -25,7 +25,12 @@ type Step = "email" | "otp";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/";
+  const next = searchParams.get("next");
+  const redirectPath =
+    next?.startsWith("/") &&
+    !["/", "\\", "\t", "\n", "\r"].includes(next.charAt(1))
+      ? next
+      : "/";
 
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
@@ -70,7 +75,7 @@ export function LoginForm() {
         setOtp("");
         return;
       }
-      router.replace(next as Route);
+      router.replace(redirectPath as Route);
       router.refresh();
     } catch {
       toast.error("Неверный код");
@@ -109,6 +114,7 @@ export function LoginForm() {
                 autoComplete="email"
                 autoFocus
                 value={email}
+                disabled={pending}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="admin@3dbirki.ru"
               />

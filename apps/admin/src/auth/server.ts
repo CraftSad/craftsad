@@ -17,6 +17,7 @@ export const auth = initAuth({
   baseUrl: env.ADMIN_URL,
   productionUrl: env.ADMIN_URL,
   secret: env.AUTH_SECRET,
+  adminOnly: true,
   extraPlugins: [nextCookies()],
   runInBackground: (promise) => {
     try {

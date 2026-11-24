@@ -132,6 +132,7 @@ describe("users.list", () => {
     expect(row?.orderCount).toBe(2);
     // Cancelled orders are excluded from lifetime spend.
     expect(row?.totalSpent).toBe(120_000);
+    expect(row?.lastOrderAt).toBeInstanceOf(Date);
   });
 });
 
@@ -260,6 +261,31 @@ describe("orders", () => {
 });
 
 describe("stats.overview", () => {
+  it("returns numeric totals beyond the PostgreSQL integer range", async () => {
+    const admin = await createSession(api.db, { role: "admin" });
+    const customer = await createSession(api.db);
+    const options = { context: api.context(admin) };
+    const before = await call(adminRouter.stats.overview, {}, options);
+
+    for (const orderNumber of ["LARGE-1", "LARGE-2"]) {
+      await seedOrder({
+        userId: customer.user.id,
+        orderNumber,
+        totalAmount: 1_500_000_000,
+      });
+    }
+
+    const result = await call(
+      adminRouter.users.list,
+      { limit: 1, offset: 0, query: customer.user.email },
+      options,
+    );
+    const after = await call(adminRouter.stats.overview, {}, options);
+
+    expect(result.items[0]?.totalSpent).toBe(3_000_000_000);
+    expect(after.revenue - before.revenue).toBe(3_000_000_000);
+  });
+
   it("counts users, orders and revenue", async () => {
     const admin = await createSession(api.db, { role: "admin" });
     const overview = await call(

@@ -31,6 +31,7 @@ const getApiOrigin = () => {
 const link = new RPCLink({
   origin: getApiOrigin(),
   url: API_PATH,
+  fetch: (request, init) => fetch(request, { ...init, credentials: "include" }),
 });
 
 const client: RouterClient<typeof adminRouter> =

@@ -127,9 +127,19 @@ export function OrdersTable() {
             ))}
           </div>
         ) : data.items.length === 0 ? (
-          <p className="text-muted-foreground px-4 py-10 text-center text-sm">
-            Заказы не найдены.
-          </p>
+          <>
+            <p className="text-muted-foreground px-4 py-10 text-center text-sm">
+              Заказы не найдены.
+            </p>
+            {offset > 0 && (
+              <Pagination
+                offset={offset}
+                limit={LIMIT}
+                total={data.total}
+                onChange={setOffset}
+              />
+            )}
+          </>
         ) : (
           <>
             <Table>

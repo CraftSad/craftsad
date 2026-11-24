@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -21,7 +22,7 @@ import { formatDate, formatMoney } from "~/lib/format";
 import { orpc } from "~/orpc/react";
 
 export function RecentOrders() {
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError, isFetching, refetch } = useQuery(
     orpc.orders.list.queryOptions({
       input: { limit: 6, offset: 0, status: "all" },
     }),
@@ -33,7 +34,20 @@ export function RecentOrders() {
         <CardTitle>Последние заказы</CardTitle>
       </CardHeader>
       <CardContent className="px-0">
-        {isLoading || !data ? (
+        {isError ? (
+          <div className="space-y-2 px-6 py-8 text-sm" role="alert">
+            <p>Не удалось загрузить последние заказы.</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isFetching}
+              onClick={() => void refetch()}
+            >
+              Повторить
+            </Button>
+          </div>
+        ) : isLoading || !data ? (
           <div className="space-y-2 px-6">
             {["a", "b", "c"].map((key) => (
               <Skeleton key={key} className="h-10 w-full" />

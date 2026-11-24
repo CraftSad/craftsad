@@ -1,3 +1,4 @@
+import { logger } from "@acme/config";
 import { and, eq, orderItems, orders, printJobs, sql } from "@acme/db";
 import { notifyOrderStatus } from "@acme/store/notifications";
 import { z } from "zod";
@@ -83,7 +84,13 @@ export const updateStatus = adminProcedure
       (old.status !== updated.status ||
         old.ozonTrackingNumber !== updated.ozonTrackingNumber)
     ) {
-      await notifyOrderStatus(updated, context.db);
+      try {
+        await notifyOrderStatus(updated, context.db);
+      } catch (error) {
+        logger.error("admin_order.notification_failed", error, {
+          orderId: updated.id,
+        });
+      }
     }
 
     return updated;

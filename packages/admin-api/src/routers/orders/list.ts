@@ -68,7 +68,7 @@ export const list = adminProcedure
         .from(orders)
         .innerJoin(user, eq(user.id, orders.userId))
         .where(where)
-        .orderBy(desc(orders.createdAt))
+        .orderBy(desc(orders.createdAt), desc(orders.id))
         .limit(input.limit)
         .offset(input.offset),
       context.db

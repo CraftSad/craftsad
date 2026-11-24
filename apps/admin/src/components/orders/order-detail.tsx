@@ -45,14 +45,18 @@ export function OrderDetail({ id }: { id: string }) {
   );
 
   const [status, setStatus] = useState<OrderStatus | null>(null);
-  const [tracking, setTracking] = useState("");
+  const [tracking, setTracking] = useState<string | null>(null);
 
   const update = useMutation(
     orpc.orders.updateStatus.mutationOptions({
       onSuccess: (updated) => {
         if (updated) {
-          setStatus(updated.status);
-          setTracking(updated.ozonTrackingNumber ?? "");
+          queryClient.setQueryData(
+            orpc.orders.byId.queryOptions({ input: { id } }).queryKey,
+            (current) => current && { ...current, ...updated },
+          );
+          setStatus(null);
+          setTracking(null);
         }
         toast.success("Статус заказа обновлён");
         void queryClient.invalidateQueries({
@@ -96,7 +100,7 @@ export function OrderDetail({ id }: { id: string }) {
 
   const currentStatus = status ?? data.status;
   const orderId = data.id;
-  const currentTracking = tracking || (data.ozonTrackingNumber ?? "");
+  const currentTracking = tracking ?? data.ozonTrackingNumber ?? "";
   const statusChanged = currentStatus !== data.status;
   const trackingChanged =
     currentStatus === "shipped_ozon" &&
@@ -169,6 +173,7 @@ export function OrderDetail({ id }: { id: string }) {
               <Label htmlFor="order-status">Статус</Label>
               <Select
                 value={currentStatus}
+                disabled={update.isPending}
                 onValueChange={(value) => {
                   if (value) setStatus(value);
                 }}
@@ -192,7 +197,7 @@ export function OrderDetail({ id }: { id: string }) {
                 value={currentTracking}
                 onChange={(event) => setTracking(event.target.value)}
                 placeholder="Например, 1234567890"
-                disabled={currentStatus !== "shipped_ozon"}
+                disabled={update.isPending || currentStatus !== "shipped_ozon"}
               />
             </div>
           </div>

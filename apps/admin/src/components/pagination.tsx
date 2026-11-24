@@ -16,8 +16,8 @@ export function Pagination({
 }) {
   const page = Math.floor(offset / limit) + 1;
   const pages = Math.max(1, Math.ceil(total / limit));
-  const from = total === 0 ? 0 : offset + 1;
-  const to = Math.min(offset + limit, total);
+  const from = offset >= total ? 0 : offset + 1;
+  const to = offset >= total ? 0 : Math.min(offset + limit, total);
 
   return (
     <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 text-sm">
