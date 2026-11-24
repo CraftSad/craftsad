@@ -210,3 +210,5 @@ export const presets = [
     names: ["Томаты", "Огурцы", "Клубника", "Мята", "Базилик", "Цветы"],
   },
 ];
+
+export type Preset = (typeof presets)[number];
