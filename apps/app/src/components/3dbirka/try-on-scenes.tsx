@@ -102,7 +102,8 @@ function GardenScene({ shape, color, name }: TagProps) {
     [2.4, 0.01, 0.5],
   ];
 
-  const tagPos: [number, number, number] = [-3.8, 0.01, 1.3];
+  // Учитываем нижний край корпуса (-0.57), фаску и покачивание.
+  const tagPos: [number, number, number] = [-3.8, 0.7, 1.3];
   const tagRot: [number, number, number] = [0, 0.25, 0];
 
   return (

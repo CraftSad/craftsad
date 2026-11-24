@@ -73,17 +73,21 @@ function Pot({ position }: { position: [number, number, number] }) {
         <meshStandardMaterial map={clayTex} roughness={0.9} metalness={0} />
       </mesh>
       {/* rim */}
-      <mesh position={[0, 0.6, 0]} castShadow>
+      <mesh position={[0, 0.6, 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow>
         <torusGeometry args={[0.73, 0.075, 10, 32]} />
         <meshStandardMaterial color="#c47045" roughness={0.85} />
       </mesh>
       {/* soil top */}
-      <mesh position={[0, 0.56, 0]} receiveShadow>
+      <mesh
+        position={[0, 0.56, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        receiveShadow
+      >
         <circleGeometry args={[0.68, 32]} />
         <meshStandardMaterial map={soilTex} roughness={1} />
       </mesh>
       {/* bottom */}
-      <mesh position={[0, -0.55, 0]}>
+      <mesh position={[0, -0.55, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.5, 24]} />
         <meshStandardMaterial color="#a0502a" roughness={1} />
       </mesh>
