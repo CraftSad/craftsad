@@ -4,7 +4,8 @@ import { type NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   if (
     request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/images/")
+    request.nextUrl.pathname.startsWith("/images/") ||
+    request.nextUrl.pathname.startsWith("/fonts/")
   ) {
     return NextResponse.next();
   }

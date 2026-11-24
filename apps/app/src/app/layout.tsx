@@ -2,11 +2,17 @@ import { APP_CONFIG } from "@acme/config";
 import { cn, ThemeProvider, Toaster } from "@acme/ui";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Geist,
+  Geist_Mono,
+  Manrope,
+} from "next/font/google";
 import { env } from "~/env";
 import { ORPCReactProvider } from "~/orpc/react";
 
 import "~/app/styles.css";
+import "~/app/craftsad.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -28,6 +34,17 @@ export const viewport: Viewport = {
   themeColor: "#faf8f5",
 };
 
+const manrope = Manrope({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-craft-sans",
+});
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-craft-serif",
+});
+
 const geistSans = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
@@ -44,6 +61,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         className={cn(
           "bg-background text-foreground min-h-screen font-sans antialiased",
           geistSans.variable,
+          manrope.variable,
+          cormorant.variable,
           geistMono.variable,
         )}
       >
