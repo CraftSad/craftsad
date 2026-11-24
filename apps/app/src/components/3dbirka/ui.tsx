@@ -76,7 +76,7 @@ export function StorefrontDialog({
         if (event.key !== "Tab") return;
         const controls = Array.from(
           event.currentTarget.querySelectorAll<HTMLElement>(
-            "button:enabled, input:enabled, [tabindex='0']",
+            "button:enabled, input:enabled, a[href], [tabindex='0']",
           ),
         ).filter(
           (control) => control.tabIndex >= 0 && control.getClientRects().length,

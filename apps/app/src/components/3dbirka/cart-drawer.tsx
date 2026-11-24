@@ -273,6 +273,8 @@ export function CartDrawer({
                 Нажимая кнопку оформления, вы принимаете условия{" "}
                 <Link
                   href={paths.legal.offer}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="underline underline-offset-2"
                 >
                   публичной оферты
@@ -280,6 +282,8 @@ export function CartDrawer({
                 и даёте{" "}
                 <Link
                   href={paths.legal.consent}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="underline underline-offset-2"
                 >
                   согласие на обработку персональных данных
@@ -287,6 +291,8 @@ export function CartDrawer({
                 в соответствии с{" "}
                 <Link
                   href={paths.legal.privacy}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="underline underline-offset-2"
                 >
                   политикой конфиденциальности
