@@ -1,0 +1,43 @@
+import { expect, test } from "bun:test";
+import { layoutText } from "./model";
+import { cartSchema, itemTotal } from "./pricing";
+
+test("price counts each variety in each set", () => {
+  expect(itemTotal(7900, 2, 3)).toBe(47400);
+});
+
+test("long Cyrillic variety fits on two lines", () => {
+  const layout = layoutText("Томат Бычье сердце розовое", 100, 25);
+  expect(layout.lines).toHaveLength(2);
+  expect(layout.fontSize).toBeGreaterThanOrEqual(3);
+});
+
+test("unprintable long word is rejected before spawning OpenSCAD", () => {
+  expect(() => layoutText("А".repeat(80), 80, 15)).toThrow();
+});
+
+test("rejects empty or oversized variety names", () => {
+  const base = {
+    productId: crypto.randomUUID(),
+    quantity: 1,
+    customization: {
+      shape: "rounded",
+      lengthMm: 100,
+      heightMm: 25,
+      baseColor: "зелёный",
+      textColor: "белый",
+      varieties: [""],
+    },
+  };
+  expect(cartSchema.safeParse({ items: [base] }).success).toBe(false);
+  expect(
+    cartSchema.safeParse({
+      items: [
+        {
+          ...base,
+          customization: { ...base.customization, varieties: ["А".repeat(81)] },
+        },
+      ],
+    }).success,
+  ).toBe(false);
+});

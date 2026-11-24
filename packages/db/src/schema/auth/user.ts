@@ -4,13 +4,17 @@ export const user = pgTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  phoneNumber: text("phone_number").unique(),
+  phoneNumberVerified: boolean("phone_number_verified")
+    .default(false)
+    .notNull(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   username: text("username"),
   bio: text("bio"),
   language: text("language").default("en"),
   // Better Auth admin plugin
-  role: text("role"),
+  role: text("role").default("customer").notNull(),
   banned: boolean("banned").default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),

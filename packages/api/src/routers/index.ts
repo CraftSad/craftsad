@@ -18,11 +18,13 @@
 
 import { adminRouter } from "./admin";
 import { postRouter } from "./post";
+import { storeRouter } from "./store";
 import { userRouter } from "./user";
 
 export const appRouter = {
   user: userRouter,
   post: postRouter,
+  store: storeRouter,
   admin: adminRouter,
 };
 
