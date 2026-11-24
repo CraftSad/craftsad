@@ -68,7 +68,7 @@ export function initAuth<
       window: 60,
       max: 100,
     },
-    emailAndPassword: { enabled: false },
+    emailAndPassword: { enabled: true },
     plugins: [
       emailOTP({
         otpLength: 6,
