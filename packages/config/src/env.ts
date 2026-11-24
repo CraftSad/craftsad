@@ -16,6 +16,8 @@ export const env = createEnv({
 
     // App
     APP_URL: z.url().default("http://localhost:3000"),
+    // Admin panel (apps/admin). Used as Better Auth's baseURL there.
+    ADMIN_URL: z.url().default("http://localhost:3001"),
 
     // Email. Sending order: Yandex Cloud Postbox (HTTPS API), then Resend.
     // Postbox uses a service account static access key (AWS Signature V4).
@@ -70,6 +72,7 @@ export const env = createEnv({
     VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
     POSTGRES_URL: process.env.POSTGRES_URL,
     APP_URL: process.env.APP_URL,
+    ADMIN_URL: process.env.ADMIN_URL,
     YANDEX_POSTBOX_ENDPOINT: process.env.YANDEX_POSTBOX_ENDPOINT,
     YANDEX_POSTBOX_REGION: process.env.YANDEX_POSTBOX_REGION,
     YANDEX_POSTBOX_ACCESS_KEY_ID: process.env.YANDEX_POSTBOX_ACCESS_KEY_ID,
