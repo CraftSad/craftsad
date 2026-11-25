@@ -1,12 +1,12 @@
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import {
-  BufferGeometry,
+  type BufferGeometry,
   ExtrudeGeometry,
   Path,
   Shape,
   Vector3,
 } from "three";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import type { ShapeId } from "./data";
 import { colorPairs } from "./data";
 import { wrapName } from "./tag-config";
@@ -36,7 +36,11 @@ function trianglesFromGeometry(geometry: BufferGeometry): Triangle[] {
   return result;
 }
 
-function tagOutline(shape: ShapeId): { outline: Shape; width: number; height: number } {
+function tagOutline(shape: ShapeId): {
+  outline: Shape;
+  width: number;
+  height: number;
+} {
   // The whole silhouette is extruded once, so the head and stake form one solid.
   const outline = new Shape();
   const width = shape === "flag" ? 80 : shape === "hanging" ? 80 : 65;
@@ -69,7 +73,11 @@ function tagOutline(shape: ShapeId): { outline: Shape; width: number; height: nu
   return { outline, width, height: top - bottom };
 }
 
-async function makeModel(shape: ShapeId, color: number, name: string): Promise<PrintModel> {
+async function makeModel(
+  shape: ShapeId,
+  color: number,
+  name: string,
+): Promise<PrintModel> {
   const pair = colorPairs[color] ?? colorPairs[0];
   const { outline, width, height } = tagOutline(shape);
   const body = new ExtrudeGeometry(outline, {
@@ -78,7 +86,9 @@ async function makeModel(shape: ShapeId, color: number, name: string): Promise<P
     curveSegments: 12,
     steps: 1,
   });
-  const parts: PrintPart[] = [{ triangles: trianglesFromGeometry(body), color: pair.base }];
+  const parts: PrintPart[] = [
+    { triangles: trianglesFromGeometry(body), color: pair.base },
+  ];
   body.dispose();
 
   const response = await fetch("/fonts/manrope.typeface.json");
@@ -106,7 +116,11 @@ async function makeModel(shape: ShapeId, color: number, name: string): Promise<P
       const fitted = text.boundingBox;
       if (fitted) {
         const y = lines.length === 1 ? 12 : i === 0 ? 17 : 7;
-        text.translate(-(fitted.min.x + fitted.max.x) / 2, y - fitted.min.y, thickness - 0.15);
+        text.translate(
+          -(fitted.min.x + fitted.max.x) / 2,
+          y - fitted.min.y,
+          thickness - 0.15,
+        );
       }
     }
     parts.push({ triangles: trianglesFromGeometry(text), color: pair.ink });
@@ -122,7 +136,10 @@ function stl(model: PrintModel): Blob {
   view.setUint32(80, all.length, true);
   all.forEach(([a, b, c], i) => {
     const offset = 84 + i * 50;
-    const normal = new Vector3().subVectors(b, a).cross(new Vector3().subVectors(c, a)).normalize();
+    const normal = new Vector3()
+      .subVectors(b, a)
+      .cross(new Vector3().subVectors(c, a))
+      .normalize();
     const values = [normal, a, b, c];
     values.forEach((point, j) => {
       view.setFloat32(offset + j * 12, point.x, true);
@@ -134,22 +151,46 @@ function stl(model: PrintModel): Blob {
 }
 
 function xmlEscape(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;",
-  })[char] ?? char);
+  return value.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&apos;",
+      })[char] ?? char,
+  );
 }
 
 function modelXml(model: PrintModel, name: string): string {
   const colors = model.parts.map((part) => part.color.toUpperCase());
-  const objects = model.parts.map((part, partIndex) => {
-    // Separate printable shells retain their assigned filament colors in 3MF.
-    const vertices = part.triangles.flat();
-    const vertexXml = vertices.map((v) => `<vertex x="${v.x}" y="${v.y}" z="${v.z}"/>`).join("");
-    const triangles = part.triangles.map((_, i) => `<triangle v1="${i * 3}" v2="${i * 3 + 1}" v3="${i * 3 + 2}"/>`).join("");
-    return `<object id="${partIndex + 2}" type="model" pid="1" pindex="${partIndex}"><mesh><vertices>${vertexXml}</vertices><triangles>${triangles}</triangles></mesh></object>`;
-  }).join("");
-  const materials = colors.map((hex, i) => `<base name="${i === 0 ? "Корпус" : "Надпись"}" displaycolor="${hex}FF"/>`).join("");
-  const build = model.parts.map((_, i) => `<item objectid="${i + 2}"/>`).join("");
+  const objects = model.parts
+    .map((part, partIndex) => {
+      // Separate printable shells retain their assigned filament colors in 3MF.
+      const vertices = part.triangles.flat();
+      const vertexXml = vertices
+        .map((v) => `<vertex x="${v.x}" y="${v.y}" z="${v.z}"/>`)
+        .join("");
+      const triangles = part.triangles
+        .map(
+          (_, i) =>
+            `<triangle v1="${i * 3}" v2="${i * 3 + 1}" v3="${i * 3 + 2}"/>`,
+        )
+        .join("");
+      return `<object id="${partIndex + 2}" type="model" pid="1" pindex="${partIndex}"><mesh><vertices>${vertexXml}</vertices><triangles>${triangles}</triangles></mesh></object>`;
+    })
+    .join("");
+  const materials = colors
+    .map(
+      (hex, i) =>
+        `<base name="${i === 0 ? "Корпус" : "Надпись"}" displaycolor="${hex}FF"/>`,
+    )
+    .join("");
+  const build = model.parts
+    .map((_, i) => `<item objectid="${i + 2}"/>`)
+    .join("");
   return `<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="ru-RU" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><metadata name="Title">${xmlEscape(name)}</metadata><resources><basematerials id="1">${materials}</basematerials>${objects}</resources><build>${build}</build></model>`;
 }
 
@@ -206,13 +247,28 @@ function zip(entries: { name: string; data: Uint8Array<ArrayBuffer> }[]): Blob {
 
 function threeMf(model: PrintModel, name: string): Blob {
   return zip([
-    { name: "[Content_Types].xml", data: encoder.encode('<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>') },
-    { name: "_rels/.rels", data: encoder.encode('<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>') },
+    {
+      name: "[Content_Types].xml",
+      data: encoder.encode(
+        '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>',
+      ),
+    },
+    {
+      name: "_rels/.rels",
+      data: encoder.encode(
+        '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>',
+      ),
+    },
     { name: "3D/3dmodel.model", data: encoder.encode(modelXml(model, name)) },
   ]);
 }
 
-export async function downloadPrintFile(shape: ShapeId, color: number, name: string, format: "stl" | "3mf") {
+export async function downloadPrintFile(
+  shape: ShapeId,
+  color: number,
+  name: string,
+  format: "stl" | "3mf",
+) {
   const model = await makeModel(shape, color, name);
   const blob = format === "stl" ? stl(model) : threeMf(model, name);
   const url = URL.createObjectURL(blob);

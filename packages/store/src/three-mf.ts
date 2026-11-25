@@ -107,7 +107,9 @@ export function stlTo3mf(
       if (id === undefined) {
         id = vertices.length;
         vertexIds.set(key, id);
-        vertices.push(`<vertex x="${point[0]}" y="${point[1]}" z="${point[2]}"/>`);
+        vertices.push(
+          `<vertex x="${point[0]}" y="${point[1]}" z="${point[2]}"/>`,
+        );
       }
       return id;
     });
