@@ -69,6 +69,7 @@ export function UnifiedAuthForm({
           email: data.email,
           password: data.password,
           name: data.email.split("@")[0] ?? "Пользователь",
+          callbackURL: paths.auth.login,
         });
         if (error) {
           if (error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
@@ -83,14 +84,20 @@ export function UnifiedAuthForm({
           }
           return;
         }
-        toast.success("Аккаунт успешно создан!");
+        toast.success("Проверьте почту и подтвердите адрес перед входом.");
+        router.push(paths.auth.login);
+        return;
       } else {
         const { error } = await authClient.signIn.email({
           email: data.email,
           password: data.password,
         });
         if (error) {
-          toast.error(error.message || "Неверный адрес почты или пароль.");
+          toast.error(
+            error.code === "EMAIL_NOT_VERIFIED"
+              ? "Подтвердите адрес по ссылке из письма, затем войдите снова."
+              : error.message || "Неверный адрес почты или пароль.",
+          );
           return;
         }
         toast.success("Вы успешно вошли!");

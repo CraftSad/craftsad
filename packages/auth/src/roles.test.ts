@@ -16,9 +16,24 @@ describe("hasAdminRole / isAdmin", () => {
     expect(hasAdminRole(null)).toBe(false);
   });
 
-  it("treats ADMIN_EMAILS as admins regardless of role", () => {
-    expect(isAdmin({ email: "ADMIN@test.local", role: "user" })).toBe(true);
-    expect(isAdmin({ email: "someone@test.local", role: "user" })).toBe(false);
+  it("requires verification for the ADMIN_EMAILS fallback", () => {
+    expect(
+      isAdmin({ email: "ADMIN@test.local", emailVerified: true, role: "user" }),
+    ).toBe(true);
+    expect(
+      isAdmin({
+        email: "ADMIN@test.local",
+        emailVerified: false,
+        role: "user",
+      }),
+    ).toBe(false);
+    expect(
+      isAdmin({
+        email: "someone@test.local",
+        emailVerified: true,
+        role: "user",
+      }),
+    ).toBe(false);
   });
 });
 
@@ -26,6 +41,7 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
   let testDb: Awaited<ReturnType<typeof createTestDb>>;
   let auth: ReturnType<typeof initAuth>;
   const codes = new Map<string, string>();
+  const links = new Map<string, string>();
 
   function makeAuth(adminOnly = false) {
     return initAuth({
@@ -36,6 +52,7 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
       adminOnly,
       sendEmail: async ({ email, otp }) => {
         if (otp) codes.set(email, otp);
+        if (url) links.set(type, url);
       },
     });
   }
@@ -46,6 +63,7 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
   });
   afterEach(() => {
     codes.clear();
+    links.clear();
     return testDb.close();
   });
 
@@ -113,5 +131,55 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
     await signInWithCode(ADMIN_EMAIL);
 
     expect(await roleOf(ADMIN_EMAIL)).toBe("admin");
+  });
+
+  it("does not grant an admin role or password session until email verification", async () => {
+    const credentials = { email: ADMIN_EMAIL, password: "test-password-123" };
+    const signup = await auth.api.signUpEmail({
+      body: { ...credentials, name: "Admin", callbackURL: "/auth/login" },
+    });
+    expect(signup.token).toBeNull();
+    expect(await roleOf(ADMIN_EMAIL)).toBe("customer");
+    await expect(
+      auth.api.signInEmail({ body: credentials }),
+    ).rejects.toMatchObject({
+      body: { code: "EMAIL_NOT_VERIFIED" },
+    });
+    expect(await testDb.db.select().from(session)).toHaveLength(0);
+
+    const link = links.get("email-verification");
+    if (!link) throw new Error("Verification email was not sent");
+    expect(
+      (await auth.handler(new Request(link))).headers.get("location"),
+    ).toBeTruthy();
+    expect(
+      (await auth.api.signInEmail({ body: credentials })).token,
+    ).toBeTruthy();
+    expect(await roleOf(ADMIN_EMAIL)).toBe("admin");
+  });
+
+  it("sends a reset link that can be used to change the password", async () => {
+    const email = "reset@test.local";
+    await signInWithCode(email);
+    const response = await auth.api.requestPasswordReset({
+      body: { email, redirectTo: "/auth/reset-password" },
+    });
+    expect(response.status).toBe(true);
+    const link = links.get("forget-password");
+    if (!link) throw new Error("Password reset email was not sent");
+    const redirect = (await auth.handler(new Request(link))).headers.get(
+      "location",
+    );
+    if (!redirect) throw new Error("Password reset link did not redirect");
+    const target = new URL(redirect, link);
+    expect(target.pathname).toBe("/auth/reset-password");
+    const token = target.searchParams.get("token");
+    if (!token) throw new Error("Missing password reset token");
+
+    const password = "new-test-password-123";
+    await auth.api.resetPassword({ body: { token, newPassword: password } });
+    expect(
+      (await auth.api.signInEmail({ body: { email, password } })).token,
+    ).toBeTruthy();
   });
 });

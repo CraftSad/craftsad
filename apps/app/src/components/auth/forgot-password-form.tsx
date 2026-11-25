@@ -46,10 +46,11 @@ export function ForgotPasswordForm({
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setLoading(true);
     try {
-      await authClient.requestPasswordReset({
+      const { error } = await authClient.requestPasswordReset({
         email: data.email,
         redirectTo: paths.auth.resetPassword,
       });
+      if (error) throw error;
       setSent(true);
       toast.success("Ссылка для сброса пароля отправлена! Проверьте почту.");
     } catch (_error) {

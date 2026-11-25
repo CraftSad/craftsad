@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { eq, user } from "@acme/db";
 import { call, isDefinedError } from "@orpc/server";
 
 import { createSession, setupTestApi } from "../../../test/helpers";
@@ -83,5 +84,28 @@ describe("user.updateProfile", () => {
       context: api.context(caller),
     });
     expect(me?.username).toBe("renamed");
+  });
+
+  it("preserves verification only while the email stays the same", async () => {
+    const caller = await createSession(api.db);
+    await api.db
+      .update(user)
+      .set({ emailVerified: true })
+      .where(eq(user.id, caller.user.id));
+    const context = api.context(caller);
+    const update = (email: string) =>
+      call(
+        userRouter.updateProfile,
+        { username: "caller", email },
+        { context },
+      );
+    const profile = () => call(userRouter.me, undefined, { context });
+
+    await update(caller.user.email);
+    expect((await profile())?.emailVerified).toBe(true);
+
+    const email = `${crypto.randomUUID()}@test.local`;
+    await update(email);
+    expect(await profile()).toMatchObject({ email, emailVerified: false });
   });
 });
