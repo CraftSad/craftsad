@@ -5,7 +5,7 @@ import * as React from "react";
 import { Button } from "./button";
 import { cn } from ".";
 
-const COOKIE_CONSENT_KEY = "craftsad:cookie-consent";
+const COOKIE_CONSENT_KEY = "badge3d:cookie-consent";
 
 type Consent = "accepted" | "declined";
 
