@@ -13,18 +13,24 @@ const examples = [
     region: "Московская область",
     season: "Рассада · первый сезон",
     text: "На подоконнике у каждого сорта своё место. Молочные бирки хорошо видны среди стаканчиков.",
+    image:
+      "/api/ide/v1/text_to_image?prompt=A%20white%20garden%20tag%20with%20%22Tomato%22%20written%20on%20it%2C%20placed%20in%20a%20small%20plastic%20pot%20with%20a%20green%20seedling%20on%20a%20sunlit%20wooden%20windowsill.%20Realistic%20photo%20style%2C%20macro%20shot.&image_size=landscape_4_3",
   },
   {
     name: "Елена",
     region: "Краснодарский край",
     season: "Грядки · летний сезон",
     text: "Высокий флажок удобно читать, когда томаты подрастут. Названия остаются на виду.",
+    image:
+      "/api/ide/v1/text_to_image?prompt=A%20tall%20garden%20flag%20tag%20with%20%22Cherry%20Tomato%22%20written%20on%20it%2C%20standing%20in%20a%20garden%20bed%20among%20lush%20green%20tomato%20plants.%20Outdoor%20sunlight%2C%20realistic%20garden%20photography.&image_size=landscape_4_3",
   },
   {
     name: "Михаил",
     region: "Ленинградская область",
     season: "Теплица · второй сезон",
     text: "Подвесные бирки закреплены на шпалере. Удобно сверяться со списком сортов.",
+    image:
+      "/api/ide/v1/text_to_image?prompt=A%20hanging%20plastic%20garden%20tag%20tied%20with%20a%20string%20to%20a%20metal%20trellis%20in%20a%20greenhouse.%20Close-up%2C%20blurred%20background%20of%20greenhouse%20plants%2C%20realistic%20documentary%20style.&image_size=landscape_4_3",
   },
 ];
 const questions = [
@@ -128,10 +134,11 @@ export function GardenSections({
             {examples.map((review) => (
               <article key={review.name}>
                 <Image
-                  src="/images/tag-photo-placeholder.svg"
-                  alt={`Фото-заглушка: садовая бирка, ${review.season.toLowerCase()}`}
+                  src={review.image}
+                  alt={`Отзыв: ${review.name}, ${review.season}`}
                   width={640}
-                  height={440}
+                  height={480}
+                  unoptimized
                 />
                 <div>
                   <span className="birka-demo-badge">Пример отзыва</span>
