@@ -1,9 +1,9 @@
 "use client";
 
 import { paths } from "@acme/config";
-import { Leaf } from "lucide-react";
 import Link from "next/link";
 import { LEGAL_ENTITY } from "~/components/legal/legal-data";
+import { BrandLockup } from "./brand";
 import { ContactLink } from "./contact-link";
 
 export function SiteFooter({
@@ -20,15 +20,12 @@ export function SiteFooter({
       <div className="birka-container">
         <div>
           <strong className="birka-footer-brand">
-            <i className="birka-footer-mark" aria-hidden="true">
-              <Leaf />
-            </i>
-            Craft<em>Sad</em>
+            <BrandLockup />
           </strong>
           <p>
-            Мастерская садовых бирок 3dbirka.
+            Садовые бирки с вашим характером.
             <br />
-            Сделано с любовью к вашим растениям.
+            Имена, которым придали форму.
           </p>
           <p className="mt-3 text-xs text-[#9ba996]">
             {LEGAL_ENTITY.shortName}
@@ -77,7 +74,7 @@ export function SiteFooter({
         <span>
           © {year} 3D Бирка · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
         </span>
-        <span>Пусть всё растёт 🌱</span>
+        <span>Сад начинается с имени.</span>
       </div>
     </footer>
   );

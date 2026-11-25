@@ -71,7 +71,7 @@ export function AdminSidebar({
                 <ShoppingBag className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">3dbirka</span>
+                <span className="truncate font-semibold">3D Бирка</span>
                 <span className="text-muted-foreground truncate text-xs">
                   Админ-панель
                 </span>

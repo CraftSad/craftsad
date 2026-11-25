@@ -7,10 +7,10 @@ import "~/app/styles.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "3dbirka — админ-панель",
-    template: "%s — 3dbirka",
+    default: "3D Бирка — админ-панель",
+    template: "%s — 3D Бирка",
   },
-  description: "Внутренняя панель управления заказами и клиентами 3dbirka.",
+  description: "Внутренняя панель управления заказами и клиентами 3D Бирка.",
   robots: { index: false, follow: false },
 };
 

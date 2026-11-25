@@ -1,13 +1,8 @@
 import { paths } from "@acme/config";
-import {
-  ArrowLeft,
-  ArrowRight,
-  FileText,
-  Leaf,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, FileText, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BrandLockup } from "~/components/3dbirka/brand";
 import { LEGAL_DOC_LIST, LEGAL_ENTITY } from "~/components/legal/legal-data";
 
 export const metadata: Metadata = {
@@ -24,12 +19,7 @@ export default function LegalIndexPage() {
             href={paths.dashboard.root}
             className="birka-brand no-underline"
           >
-            <span className="birka-brand-mark">
-              <Leaf />
-            </span>
-            <span>
-              3D<span> Бирка</span>
-            </span>
+            <BrandLockup />
           </Link>
           <Link
             href={paths.dashboard.root}

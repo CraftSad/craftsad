@@ -13,16 +13,18 @@ import { ORPCReactProvider } from "~/orpc/react";
 
 import "~/app/styles.css";
 import "~/app/3dbirka.css";
+import "~/app/brand.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production" ? APP_CONFIG.url : "http://localhost:3000",
   ),
-  title: "3D Бирка — мастерская садовых бирок 3dbirka",
+  icons: { icon: "/brand-mark.svg" },
+  title: "3D Бирка — сад начинается с имени",
   description:
     "Прочные садовые бирки для рассады и грядок. Выберите форму, цвет и названия сортов. Доставка в пункты Ozon по России.",
   openGraph: {
-    title: "3D Бирка — мастерская садовых бирок 3dbirka",
+    title: "3D Бирка — сад начинается с имени",
     description:
       "Прочные садовые бирки для рассады и грядок с доставкой в Ozon.",
     url: APP_CONFIG.url,
@@ -31,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#faf8f5",
+  themeColor: "#f5f1e8",
 };
 
 const manrope = Manrope({

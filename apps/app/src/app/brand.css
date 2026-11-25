@@ -1,0 +1,106 @@
+/* 3D Бирка: warm paper, evergreen ink, and the fine edge of brass. */
+.birka-site {
+  --milk: #f5f1e8;
+  --forest: #23483e;
+  --forest-dark: #15372e;
+  --ink: #203c32;
+  --terra: #a57d46;
+  background: radial-gradient(ellipse at 85% 8%, #dce2d366, transparent 34%), var(--milk);
+}
+
+.birka-site .birka-brand,
+.birka-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.birka-site .birka-brand-mark,
+.birka-footer-brand .birka-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 52px;
+  flex-shrink: 0;
+  border: 1px solid #b5965c66;
+  border-radius: 15px 15px 15px 3px;
+  background: #203e33;
+  color: #e4cf9f;
+  box-shadow: 3px 3px 0 #b5965c30;
+}
+
+.birka-site .birka-brand-mark svg,
+.birka-footer-brand .birka-brand-mark svg { width: 38px; height: 38px; }
+
+.birka-wordmark { display: flex; flex-direction: column; gap: 5px; }
+.birka-site .birka-brand > .birka-wordmark > .birka-wordmark-name,
+.birka-footer-brand .birka-wordmark-name {
+  color: inherit;
+  font: 600 32px/1 var(--font-craft-serif), Georgia, serif;
+  font-style: normal;
+  letter-spacing: -.035em;
+}
+.birka-site .birka-brand small,
+.birka-footer-brand small {
+  display: block;
+  font: 500 8px/1.4 var(--font-craft-sans), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .17em;
+  color: #637064;
+}
+.birka-footer-brand small { color: #c1cbb9; }
+.birka-header { border-color: #b5965c30; background: #fbf8f0ed; }
+.birka-header .birka-contact { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.birka-header .birka-contact svg { width: 18px; height: 18px; }
+.birka-hero-edition { font-size: 11px; letter-spacing: .12em; }
+.birka-hero-edition > span { background: #a57d46; border-radius: 1px; transform: rotate(45deg); }
+.birka-hero h1 { font-size: clamp(44px, 4.6vw, 69px); line-height: 1.06; }
+.birka-hero h1 em { color: #7b805e; }
+.birka-hero-copy > p { max-width: 440px; font-size: 16px; }
+.birka-art-monogram {
+  position: absolute;
+  inset: 40px 0 auto;
+  text-align: center;
+  font: 500 350px/1 var(--font-craft-serif), Georgia, serif;
+  letter-spacing: -.1em;
+  color: #23483e08;
+  user-select: none;
+  pointer-events: none;
+}
+.birka-orbit { border-color: #a58b5933; }
+.birka-orbit-two { border-style: solid; opacity: .45; }
+.birka-art-coordinate { color: #586547; letter-spacing: .13em; }
+.birka-hero-rule { border-color: #a58b5940; letter-spacing: .08em; }
+.birka-hero-delivery { border-radius: 5px 20px 20px; border-color: #c8b58b50; }
+.birka-footer { border-top: 1px solid #b5965c66; }
+.birka-footer-brand { margin-bottom: 15px; }
+
+@media (max-width: 1100px) {
+  .birka-header-inner { gap: 16px; }
+  .birka-header-actions { gap: 16px; }
+  .birka-nav { gap: 20px; }
+}
+@media (max-width: 570px) {
+  .birka-header-inner { padding-inline: 14px; gap: 8px; }
+  .birka-header-actions { gap: 6px; }
+  .birka-header .birka-contact { display: none; }
+  .birka-site .birka-brand { gap: 9px; }
+  .birka-site .birka-brand-mark { width: 34px; height: 39px; border-radius: 11px 11px 11px 2px; }
+  .birka-site .birka-brand-mark svg { width: 29px; height: 29px; }
+  .birka-site .birka-brand > .birka-wordmark > .birka-wordmark-name { font-size: 27px; }
+  .birka-site .birka-brand small { font-size: 6px; letter-spacing: .1em; }
+  .birka-hero-edition { font-size: 9px; letter-spacing: .07em; gap: 8px; }
+  .birka-hero h1 { font-size: clamp(37px, 9.5vw, 51px); }
+  .birka-art-monogram { font-size: 260px; }
+  .birka-hero-rule { letter-spacing: 0; }
+}
+
+@media (max-width: 370px) {
+  .birka-header-inner { padding-inline: 10px; }
+  .birka-header-actions { gap: 2px; }
+  .birka-site .birka-brand { gap: 6px; }
+  .birka-site .birka-brand > .birka-wordmark > .birka-wordmark-name { font-size: 24px; }
+  .birka-site .birka-brand small { letter-spacing: 0; }
+}

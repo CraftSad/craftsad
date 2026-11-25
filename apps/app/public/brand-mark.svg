@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>3D Бирка</title>
+  <rect width="64" height="64" rx="17" fill="#203e33"/>
+  <g transform="translate(8 8)" stroke="#e4cf9f" stroke-linejoin="round">
+    <path d="m13 8 24 4v23l-11 8V31L13 27Z" fill="#e4cf9f" fill-opacity=".22" stroke="none"/>
+    <path d="M9 5h25v23H23v13l-5-5v-8H9Z" stroke-width="1.6"/>
+    <path d="m34 5 5 5v23l-16 8M34 28l5 5M18 36l5 5" stroke-width="1.2"/>
+    <path d="M22 23v-8m0 4c-6 0-8-3-8-7 5 0 8 2 8 7Zm0-3c0-5 3-7 7-7 0 4-2 7-7 7Z" stroke-width="1.5"/>
+  </g>
+</svg>

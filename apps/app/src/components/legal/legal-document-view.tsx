@@ -1,6 +1,7 @@
 import { paths } from "@acme/config";
-import { ArrowLeft, FileText, Leaf, ShieldCheck } from "lucide-react";
+import { ArrowLeft, FileText, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { BrandLockup } from "~/components/3dbirka/brand";
 import {
   LEGAL_DOC_LIST,
   LEGAL_DOCUMENTS,
@@ -19,12 +20,7 @@ export function LegalDocumentView({ docId }: { docId: LegalDocId }) {
             href={paths.dashboard.root}
             className="birka-brand no-underline"
           >
-            <span className="birka-brand-mark">
-              <Leaf />
-            </span>
-            <span>
-              3D<span> Бирка</span>
-            </span>
+            <BrandLockup />
           </Link>
           <Link
             href={paths.dashboard.root}

@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  ChevronDown,
-  Leaf,
-  Menu,
-  ShoppingBag,
-  UserRound,
-  X,
-} from "lucide-react";
+import { ChevronDown, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import { BrandLockup } from "./brand";
 import { ContactLink } from "./contact-link";
 import { type Category, money } from "./shared";
 import { RollingNumber } from "./ui";
@@ -42,13 +36,7 @@ export function SiteHeader({
           onClick={onHome}
           aria-label="3D Бирка — на главную"
         >
-          <span className="birka-brand-mark">
-            <Leaf />
-          </span>
-          <span>
-            Craft<span>Sad</span>
-            <small>мастерская садовых бирок</small>
-          </span>
+          <BrandLockup />
         </button>
         <nav
           className={menuOpen ? "birka-nav is-open" : "birka-nav"}

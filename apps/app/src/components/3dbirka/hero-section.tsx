@@ -27,22 +27,21 @@ export function HeroSection({
           variants={reveal}
         >
           <motion.div variants={reveal} className="birka-hero-edition">
-            <span /> Маленькие детали. Большой сад.
+            <span /> 3D Бирка · предметы для любимого сада
           </motion.div>
           <motion.h1 variants={reveal}>
-            Вечные садовые
+            У каждого растения
+            <br />— своё имя
             <br />
-            бирки с названиями
-            <br />
-            <em>ваших сортов</em>
+            <em>и своя история</em>
             <span className="birka-title-dot">.</span>
           </motion.h1>
           <motion.p variants={reveal}>
-            Вы растите любимые растения.
+            Создаём садовые бирки с объёмными буквами.
             <br />
-            Мы сохраняем их имена — в объёмных
-            <br className="birka-desktop-break" /> буквах, красивых цветах и
-            надолго.
+            Ваши сорта, любимые оттенки и детали,
+            <br className="birka-desktop-break" /> которые делают сад
+            по-настоящему вашим.
           </motion.p>
           <motion.div variants={reveal} className="birka-hero-actions">
             <motion.button
@@ -80,10 +79,13 @@ export function HeroSection({
           role="img"
           aria-label="Коллекция садовых бирок в молочном, хвойном и терракотовом цветах"
         >
+          <span className="birka-art-monogram" aria-hidden="true">
+            3D
+          </span>
           <div className="birka-orbit birka-orbit-one" />
           <div className="birka-orbit birka-orbit-two" />
           <span className="birka-art-coordinate">
-            3D БИРКА · КОЛЛЕКЦИЯ — 01 / 03
+            3D Бирка / САДОВАЯ КОЛЛЕКЦИЯ
           </span>
           <div className="birka-art-leaf birka-art-leaf-one" />
           <div className="birka-art-leaf birka-art-leaf-two" />
@@ -121,7 +123,7 @@ export function HeroSection({
         </div>
       </div>
       <div className="birka-hero-rule birka-container">
-        <span>Красота, которая остаётся на сезоны</span>
+        <span>Точная форма. Живой характер.</span>
         <span>
           Сделано в России <span>↗</span>
         </span>
