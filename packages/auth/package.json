@@ -21,13 +21,13 @@
   "dependencies": {
     "@acme/config": "workspace:*",
     "@acme/db": "workspace:*",
-    "better-auth": "1.7.27"
+    "better-auth": "1.7.28"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
     "@better-auth/cli": "1.4.21",
     "@types/bun": "1.4.5",
-    "@types/node": "26.6.6",
+    "@types/node": "26.6.10",
     "typescript": "7.0.2"
   }
 }
