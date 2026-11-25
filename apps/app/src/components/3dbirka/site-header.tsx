@@ -40,7 +40,7 @@ export function SiteHeader({
           type="button"
           className="birka-brand"
           onClick={onHome}
-          aria-label="CraftSad — на главную"
+          aria-label="3D Бирка — на главную"
         >
           <span className="birka-brand-mark">
             <Leaf />

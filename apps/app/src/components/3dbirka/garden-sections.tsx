@@ -151,7 +151,7 @@ export function GardenSections() {
             </div>
             <label className="birka-consent">
               <input type="checkbox" name="consent" required />
-              Согласен получать письма о новинках CraftSad на указанную почту.
+              Согласен получать письма о новинках 3D Бирка на указанную почту.
             </label>
             <p role="status">{status}</p>
           </form>

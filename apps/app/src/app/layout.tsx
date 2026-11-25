@@ -18,15 +18,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production" ? APP_CONFIG.url : "http://localhost:3000",
   ),
-  title: "CraftSad — мастерская садовых бирок 3dbirka",
+  title: "3D Бирка — мастерская садовых бирок 3dbirka",
   description:
     "Прочные садовые бирки для рассады и грядок. Выберите форму, цвет и названия сортов. Доставка в пункты Ozon по России.",
   openGraph: {
-    title: "CraftSad — мастерская садовых бирок 3dbirka",
+    title: "3D Бирка — мастерская садовых бирок 3dbirka",
     description:
       "Прочные садовые бирки для рассады и грядок с доставкой в Ozon.",
     url: APP_CONFIG.url,
-    siteName: "CraftSad",
+    siteName: "3D Бирка",
   },
 };
 

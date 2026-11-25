@@ -6,7 +6,7 @@ import { StorefrontDialog } from "./ui";
 
 export function ContactLink({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState(false);
-  const url = process.env.NEXT_PUBLIC_CRAFTSAD_CONTACT_URL;
+  const url = process.env.NEXT_PUBLIC_3D Бирка_CONTACT_URL;
   const content = (
     <>
       <Send aria-hidden="true" />

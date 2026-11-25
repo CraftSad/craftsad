@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 for (const width of [375, 1440]) {
-  test(`CraftSad constructor and catalog at ${width}px`, async ({ page }) => {
+  test(`3D Бирка constructor and catalog at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    await expect(page).toHaveTitle(/CraftSad/);
+    await expect(page).toHaveTitle(/3D Бирка/);
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
       "content",
-      "CraftSad",
+      "3D Бирка",
     );
     await page.getByRole("tab", { name: "В масштабе" }).click();
     await expect(page.getByRole("tabpanel")).toContainText("Стаканчик ≈ 10 см");
@@ -68,7 +68,7 @@ for (const width of [375, 1440]) {
       .locator("#constructor")
       .evaluate((element) => element.scrollIntoView({ block: "start" }));
     await page.screenshot({
-      path: `test-results/craftsad-${width}-constructor.png`,
+      path: `test-results/3D Бирка-${width}-constructor.png`,
     });
     await page
       .getByRole("button", { name: "Большие наборы −15%", exact: true })
@@ -107,7 +107,7 @@ for (const width of [375, 1440]) {
       .locator("#catalog")
       .evaluate((element) => element.scrollIntoView({ block: "start" }));
     await page.screenshot({
-      path: `test-results/craftsad-${width}-catalog.png`,
+      path: `test-results/3D Бирка-${width}-catalog.png`,
     });
     expect(
       await page.evaluate(

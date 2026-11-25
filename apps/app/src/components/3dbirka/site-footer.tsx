@@ -75,7 +75,7 @@ export function SiteFooter({
       </div>
       <div className="birka-footer-bottom birka-container">
         <span>
-          © {year} CraftSad · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
+          © {year} 3D Бирка · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
         </span>
         <span>Пусть всё растёт 🌱</span>
       </div>
