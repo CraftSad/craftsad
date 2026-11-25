@@ -1,5 +1,22 @@
 import { expect, test } from "@playwright/test";
 
+test("shows a helpful branded page for unknown routes", async ({ page }) => {
+  const response = await page.goto("/this-page-does-not-exist");
+
+  expect(response?.status()).toBe(404);
+  await expect(
+    page.getByRole("heading", {
+      name: "Похоже, вы свернули не на ту грядку.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Вернуться на главную" }),
+  ).toHaveAttribute("href", "/");
+  await expect(
+    page.getByRole("link", { name: "Перейти в каталог" }),
+  ).toHaveAttribute("href", "/#catalog");
+});
+
 test("redirects anonymous visitors to the login page", async ({ page }) => {
   await page.goto("/dashboard");
 
