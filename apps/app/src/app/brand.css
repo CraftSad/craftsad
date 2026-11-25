@@ -584,6 +584,10 @@
   transform: scale(0.69) rotate(3deg);
 }
 
+.birka-product-stage-duo .birka-preview-small {
+  grid-area: 1 / 1;
+}
+
 .birka-product-stage-duo .birka-preview-small:first-child {
   transform: translate(-42px, -6px) scale(0.58) rotate(-4deg);
 }
