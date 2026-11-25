@@ -14,3 +14,121 @@
 .birka-site .birka-brand{font-size:33px;font-weight:600}.birka-hero-copy>p{font-size:18px}.birka-bento p,.birka-product p{font-size:16px}.birka-builder-heading h3{font-size:17px}.birka-shape strong{font-size:14px}.birka-shape small{font-size:13px}.birka-builder-right textarea{font-size:16px}.birka-field-label{font-size:14px!important}.birka-summary>span{font-size:16px}.birka-builder-final .birka-button{font-size:17px}.birka-view-controls button{font-size:14px;min-height:44px}.birka-variety-help>div{scrollbar-width:none}.birka-variety-help>div::-webkit-scrollbar{display:none}.birka-variety-help button{font-size:12px;min-height:38px}.birka-product-footer button{font-size:14px}.birka-color{min-width:44px;min-height:44px}.birka-filters button{font-size:16px}.birka-nav button{font-size:16px}
 @media(max-width:570px){.birka-site .birka-brand{font-size:28px}.birka-hero-actions .birka-button{font-size:14px}.birka-shape strong{font-size:13px}.birka-filters button{font-size:13px}.birka-colors{gap:3px;flex-wrap:wrap}.birka-color{padding:4px}.birka-bento p{font-size:16px}.birka-product-footer button{font-size:14px}}
 .birka-site .birka-brand{letter-spacing:-.02em;gap:11px;align-items:center}.birka-site .birka-brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#24523c,#143324);color:#f6f4ef;box-shadow:0 4px 14px #1b433229,inset 0 1px 1px #ffffff30;display:grid;place-items:center}.birka-site .birka-brand-mark svg{width:20px;height:20px}.birka-site .birka-brand>span:last-child{color:var(--ink);font-weight:600;letter-spacing:-.02em}.birka-site .birka-brand>span:last-child>span{color:var(--terra);font-style:italic;font-weight:500}.birka-footer-brand{display:inline-flex;align-items:center;gap:13px;font:500 40px/1 var(--font-craft-serif),Georgia,serif;color:#f6f4ef;letter-spacing:-.02em;margin-bottom:6px}.birka-footer-brand em{font-style:italic;font-weight:400;color:#d6b293}.birka-footer-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#2a5c43,#183a2a);border:1px solid #ffffff22;color:#e6d3be;display:grid;place-items:center;box-shadow:0 6px 18px #00000035}.birka-footer-mark svg{width:20px;height:20px}@media(max-width:570px){.birka-site .birka-brand{gap:9px;font-size:26px}.birka-site .birka-brand-mark{width:32px;height:32px;border-radius:10px}.birka-site .birka-brand-mark svg{width:17px;height:17px}.birka-footer-brand{font-size:34px;gap:10px}.birka-footer-mark{width:32px;height:32px;border-radius:10px}.birka-footer-mark svg{width:17px;height:17px}}
+
+/* CraftSad constructor and catalog. Keep the existing craft palette and motion. */
+.birka-builder { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); align-items: start; }
+.birka-builder-left { position: sticky; top: 125px; align-self: start; width: 100%; justify-content: start; border-radius: 20px; }
+.birka-builder-right { padding: 30px; }
+.birka-builder-heading { align-items: start; }
+.birka-builder-heading > span { display: grid; place-items: center; flex: 0 0 27px; height: 27px; border: 1px solid #71816d; border-radius: 50%; color: #dce6c9; font-size: 12px; }
+.birka-builder-heading h3 { font-size: 18px; }
+.birka-builder-heading p { display: block; font-size: 12px; color: #b7c5af; margin-top: 6px; line-height: 1.6; }
+.birka-builder-step { margin-bottom: 28px; }
+.birka-shapes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; padding: 0; border: 0; background: none; }
+.birka-shape { display: flex; flex-direction: column; align-items: start; justify-content: start; gap: 8px; text-align: left; padding: 13px 10px; border: 1px solid #ffffff25; border-radius: 12px; min-width: 0; }
+.birka-shape.active { border: 1px solid #dce6c9; }
+.birka-shape strong { font-size: 13px; }
+.birka-shape small { font-size: 11px; line-height: 1.5; margin: 0; opacity: 1; }
+.birka-shape b { font-size: 13px; margin-top: auto; padding-top: 6px; }
+.birka-inline-action { color: #dce6c9; font-size: 13px; padding: 12px 0 0; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+.birka-colors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.birka-color { width: 100%; height: auto; border: 1px solid #ffffff25; border-radius: 12px; display: flex; align-items: start; gap: 8px; padding: 12px; text-align: left; min-width: 0; }
+.birka-color > span:nth-child(2) { display: block; color: #dce6c9; min-width: 0; }
+.birka-color-swatch { flex: 0 0 25px; height: 25px; width: 25px; }
+.birka-color strong { display: block; font-size: 12px; line-height: 1.5; }
+.birka-color small { display: block; font-size: 11px; color: #b7c5af; margin-top: 6px; line-height: 1.5; }
+.birka-color em { display: inline-block; font-size: 10px; font-style: normal; border-radius: 5px; padding: 3px 6px; background: #dce6c920; margin-top: 7px; }
+.birka-builder-right textarea { min-height: 150px; max-height: 400px; width: 100%; }
+.birka-builder-right textarea[aria-invalid="true"] { border-color: #e5ac88; }
+.birka-validation, .birka-mix-note, .birka-delivery-copy { font-size: 12px; line-height: 1.6; color: #bac8b3; overflow-wrap: anywhere; margin: 10px 0; }
+.birka-validation p { margin: 8px 0; }
+.birka-line-error { background: #b05c3420; border-left: 2px solid #e5ac88; padding: 8px; color: #f4c7a9; }
+.birka-line-error mark { background: transparent; color: #ffdcbd; }
+.birka-quick-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.birka-quick-actions button { border: 1px solid #ffffff30; border-radius: 8px; padding: 10px 12px; color: #dce6c9; font-size: 12px; min-height: 44px; }
+.birka-builder-final .birka-builder-heading { display: flex; }
+.birka-discount { color: #dce6c9; font-size: 12px; line-height: 1.6; margin: 14px 0; }
+.birka-discount progress { width: 100%; height: 7px; border: 0; border-radius: 5px; background: #ffffff15; accent-color: #bbce9c; }
+.birka-discount progress::-webkit-progress-bar { background: #ffffff15; border-radius: 5px; }
+.birka-discount progress::-webkit-progress-value { background: #bbce9c; border-radius: 5px; }
+.birka-summary { display: flex; flex-direction: column; align-items: start; gap: 10px; }
+.birka-summary > span { font-size: 14px; line-height: 1.6; }
+.birka-summary del { color: #a6b49d; font-size: 16px; margin-right: 8px; }
+.birka-builder-final .birka-helper { font-size: 12px; line-height: 1.6; }
+.birka-preview-tabs { display: flex; gap: 4px; width: calc(100% - 32px); margin: 18px 16px 0; padding: 4px; background: #ffffff0b; border-radius: 14px; }
+.birka-preview-tabs button { flex: 1; min-width: 0; min-height: 44px; font-size: 13px; padding: 8px 6px; color: #dce6c9; border-radius: 10px; }
+.birka-preview-tabs button[aria-selected="true"] { color: #1b4332; background: #e4e9d8; }
+#preview-panel { width: 100%; }
+.birka-view-controls { flex-wrap: wrap; border-radius: 16px; margin: 8px 16px; }
+.birka-view-controls button { flex: 1 0 28%; padding: 10px 8px; border-radius: 12px; }
+.birka-preview-note { font-size: 12px; line-height: 1.7; max-width: 430px; }
+.birka-scale { padding: 22px 12px; color: #bfccb7; }
+.birka-scale svg { width: 100%; height: auto; }
+.birka-scale p { text-align: center; padding: 10px; font-size: 12px; }
+.birka-photo-gallery { padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; color: #bfccb7; font-size: 12px; }
+.birka-photo-gallery > p { grid-column: 1/-1; line-height: 1.7; }
+.birka-photo-gallery img { width: 100%; height: auto; border-radius: 12px; }
+.birka-photo-gallery figcaption { margin-top: 8px; line-height: 1.6; }
+.birka-label-text { white-space: pre-line; }
+.birka-filters { display: flex; flex-wrap: wrap; width: fit-content; max-width: 100%; border-radius: 18px; }
+.birka-filters button { flex: 0 1 auto; border-radius: 13px; font-size: 14px; padding-inline: 16px; }
+.birka-product { min-width: 0; display: flex; flex-direction: column; }
+.birka-product-body { display: flex; flex-direction: column; flex: 1; }
+.birka-product-body > p { margin-bottom: 10px; }
+.birka-product-category { line-height: 1.8; letter-spacing: .03em; }
+.birka-kit-list { margin-bottom: 15px; font-size: 13px; color: #526056; }
+.birka-kit-list summary { cursor: pointer; width: fit-content; border: 1px solid #c8d0be; border-radius: 18px; padding: 7px 12px; }
+.birka-kit-list p { margin-top: 12px; }
+.birka-product-footer { margin-top: auto; }
+.birka-product-footer small { display: block; font-size: 12px; margin-top: 4px; color: #526056; }
+.birka-product-footer del { color: #69745e; font-size: 13px; }
+.birka-kit-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+.birka-kit-actions .birka-button { min-height: 46px; padding: 12px 16px; font-size: 13px; flex: 1 0 auto; }
+.birka-kit-actions .birka-button-light { border: 1px solid #bbc7b2; color: #1b4332; background: transparent; }
+.birka-guide-row { padding: 15px 0; border-bottom: 1px solid #d8dccf; }
+.birka-guide-row h3 { font-size: 24px; }
+.birka-guide-row p { font-size: 14px; margin-top: 6px; }
+.birka-contact { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; font-size: 13px; color: inherit; }
+.birka-contact svg { width: 19px; height: 19px; }
+.birka-footer .birka-contact { color: #dce6c9; }
+.birka-reviews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.birka-reviews article { background: #eeeee4; border-radius: 18px; overflow: hidden; }
+.birka-reviews img { width: 100%; height: auto; }
+.birka-reviews article > div { padding: 24px; }
+.birka-reviews p { font-size: 15px; line-height: 1.8; margin: 15px 0; }
+.birka-reviews strong { font-size: 13px; }
+.birka-reviews small { display: block; margin-top: 7px; color: #526056; }
+.birka-demo-badge { font-size: 11px; color: #526056; border: 1px solid #bbc7b2; border-radius: 20px; padding: 5px 10px; }
+.birka-faq { padding-top: 0; }
+.birka-faq h2 { margin-bottom: 28px; }
+.birka-faq details { border-bottom: 1px solid #cbd3c0; padding: 22px 0; }
+.birka-faq summary { font-size: 18px; font-weight: 500; cursor: pointer; }
+.birka-faq p { max-width: 780px; margin-top: 15px; line-height: 1.8; color: #526056; }
+.birka-newsletter { background: #e5e9dc; padding-block: 48px; }
+.birka-newsletter > div { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.birka-newsletter h2 { font-size: 38px; margin: 12px 0; }
+.birka-newsletter p { font-size: 14px; line-height: 1.7; }
+.birka-newsletter form { min-width: 0; }
+.birka-newsletter label { font-size: 13px; }
+.birka-subscribe-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 15px; }
+.birka-subscribe-row input { width: 140px; min-width: 0; flex: 1; padding: 12px 16px; border: 1px solid #a4b29a; border-radius: 12px; background: #fffdf6; font-size: 16px; }
+.birka-subscribe-row button { min-height: 48px; font-size: 13px; padding: 12px 16px; }
+.birka-consent { display: flex; align-items: start; gap: 10px; line-height: 1.6; }
+.birka-consent input { margin-top: 4px; }
+.birka-newsletter [role="status"] { margin-top: 10px; }
+.birka-cart-item del { display: block; color: #69745e; font-size: 12px; }
+@media (max-width: 1100px) { .birka-contact > span { display: none; } .birka-footer .birka-contact > span { display: inline; } .birka-shapes { grid-template-columns: 1fr; } .birka-builder-right { padding: 22px; } }
+@media (max-width: 800px) { .birka-builder { grid-template-columns: minmax(0, 1fr); } .birka-builder-left { position: static; } .birka-shapes { grid-template-columns: repeat(3, minmax(0, 1fr)); } .birka-reviews { grid-template-columns: 1fr; } .birka-newsletter > div { grid-template-columns: 1fr; gap: 24px; } }
+@media (max-width: 570px) {
+  .birka-header-inner { gap: 8px; padding-inline: 12px; } .birka-header-actions { gap: 9px; } .birka-site .birka-brand { font-size: 25px; gap: 4px; } .birka-brand-mark { width: 22px; } .birka-brand-mark svg { width: 22px; }
+  .birka-header .birka-cart-button { padding-inline: 10px; } .birka-header .birka-cart-button > span { display: none; }
+  .birka-builder-right { padding: 22px 16px; } .birka-shapes { grid-template-columns: 1fr; } .birka-shape { padding: 13px; gap: 5px; } .birka-shape strong { font-size: 14px; }
+  .birka-colors { grid-template-columns: 1fr; } .birka-color { padding: 12px; } .birka-color strong { font-size: 13px; } .birka-color small { font-size: 12px; }
+  .birka-filters { width: 100%; gap: 3px; } .birka-filters button { flex: 1 0 42%; font-size: 12px; padding: 10px 7px; }
+  .birka-builder-final .birka-button { font-size: 14px; padding-inline: 16px; } .birka-photo-gallery { padding: 16px; }
+  .birka-faq summary { font-size: 16px; } .birka-subscribe-row { flex-direction: column; } .birka-subscribe-row input { width: 100%; }
+}
+.birka-label { container-type: inline-size; }
+.birka-label-text { white-space: pre; overflow-wrap: normal; }
+.birka-preview-note { display: block; }
+.birka-builder { overflow: clip; }

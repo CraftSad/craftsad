@@ -2,8 +2,11 @@
 
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
-import type { Ref } from "react";
+import Image from "next/image";
+import { type Ref, useState } from "react";
 import type { ShapeId } from "./data";
+import { tagPhotos } from "./data";
+import { ScalePreview } from "./scale-preview";
 import type { View } from "./shared";
 import type { TryOnMode } from "./try-on-types";
 import { LabelPreview, Pill } from "./ui";
@@ -36,140 +39,218 @@ export function ConstructorPreview({
   onSelectTryOn,
   onStep,
 }: ConstructorPreviewProps) {
+  const [tab, setTab] = useState("model");
+  const tabs = [
+    ["model", "3D-модель"],
+    ["scale", "В масштабе"],
+    ["photo", "Живое фото"],
+  ];
   const total = Math.max(names.length, 1);
   const currentName = names[previewIndex % total] ?? "Ваш сорт";
 
   return (
     <div className="birka-builder-left">
-      <div className="birka-builder-preview">
-        <div className="birka-preview-top">
-          <span>
-            <span className="birka-live-dot" />{" "}
-            {tryOn
-              ? tryOn === "seedling"
-                ? "🌱 Рассада"
-                : tryOn === "garden"
-                  ? "🌾 Грядка"
-                  : "🏡 Теплица"
-              : "Живой просмотр"}
-          </span>
-          {!tryOn && (
-            <span>
-              {Math.min(previewIndex + 1, total)} из {total}
-            </span>
-          )}
-        </div>
-
-        {tryOn ? (
-          <TryOnScene
-            mode={tryOn}
-            shape={shape}
-            color={color}
-            name={currentName}
-            fallback={
-              <LabelPreview
-                shape={shape}
-                color={color}
-                name={currentName}
-                view="front"
-              />
-            }
-          />
-        ) : (
-          <LabelScene
-            shape={shape}
-            color={color}
-            name={currentName}
-            view={view}
-            resetViewRef={resetViewRef}
-            fallback={
-              <LabelPreview
-                shape={shape}
-                color={color}
-                name={currentName}
-                view={view}
-              />
-            }
-          />
-        )}
-
-        {!tryOn && (
-          <div className="birka-preview-pager">
-            <button
-              type="button"
-              aria-label="Предыдущая надпись"
-              onClick={() => onStep(-1)}
-            >
-              <ChevronLeft />
-            </button>
-            <span aria-live="polite">
-              {names[previewIndex % total] || "Ваша надпись"}
-            </span>
-            <button
-              type="button"
-              aria-label="Следующая надпись"
-              onClick={() => onStep(1)}
-            >
-              <ChevronRight />
-            </button>
+      <div
+        className="birka-preview-tabs"
+        role="tablist"
+        aria-label="Режим предпросмотра"
+      >
+        {tabs.map(([id, title], index) => (
+          <button
+            type="button"
+            role="tab"
+            key={id}
+            id={`preview-tab-${id}`}
+            aria-controls="preview-panel"
+            aria-selected={tab === id}
+            tabIndex={tab === id ? 0 : -1}
+            onClick={() => setTab(id ?? "model")}
+            onKeyDown={(event) => {
+              if (
+                !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
+              )
+                return;
+              event.preventDefault();
+              const next =
+                event.key === "Home"
+                  ? 0
+                  : event.key === "End"
+                    ? 2
+                    : (index + (event.key === "ArrowRight" ? 1 : 2)) % 3;
+              setTab(tabs[next]?.[0] ?? "model");
+              document
+                .getElementById(`preview-tab-${tabs[next]?.[0]}`)
+                ?.focus();
+            }}
+          >
+            {title}
+          </button>
+        ))}
+      </div>
+      <div
+        id="preview-panel"
+        role="tabpanel"
+        aria-labelledby={`preview-tab-${tab}`}
+      >
+        {tab === "scale" ? (
+          <ScalePreview shape={shape} color={color} name={currentName} />
+        ) : tab === "photo" ? (
+          <div className="birka-photo-gallery">
+            <p>
+              Реальные фотографии скоро появятся. Сейчас здесь заглушки, они не
+              передают оттенок пластика.
+            </p>
+            {tagPhotos[color]?.photos.map((photo) => (
+              <figure key={photo.caption}>
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={640}
+                  height={440}
+                />
+                <figcaption>
+                  {tagPhotos[color]?.color} · {photo.caption}{" "}
+                  {photo.placeholder && "· Фото-заглушка"}
+                </figcaption>
+              </figure>
+            ))}
           </div>
+        ) : (
+          <>
+            <div className="birka-builder-preview">
+              <div className="birka-preview-top">
+                <span>
+                  <span className="birka-live-dot" />{" "}
+                  {tryOn
+                    ? tryOn === "seedling"
+                      ? "🌱 Рассада"
+                      : tryOn === "garden"
+                        ? "🌾 Грядка"
+                        : "🏡 Теплица"
+                    : "Живой просмотр"}
+                </span>
+                {!tryOn && (
+                  <span>
+                    {Math.min(previewIndex + 1, total)} из {total}
+                  </span>
+                )}
+              </div>
+
+              {tryOn ? (
+                <TryOnScene
+                  mode={tryOn}
+                  shape={shape}
+                  color={color}
+                  name={currentName}
+                  fallback={
+                    <LabelPreview
+                      shape={shape}
+                      color={color}
+                      name={currentName}
+                      view="front"
+                    />
+                  }
+                />
+              ) : (
+                <LabelScene
+                  shape={shape}
+                  color={color}
+                  name={currentName}
+                  view={view}
+                  resetViewRef={resetViewRef}
+                  fallback={
+                    <LabelPreview
+                      shape={shape}
+                      color={color}
+                      name={currentName}
+                      view={view}
+                    />
+                  }
+                />
+              )}
+
+              {!tryOn && (
+                <div className="birka-preview-pager">
+                  <button
+                    type="button"
+                    aria-label="Предыдущая надпись"
+                    onClick={() => onStep(-1)}
+                  >
+                    <ChevronLeft />
+                  </button>
+                  <span aria-live="polite">
+                    {names[previewIndex % total] || "Ваша надпись"}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Следующая надпись"
+                    onClick={() => onStep(1)}
+                  >
+                    <ChevronRight />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <fieldset
+              className="birka-view-controls"
+              aria-label="Примерить бирку"
+            >
+              <button
+                type="button"
+                className={!tryOn && view === "front" ? "active" : ""}
+                onClick={() => onSelectView("front")}
+              >
+                <Pill active={!tryOn && view === "front"} group="view" />
+                Спереди
+              </button>
+              <button
+                type="button"
+                className={!tryOn && view === "side" ? "active" : ""}
+                onClick={() => onSelectView("side")}
+              >
+                <Pill active={!tryOn && view === "side"} group="view" />
+                Сбоку
+              </button>
+              <button
+                type="button"
+                className={!tryOn && view === "rotate" ? "active" : ""}
+                onClick={() => onSelectView("rotate")}
+              >
+                <Pill active={!tryOn && view === "rotate"} group="view" />
+                <RotateCcw /> 360°
+              </button>
+              <button
+                type="button"
+                className={tryOn === "seedling" ? "active" : ""}
+                onClick={() => onSelectTryOn("seedling")}
+                title="Примерить на рассаду в горшке"
+              >
+                <Pill active={tryOn === "seedling"} group="view" />🌱 Рассада
+              </button>
+              <button
+                type="button"
+                className={tryOn === "garden" ? "active" : ""}
+                onClick={() => onSelectTryOn("garden")}
+                title="Примерить на грядку"
+              >
+                <Pill active={tryOn === "garden"} group="view" />🌾 Грядка
+              </button>
+              <button
+                type="button"
+                className={tryOn === "greenhouse" ? "active" : ""}
+                onClick={() => onSelectTryOn("greenhouse")}
+                title="Примерить в теплице"
+              >
+                <Pill active={tryOn === "greenhouse"} group="view" />🏡 Теплица
+              </button>
+            </fieldset>
+          </>
         )}
       </div>
-
-      <fieldset className="birka-view-controls" aria-label="Примерить бирку">
-        <button
-          type="button"
-          className={!tryOn && view === "front" ? "active" : ""}
-          onClick={() => onSelectView("front")}
-        >
-          <Pill active={!tryOn && view === "front"} group="view" />
-          Спереди
-        </button>
-        <button
-          type="button"
-          className={!tryOn && view === "side" ? "active" : ""}
-          onClick={() => onSelectView("side")}
-        >
-          <Pill active={!tryOn && view === "side"} group="view" />
-          Сбоку
-        </button>
-        <button
-          type="button"
-          className={!tryOn && view === "rotate" ? "active" : ""}
-          onClick={() => onSelectView("rotate")}
-        >
-          <Pill active={!tryOn && view === "rotate"} group="view" />
-          <RotateCcw /> 360°
-        </button>
-        <button
-          type="button"
-          className={tryOn === "seedling" ? "active" : ""}
-          onClick={() => onSelectTryOn("seedling")}
-          title="Примерить на рассаду в горшке"
-        >
-          <Pill active={tryOn === "seedling"} group="view" />🌱 Рассада
-        </button>
-        <button
-          type="button"
-          className={tryOn === "garden" ? "active" : ""}
-          onClick={() => onSelectTryOn("garden")}
-          title="Примерить на грядку"
-        >
-          <Pill active={tryOn === "garden"} group="view" />🌾 Грядка
-        </button>
-        <button
-          type="button"
-          className={tryOn === "greenhouse" ? "active" : ""}
-          onClick={() => onSelectTryOn("greenhouse")}
-          title="Примерить в теплице"
-        >
-          <Pill active={tryOn === "greenhouse"} group="view" />🏡 Теплица
-        </button>
-      </fieldset>
       <p className="birka-preview-note">
-        {tryOn
-          ? "Вращайте сцену мышью. Бирка оживает в вашем саду."
-          : "Изображение помогает представить изделие. Готовая бирка может немного отличаться."}
+        Точный предпросмотр шрифта и переноса строк. Реальный оттенок пластика
+        при дневном свете смотрите во вкладке „Живое фото“
       </p>
     </div>
   );

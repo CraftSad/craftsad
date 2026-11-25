@@ -73,8 +73,8 @@ test("shows the full inscription and validates checkout on a short viewport", as
     .getByText(name, { exact: true });
   await expect(fullName).toBeVisible();
   await expect(fullName).toHaveCSS("white-space", "normal");
-  await expect(page.getByText(/^21 бирка ·/)).toBeVisible();
-  await page.getByRole("button", { name: "Добавить в корзину" }).click();
+  await expect(page.getByText(/^21 бирок ·/)).toBeVisible();
+  await page.getByRole("button", { name: "Добавить набор в корзину" }).click();
 
   const cart = page.getByRole("dialog");
   const thumbnail = cart.locator(".birka-preview");

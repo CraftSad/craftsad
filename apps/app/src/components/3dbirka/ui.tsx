@@ -9,6 +9,7 @@ import {
 } from "react";
 import { colorPairs, type ShapeId } from "./data";
 import { money, type View } from "./shared";
+import { wrapName } from "./tag-config";
 
 export function RollingNumber({ value }: { value: number }) {
   return (
@@ -126,6 +127,11 @@ export function LabelPreview({
   small?: boolean;
 }) {
   const pair = colorPairs[color] ?? colorPairs[0];
+  const lines = wrapName(name || "Ваш сорт");
+  const longestLine = Math.max(
+    ...lines.map((line) => Array.from(line).length),
+    1,
+  );
   return (
     <div
       className={`birka-preview ${small ? "birka-preview-small" : ""} birka-preview-${view}`}
@@ -142,7 +148,12 @@ export function LabelPreview({
         }
       >
         {shape === "hanging" && <span className="birka-label-hole" />}
-        <span className="birka-label-text">{name || "Ваш сорт"}</span>
+        <span
+          className="birka-label-text"
+          style={{ fontSize: `min(27px, ${140 / longestLine}cqw)` }}
+        >
+          {lines.join("\n")}
+        </span>
         {shape !== "hanging" && <span className="birka-label-stem" />}
       </div>
       {!small && <div className="birka-preview-shadow" />}

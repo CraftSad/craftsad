@@ -22,6 +22,7 @@ import {
 } from "react";
 import { type Group, Path, Shape } from "three";
 import { colorPairs, type ShapeId } from "./data";
+import { wrapName } from "./tag-config";
 
 type Props = {
   shape: ShapeId;
@@ -78,9 +79,7 @@ function Tag({ shape, color, name, view }: Props) {
       group.current.rotation.y +=
         (target - group.current.rotation.y) * Math.min(delta * 6, 1);
   });
-  const words = name.split(/\s+/);
-  const lines =
-    words.length > 1 ? [words[0] ?? "", words.slice(1).join(" ")] : [name];
+  const lines = wrapName(name);
   return (
     <group
       ref={group}

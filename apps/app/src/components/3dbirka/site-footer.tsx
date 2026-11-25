@@ -1,6 +1,7 @@
 "use client";
 
 import { Leaf } from "lucide-react";
+import { ContactLink } from "./contact-link";
 
 export function SiteFooter({
   year,
@@ -19,10 +20,10 @@ export function SiteFooter({
             <i className="birka-footer-mark" aria-hidden="true">
               <Leaf />
             </i>
-            3D <em>Бирка</em>
+            Craft<em>Sad</em>
           </strong>
           <p>
-            Мастерская садовых бирок.
+            Мастерская садовых бирок 3dbirka.
             <br />
             Сделано с любовью к вашим растениям.
           </p>
@@ -38,6 +39,7 @@ export function SiteFooter({
         </div>
         <div>
           <span>Помощь</span>
+          <ContactLink />
           <p>
             Доставка в пункты Ozon
             <br />
@@ -49,7 +51,7 @@ export function SiteFooter({
         </div>
       </div>
       <div className="birka-footer-bottom birka-container">
-        <span>© {year} 3D Бирка</span>
+        <span>© {year} CraftSad</span>
         <span>Пусть всё растёт 🌱</span>
       </div>
     </footer>

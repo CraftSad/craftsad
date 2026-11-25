@@ -6,6 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { colorPairs } from "./data";
+import { wrapName } from "./tag-config";
 import type { TagProps } from "./try-on-types";
 
 export function TagMesh({
@@ -63,9 +64,7 @@ export function TagMesh({
     return s;
   }, [shape]);
 
-  const words = name.split(/\s+/);
-  const lines =
-    words.length > 1 ? [words[0] ?? "", words.slice(1).join(" ")] : [name];
+  const lines = wrapName(name);
 
   const extrude = {
     depth: 0.1,

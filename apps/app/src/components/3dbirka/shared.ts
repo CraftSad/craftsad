@@ -1,15 +1,15 @@
 import { z } from "zod";
 import type { ShapeId } from "./data";
+import type { TagConfig } from "./tag-config";
 
-export type Category = "all" | "seedling" | "garden";
+export type Category = "all" | "seedling" | "garden" | "greenhouse" | "large";
 export type View = "front" | "side" | "rotate";
 
-export type CartItem = {
+export type CartItem = TagConfig & {
   id: number;
-  shape: ShapeId;
-  color: number;
-  names: string[];
   price: number;
+  itemShapes?: ShapeId[];
+  originalPrice?: number;
 };
 
 export const money = (value: number) =>

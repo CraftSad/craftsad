@@ -113,7 +113,8 @@ export function CartDrawer({
           <div className="birka-delivery-note">
             <Truck />
             <span>
-              Доставка в пункт выдачи Ozon по всей России — обычно 2–4 дня
+              Изготовление за 2 рабочих дня · Доставка в пункт Ozon от 190 ₽
+              (бесплатно от 2 000 ₽)
             </span>
           </div>
           <div className="birka-cart-items">
@@ -127,13 +128,34 @@ export function CartDrawer({
                 />
                 <div>
                   <strong>
-                    {shapes.find((shape) => shape.id === item.shape)?.title}
+                    {item.mixed
+                      ? "Микс 10 см + 18 см"
+                      : shapes.find((shape) => shape.id === item.shape)?.title}
                   </strong>
                   <p>
                     {item.names.length} шт. ·{" "}
                     {(colorPairs[item.color] ?? colorPairs[0]).name}
                   </p>
                   <b>{money(item.price)} ₽</b>
+                  {item.originalPrice != null &&
+                    item.originalPrice > item.price && (
+                      <del>{money(item.originalPrice)} ₽</del>
+                    )}
+                  {item.mixed && (
+                    <p>
+                      Колышек ·{" "}
+                      {
+                        item.itemShapes?.filter((shape) => shape === "stake")
+                          .length
+                      }{" "}
+                      шт. / Флажок ·{" "}
+                      {
+                        item.itemShapes?.filter((shape) => shape === "flag")
+                          .length
+                      }{" "}
+                      шт.
+                    </p>
+                  )}
                   <button
                     type="button"
                     className="birka-text-button"

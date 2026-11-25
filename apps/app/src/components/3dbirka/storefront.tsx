@@ -6,7 +6,8 @@ import { CartDrawer } from "./cart-drawer";
 import { CatalogSection } from "./catalog-section";
 import { ConstructorPreview } from "./constructor-preview";
 import { ConstructorSteps } from "./constructor-steps";
-import { type Preset, type ShapeId, shapes } from "./data";
+import type { Preset, ShapeId } from "./data";
+import { GardenSections } from "./garden-sections";
 import { HeroSection } from "./hero-section";
 import { HowSection } from "./how-section";
 import { LoginModal } from "./login-modal";
@@ -14,6 +15,7 @@ import { PromiseSection } from "./promise-section";
 import type { CartItem, Category, View } from "./shared";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
+import { calculateKit, kitShapes, parseNames } from "./tag-config";
 import type { TryOnMode } from "./try-on-types";
 
 const DEFAULT_NAMES =
@@ -27,6 +29,7 @@ const scrollBehavior = () =>
 export function Storefront() {
   const [category, setCategory] = useState<Category>("all");
   const [shape, setShape] = useState<ShapeId>("stake");
+  const [mixed, setMixed] = useState(false);
   const [color, setColor] = useState(0);
   const [namesText, setNamesText] = useState(DEFAULT_NAMES);
   const [view, setView] = useState<View>("front");
@@ -37,16 +40,13 @@ export function Storefront() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const nextCartId = useRef(1);
   const [added, setAdded] = useState(false);
   const [year, setYear] = useState(2026);
   useEffect(() => setYear(new Date().getFullYear()), []);
 
-  const names = namesText
-    .split("\n")
-    .map((name) => name.trim())
-    .filter(Boolean);
-  const chosenShape = shapes.find((entry) => entry.id === shape) ?? shapes[0];
-  const price = names.length * chosenShape.price;
+  const names = parseNames(namesText).map((row) => row.text);
+  const { price, original } = calculateKit(names.length, shape, mixed);
   const cartCount = cart.reduce((sum, item) => sum + item.names.length, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
@@ -71,6 +71,7 @@ export function Storefront() {
     });
   const selectShape = (id: ShapeId) => {
     setShape(id);
+    setMixed(false);
     setAdded(false);
   };
   const selectColor = (index: number) => {
@@ -84,15 +85,15 @@ export function Storefront() {
   };
   const applyPreset = (preset: Preset) => {
     setShape(preset.shape);
+    setMixed(!!preset.mixed);
     setColor(preset.color);
-    setNamesText(preset.names.join("\n"));
+    setNamesText(preset.items.join("\n"));
     setPreviewIndex(0);
     setAdded(false);
     scrollTo("constructor");
   };
   const appendName = (name: string) => {
     setAdded(false);
-    if (names.includes(name)) return;
     setNamesText((text) => `${text.trim()}${text.trim() ? "\n" : ""}${name}`);
   };
   const addToCart = () => {
@@ -102,9 +103,38 @@ export function Storefront() {
     }
     setCart((prev) => [
       ...prev,
-      { id: Date.now(), shape, color, names: [...names], price },
+      {
+        id: nextCartId.current++,
+        shape,
+        color,
+        names: [...names],
+        price,
+        originalPrice: original,
+        mixed,
+        itemShapes: kitShapes(names.length, shape, mixed),
+      },
     ]);
     setAdded(true);
+    setDialog("cart");
+  };
+
+  const addPreset = (preset: Preset) => {
+    const pricing = calculateKit(
+      preset.items.length,
+      preset.shape,
+      preset.mixed,
+    );
+    const item: CartItem = {
+      id: nextCartId.current++,
+      shape: preset.shape,
+      color: preset.color,
+      names: [...preset.items],
+      price: pricing.price,
+      originalPrice: pricing.original,
+      mixed: preset.mixed,
+      itemShapes: kitShapes(preset.items.length, preset.shape, preset.mixed),
+    };
+    setCart((current) => [...current, item]);
     setDialog("cart");
   };
 
@@ -141,7 +171,13 @@ export function Storefront() {
               </div>
               <div className="birka-builder">
                 <ConstructorPreview
-                  shape={shape}
+                  shape={
+                    mixed
+                      ? (kitShapes(names.length || 1, shape, true)[
+                          previewIndex % Math.max(names.length, 1)
+                        ] ?? shape)
+                      : shape
+                  }
                   color={color}
                   names={names}
                   view={view}
@@ -158,6 +194,7 @@ export function Storefront() {
                   namesText={namesText}
                   names={names}
                   added={added}
+                  mixed={mixed}
                   onSelectShape={selectShape}
                   onSelectColor={selectColor}
                   onNamesChange={handleNamesChange}
@@ -171,8 +208,10 @@ export function Storefront() {
             category={category}
             onCategoryChange={setCategory}
             onApplyPreset={applyPreset}
+            onAddPreset={addPreset}
           />
           <PromiseSection onNavigate={scrollTo} />
+          <GardenSections />
         </main>
         <SiteFooter
           year={year}

@@ -8,6 +8,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
+import { ContactLink } from "./contact-link";
 import { type Category, money } from "./shared";
 import { RollingNumber } from "./ui";
 
@@ -39,13 +40,13 @@ export function SiteHeader({
           type="button"
           className="birka-brand"
           onClick={onHome}
-          aria-label="3D Бирка — на главную"
+          aria-label="CraftSad — на главную"
         >
           <span className="birka-brand-mark">
             <Leaf />
           </span>
           <span>
-            3D<span> Бирка</span>
+            Craft<span>Sad</span>
             <small>мастерская садовых бирок</small>
           </span>
         </button>
@@ -67,7 +68,6 @@ export function SiteHeader({
               <button type="button" onClick={() => onSelectCategory("garden")}>
                 Бирки для грядок
               </button>
-              <span>Скоро: опоры и кашпо</span>
             </div>
           </div>
           <button type="button" onClick={() => onNavigate("constructor")}>
@@ -75,6 +75,7 @@ export function SiteHeader({
           </button>
         </nav>
         <div className="birka-header-actions">
+          <ContactLink compact />
           <button
             type="button"
             className="birka-login-button"

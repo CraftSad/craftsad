@@ -3,24 +3,27 @@ export type ShapeId = "stake" | "flag" | "hanging";
 export const shapes = [
   {
     id: "stake" as const,
-    title: "Колышек для стаканчиков",
+    title: "Колышек",
     size: "10 см",
     price: 60,
-    detail: "Для рассады",
+    detail: "Для стаканчиков, кассет и горшков",
+    field: "Поле текста: 6,5 см · до 2 строк",
   },
   {
     id: "flag" as const,
-    title: "Флажок для грядок",
+    title: "Флажок",
     size: "18 см",
     price: 90,
-    detail: "Для грядок",
+    detail: "Для открытых грядок и высоких кустов",
+    field: "Поле текста: 8 см · читается стоя",
   },
   {
     id: "hanging" as const,
-    title: "Подвесная для теплицы",
+    title: "Подвесная",
     size: "8 см",
     price: 70,
-    detail: "Для теплицы",
+    detail: "На ветку или шпалеру в теплице + хомут",
+    field: "Отверстие 4 мм · не теряется в листве",
   },
 ] as const;
 
@@ -45,24 +48,20 @@ export const popularVarieties = [
   "Клубника Елизавета",
 ];
 
-export const presets = [
+const standardPresets = [
   {
     title: "Первые всходы",
     category: "seedling",
-    count: 6,
-    price: 360,
     shape: "stake" as const,
     color: 0,
-    names: ["Томат", "Огурец", "Перец", "Баклажан", "Базилик", "Салат"],
+    items: ["Томат", "Огурец", "Перец", "Баклажан", "Базилик", "Салат"],
   },
   {
     title: "Любимые томаты",
     category: "seedling",
-    count: 9,
-    price: 540,
     shape: "stake" as const,
     color: 1,
-    names: [
+    items: [
       "Бычье сердце",
       "Черри",
       "Де Барао",
@@ -77,11 +76,9 @@ export const presets = [
   {
     title: "Большая рассада",
     category: "seedling",
-    count: 18,
-    price: 1080,
     shape: "stake" as const,
     color: 4,
-    names: [
+    items: [
       "Томат",
       "Огурец",
       "Перец",
@@ -105,20 +102,16 @@ export const presets = [
   {
     title: "Зелень у дома",
     category: "garden",
-    count: 6,
-    price: 540,
     shape: "flag" as const,
     color: 5,
-    names: ["Петрушка", "Укроп", "Базилик", "Мята", "Руккола", "Шпинат"],
+    items: ["Петрушка", "Укроп", "Базилик", "Мята", "Руккола", "Шпинат"],
   },
   {
     title: "Урожайная грядка",
     category: "garden",
-    count: 9,
-    price: 810,
     shape: "flag" as const,
     color: 2,
-    names: [
+    items: [
       "Морковь",
       "Свёкла",
       "Лук",
@@ -133,11 +126,9 @@ export const presets = [
   {
     title: "Весь огород",
     category: "garden",
-    count: 18,
-    price: 1620,
     shape: "flag" as const,
     color: 1,
-    names: [
+    items: [
       "Морковь",
       "Свёкла",
       "Лук",
@@ -161,11 +152,9 @@ export const presets = [
   {
     title: "Тепличный сезон",
     category: "seedling",
-    count: 11,
-    price: 770,
     shape: "hanging" as const,
     color: 0,
-    names: [
+    items: [
       "Томат",
       "Огурец",
       "Перец",
@@ -182,11 +171,9 @@ export const presets = [
   {
     title: "Сорта цветов",
     category: "garden",
-    count: 11,
-    price: 990,
     shape: "flag" as const,
     color: 3,
-    names: [
+    items: [
       "Пион",
       "Роза",
       "Лилия",
@@ -203,12 +190,79 @@ export const presets = [
   {
     title: "Дачная коллекция",
     category: "garden",
-    count: 6,
-    price: 540,
     shape: "flag" as const,
     color: 4,
-    names: ["Томаты", "Огурцы", "Клубника", "Мята", "Базилик", "Цветы"],
+    items: ["Томаты", "Огурцы", "Клубника", "Мята", "Базилик", "Цветы"],
   },
 ];
 
-export type Preset = (typeof presets)[number];
+export type PresetKit = {
+  title: string;
+  category: string;
+  shape: ShapeId;
+  color: number;
+  items: string[];
+  mixed?: boolean;
+  badge?: string;
+};
+export type Preset = PresetKit;
+export const presets: PresetKit[] = [
+  ...standardPresets,
+  {
+    title: "Полный сезон: от рассады до грядки",
+    category: "large",
+    shape: "stake",
+    color: 0,
+    mixed: true,
+    badge: "Выгода 15%",
+    items: [
+      "Томат Бычье сердце",
+      "Томат Черри",
+      "Огурец Зозуля",
+      "Огурец Герман",
+      "Перец Сладкий",
+      "Перец Огонёк",
+      "Баклажан Алмаз",
+      "Кабачок Искандер",
+      "Тыква Баттернат",
+      "Морковь Нантская",
+      "Свёкла Бордо",
+      "Редис Сора",
+      "Капуста Слава",
+      "Лук Эксибишен",
+      "Чеснок Любаша",
+      "Салат Лолло Росса",
+      "Базилик Геновезе",
+      "Укроп Аллигатор",
+      "Петрушка Богатырь",
+      "Мята Перечная",
+      "Руккола Покер",
+      "Шпинат Матадор",
+      "Горох Альфа",
+      "Фасоль Сакса",
+      "Клубника Елизавета",
+      "Земляника Руяна",
+      "Арбуз Огонёк",
+      "Дыня Колхозница",
+      "Сельдерей Юта",
+      "Кукуруза Лакомка",
+    ],
+  },
+];
+export const colorHints = [
+  "Максимальный контраст, читается в сумерках",
+  "Сливается с зеленью, не пестрит на клумбе",
+  "Под цвет глиняных горшков и тёплых грядок",
+  "Эффектный акцент для коллекционных сортов",
+  "Сразу заметна в густой траве",
+  "Спокойный природный оттенок",
+];
+export const tagPhotos = colorPairs.map((pair) => ({
+  color: pair.name,
+  photos: ["При дневном свете", "В посадках"].map((scene) => ({
+    src: "/images/tag-photo-placeholder.svg",
+    alt: `Фото-заглушка: бирка ${pair.name}, ${pair.label.toLowerCase()} — ${scene.toLowerCase()}`,
+    caption: scene,
+    placeholder: true,
+  })),
+}));
