@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>3D Бирка — сад начинается с имени</title>
+  <rect width="64" height="64" rx="16" fill="#203e33"/>
+  <path d="M19 13h28v27H35v12l-7 5V40h-9Z" fill="#a57d46"/>
+  <path d="M16 9h28v27H32v17l-7-5V36h-9Z" fill="#e4cf9f"/>
+  <path d="M30 30v-9" stroke="#203e33" stroke-width="3" stroke-linecap="round"/>
+  <path d="M30 25c-7 0-10-4-10-10 7 0 10 4 10 10Zm0-4c0-6 3-9 10-9 0 6-4 9-10 9Z" fill="#203e33"/>
+</svg>

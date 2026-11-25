@@ -1,8 +1,20 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
+const publicBrandAssets = new Set([
+  "/favicon.ico",
+  "/favicon.svg",
+  "/brand-mark.svg",
+  "/apple-touch-icon.png",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/icon-maskable-512.png",
+  "/manifest.webmanifest",
+]);
+
 export async function proxy(request: NextRequest) {
   if (
+    publicBrandAssets.has(request.nextUrl.pathname) ||
     request.nextUrl.pathname === "/" ||
     request.nextUrl.pathname.startsWith("/legal") ||
     request.nextUrl.pathname.startsWith("/images/") ||
