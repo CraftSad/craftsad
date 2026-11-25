@@ -211,7 +211,7 @@ export function Storefront() {
             onAddPreset={addPreset}
           />
           <PromiseSection onNavigate={scrollTo} />
-          <GardenSections />
+          <GardenSections onNavigate={scrollTo} />
         </main>
         <SiteFooter
           year={year}

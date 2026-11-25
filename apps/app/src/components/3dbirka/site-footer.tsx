@@ -41,6 +41,9 @@ export function SiteFooter({
           <button type="button" onClick={() => onNavigate("constructor")}>
             Создать свои бирки
           </button>
+          <button type="button" onClick={() => onNavigate("faq")}>
+            Частые вопросы
+          </button>
           <Link href={paths.legal.delivery} className="birka-footer-link">
             Оплата, доставка и возврат
           </Link>

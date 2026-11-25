@@ -61,6 +61,9 @@ export function SiteHeader({
           <button type="button" onClick={() => onNavigate("constructor")}>
             Конструктор
           </button>
+          <button type="button" onClick={() => onNavigate("faq")}>
+            Вопросы
+          </button>
         </nav>
         <div className="birka-header-actions">
           <ContactLink compact />

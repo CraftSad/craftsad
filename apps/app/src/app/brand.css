@@ -77,11 +77,330 @@
 .birka-footer { border-top: 1px solid #b5965c66; }
 .birka-footer-brand { margin-bottom: 15px; }
 
+/* Editorial FAQ section */
+.birka-faq {
+  padding-top: 20px;
+}
+
+.birka-faq-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.birka-faq-intro {
+  position: sticky;
+  top: 124px;
+}
+
+.birka-faq-intro .birka-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--terra);
+  font-weight: 600;
+}
+
+.birka-faq-intro h2 {
+  margin: 12px 0 16px;
+}
+
+.birka-faq-intro > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 430px;
+}
+
+.birka-faq-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 26px 0;
+}
+
+.birka-faq-stats > div {
+  background: #fffdf8b8;
+  border: 1px solid #d8d5c8;
+  border-radius: 16px;
+  padding: 14px 14px 13px;
+}
+
+.birka-faq-stats dt {
+  font: 600 24px/1.1 var(--font-craft-serif), Georgia, serif;
+  color: var(--forest);
+  letter-spacing: -0.02em;
+}
+
+.birka-faq-stats dd {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.birka-faq-card {
+  background: linear-gradient(155deg, #214439, #152e26);
+  color: #f4f1e7;
+  border: 1px solid #b5965c4d;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 18px 40px #152e2618;
+}
+
+.birka-faq-card > strong {
+  display: block;
+  font: 500 24px/1.2 var(--font-craft-serif), Georgia, serif;
+  color: #fbf8f0;
+  letter-spacing: -0.015em;
+}
+
+.birka-faq-card > p {
+  margin: 10px 0 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #cbd5c7;
+}
+
+.birka-faq-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.birka-faq-card .birka-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e4cf9f;
+  color: #183229;
+  border: 0;
+  border-radius: 99px;
+  padding: 10px 18px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.birka-faq-card .birka-contact:hover {
+  background: #efe0bb;
+  transform: translateY(-1px);
+}
+
+.birka-faq-card .birka-contact > span {
+  display: inline;
+}
+
+.birka-faq-card .birka-contact svg {
+  width: 16px;
+  height: 16px;
+}
+
+.birka-faq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ffffff12;
+  color: #f4f1e7;
+  border: 1px solid #ffffff26;
+  border-radius: 99px;
+  padding: 10px 16px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.birka-faq-link:hover {
+  background: #ffffff22;
+}
+
+.birka-faq-link svg {
+  width: 15px;
+  height: 15px;
+}
+
+.birka-faq-legal-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #d6c59d;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.birka-faq-legal-link:hover {
+  color: #fff8e6;
+}
+
+.birka-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.birka-faq-list details {
+  background: #fffdf8cc;
+  border: 1px solid #dcd8ca;
+  border-radius: 20px;
+  padding: 0;
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+
+.birka-faq-list details:hover {
+  border-color: #bfb9a4;
+  background: #fffef9;
+}
+
+.birka-faq-list details[open] {
+  background: #fffef9;
+  border-color: #a58b5980;
+  box-shadow: 0 14px 34px #203c320d;
+}
+
+.birka-faq-list summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.birka-faq-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.birka-faq-list summary:focus-visible {
+  outline: 3px solid #c87d55;
+  outline-offset: 3px;
+  border-radius: 20px;
+}
+
+.birka-faq-num {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #ece8dc;
+  border: 1px solid #d7d2c2;
+  color: #5b6659;
+  display: grid;
+  place-items: center;
+  font: 600 15px/1 var(--font-craft-serif), Georgia, serif;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
+}
+
+.birka-faq-list details[open] .birka-faq-num {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #e4cf9f;
+}
+
+.birka-faq-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.birka-faq-heading small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #727d6f;
+  font-weight: 600;
+}
+
+.birka-faq-heading > span {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.38;
+  color: var(--ink);
+}
+
+.birka-faq-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #d5d0c0;
+  background: #f6f3ea;
+  color: var(--forest);
+  display: grid;
+  place-items: center;
+  transition:
+    transform 0.25s,
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
+}
+
+.birka-faq-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.birka-faq-list details[open] .birka-faq-icon {
+  transform: rotate(45deg);
+  background: #e9e3d3;
+  border-color: #b5965c80;
+}
+
+.birka-faq-body {
+  padding: 0 24px 22px 78px;
+}
+
+.birka-faq-body p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #46544b;
+  max-width: 680px;
+}
+
+.birka-faq-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.birka-faq-chips span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2c4a3e;
+  background: #e9ede2;
+  border: 1px solid #d2dac8;
+  border-radius: 99px;
+  padding: 5px 12px;
+}
+
 @media (max-width: 1100px) {
   .birka-header-inner { gap: 16px; }
   .birka-header-actions { gap: 16px; }
   .birka-nav { gap: 20px; }
+  .birka-faq-grid { gap: 36px; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr); }
 }
+
+@media (max-width: 900px) {
+  .birka-faq-grid { grid-template-columns: 1fr; gap: 28px; }
+  .birka-faq-intro { position: static; }
+  .birka-faq-intro > p { max-width: none; }
+}
+
 @media (max-width: 570px) {
   .birka-header-inner { padding-inline: 14px; gap: 8px; }
   .birka-header-actions { gap: 6px; }
@@ -95,6 +414,18 @@
   .birka-hero h1 { font-size: clamp(37px, 9.5vw, 51px); }
   .birka-art-monogram { font-size: 260px; }
   .birka-hero-rule { letter-spacing: 0; }
+  .birka-faq-stats { grid-template-columns: 1fr; gap: 8px; margin: 20px 0; }
+  .birka-faq-stats > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+  .birka-faq-stats dt { font-size: 21px; white-space: nowrap; }
+  .birka-faq-stats dd { margin: 0; text-align: right; }
+  .birka-faq-card { padding: 20px; border-radius: 18px; }
+  .birka-faq-card > strong { font-size: 21px; }
+  .birka-faq-list summary { padding: 16px; gap: 12px; }
+  .birka-faq-num { width: 32px; height: 32px; border-radius: 10px; font-size: 13px; }
+  .birka-faq-heading > span { font-size: 15px; }
+  .birka-faq-icon { width: 32px; height: 32px; }
+  .birka-faq-body { padding: 0 16px 18px; }
+  .birka-faq-body p { font-size: 14px; }
 }
 
 @media (max-width: 370px) {
