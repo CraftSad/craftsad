@@ -388,17 +388,485 @@
   padding: 5px 12px;
 }
 
+/* Editorial Catalog section */
+.birka-catalog .birka-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--terra);
+  font-weight: 600;
+}
+
+.birka-catalog-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.birka-catalog-toolbar .birka-filters {
+  margin-bottom: 0;
+  border: 1px solid #d7d4c6;
+  background: #e7e5da;
+  padding: 5px;
+  gap: 4px;
+}
+
+.birka-catalog-toolbar .birka-filters button {
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 9px 18px;
+  color: #465347;
+  transition: color 0.2s;
+}
+
+.birka-catalog-toolbar .birka-filters button:hover {
+  color: var(--forest);
+}
+
+.birka-catalog-toolbar .birka-filters button.active {
+  color: var(--forest);
+}
+
+.birka-catalog-toolbar .birka-filters .birka-active-pill {
+  background: #fffef9;
+  box-shadow:
+    0 2px 10px #203c3214,
+    0 0 0 1px #b5965c29;
+}
+
+.birka-catalog-perks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.birka-catalog-perks > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border-radius: 99px;
+  background: #fffdf8b8;
+  border: 1px solid #dcd8ca;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4d5a4f;
+  white-space: nowrap;
+}
+
+.birka-catalog-perks > span svg {
+  width: 14px;
+  height: 14px;
+  color: var(--terra);
+}
+
+.birka-catalog-perks > span strong {
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.birka-products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+.birka-product {
+  background: #fffdf8;
+  border: 1px solid #dcd8ca;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 28px #203c3208;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.birka-product:hover {
+  border-color: #bfb8a2;
+  box-shadow: 0 22px 44px #203c3214;
+}
+
+.birka-product-art {
+  position: relative;
+  height: 244px;
+  border-radius: 0;
+  border-bottom: 1px solid #e6e2d5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 32%, #f4f2e7, #dfe1d2);
+}
+
+.birka-art-1 {
+  background: radial-gradient(ellipse at 42% 30%, #e4ece0, #c8d4c3);
+}
+
+.birka-art-2 {
+  background: radial-gradient(ellipse at 50% 30%, #f1e5d7, #dec9b4);
+}
+
+.birka-product-art::after {
+  inset: 22px;
+  border: 1px dashed #23483e18;
+  border-radius: 20px;
+}
+
+.birka-product-art-top,
+.birka-product-art-bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.birka-product-badge {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  background: #fffef9e6;
+  backdrop-filter: blur(8px);
+  border: 1px solid #203c3214;
+  color: var(--forest);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.birka-product-badge-discount {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #f4e6c8;
+}
+
+.birka-product-count {
+  display: inline-flex;
+  align-items: center;
+  background: #203c3212;
+  backdrop-filter: blur(6px);
+  color: #203c32;
+  border-radius: 99px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.birka-product-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.birka-product-art .birka-preview-small {
+  transform: scale(0.64);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.birka-product:hover .birka-product-art .birka-preview-small {
+  transform: scale(0.69) rotate(3deg);
+}
+
+.birka-product-stage-duo .birka-preview-small:first-child {
+  transform: translate(-42px, -6px) scale(0.58) rotate(-4deg);
+}
+
+.birka-product-stage-duo .birka-preview-small:last-child {
+  transform: translate(46px, 8px) scale(0.56) rotate(6deg);
+}
+
+.birka-product:hover .birka-product-stage-duo .birka-preview-small:first-child {
+  transform: translate(-46px, -8px) scale(0.62) rotate(-6deg);
+}
+
+.birka-product:hover .birka-product-stage-duo .birka-preview-small:last-child {
+  transform: translate(50px, 6px) scale(0.6) rotate(8deg);
+}
+
+.birka-product-shape-chip,
+.birka-product-color-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fffef9d9;
+  backdrop-filter: blur(8px);
+  border: 1px solid #203c3214;
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #36453b;
+}
+
+.birka-product-color-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex-shrink: 0;
+}
+
+.birka-product-body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0;
+}
+
+.birka-product-category {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #727d6e;
+}
+
+.birka-product h3 {
+  font: 600 28px/1.15 var(--font-craft-serif), Georgia, serif;
+  color: var(--ink);
+  margin: 6px 0 14px;
+  letter-spacing: -0.02em;
+}
+
+.birka-kit-tags-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex: 1;
+}
+
+.birka-kit-tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.birka-kit-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #f3f0e6;
+  border: 1px solid #e2ddd0;
+  color: #2f3e35;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.birka-kit-list {
+  margin: 2px 0 0;
+}
+
+.birka-kit-list summary {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #e8ede2;
+  border: 1px solid #d1dac7;
+  color: var(--forest);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.birka-kit-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.birka-kit-list summary:hover {
+  background: #dfe7d7;
+  border-color: #bcc8b0;
+}
+
+.birka-kit-list summary svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.birka-kit-list[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.birka-kit-tags-more {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2ddd0;
+}
+
+.birka-product-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #e8e4d8;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.birka-product-price {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+
+.birka-product-price-main {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.birka-product-footer strong {
+  font: 700 24px/1.1 var(--font-craft-sans), sans-serif;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.birka-product-footer del {
+  font-size: 14px;
+  color: #8c9488;
+  text-decoration: line-through;
+}
+
+.birka-product-save {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: #e5ede0;
+  color: var(--forest);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.birka-product-footer small {
+  font-size: 12px;
+  color: #6b7669;
+  line-height: 1.4;
+}
+
+.birka-kit-actions {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.birka-kit-actions .birka-button {
+  min-height: 46px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 7px;
+  border-radius: 14px;
+}
+
+.birka-kit-actions .birka-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.birka-kit-actions .birka-button-light {
+  background: #f4f1e8;
+  border: 1px solid #d5d0c0;
+  color: var(--forest);
+}
+
+.birka-kit-actions .birka-button-light:hover {
+  background: #eae5d7;
+  border-color: #bfb8a2;
+}
+
+/* Featured full-season kit */
+.birka-product-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.35fr);
+  background: linear-gradient(145deg, #fffef9, #f7f3e8);
+  border-color: #c7b58e;
+  box-shadow: 0 16px 40px #203c3210;
+}
+
+.birka-product-featured .birka-product-art {
+  height: auto;
+  min-height: 290px;
+  border-bottom: 0;
+  border-right: 1px solid #e4decb;
+  background: radial-gradient(ellipse at 50% 38%, #f4ecd8, #d8dfc9);
+}
+
+.birka-product-featured .birka-product-body {
+  padding: 26px 28px;
+}
+
+.birka-product-featured h3 {
+  font-size: 33px;
+  margin: 6px 0 14px;
+}
+
+.birka-product-featured .birka-kit-actions {
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  justify-content: start;
+}
+
 @media (max-width: 1100px) {
   .birka-header-inner { gap: 16px; }
   .birka-header-actions { gap: 16px; }
   .birka-nav { gap: 20px; }
   .birka-faq-grid { gap: 36px; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr); }
+  .birka-products { gap: 18px; }
+  .birka-product-body { padding: 18px; }
+  .birka-product h3 { font-size: 25px; }
+  .birka-kit-actions { grid-template-columns: 1fr; }
+  .birka-product-featured .birka-kit-actions { grid-template-columns: repeat(2, minmax(0, 200px)); }
 }
 
 @media (max-width: 900px) {
   .birka-faq-grid { grid-template-columns: 1fr; gap: 28px; }
   .birka-faq-intro { position: static; }
   .birka-faq-intro > p { max-width: none; }
+  .birka-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .birka-product-featured { grid-template-columns: 1fr; }
+  .birka-product-featured .birka-product-art {
+    min-height: 244px;
+    border-right: 0;
+    border-bottom: 1px solid #e4decb;
+  }
+  .birka-product-featured .birka-product-body { padding: 20px 22px 22px; }
+  .birka-product-featured h3 { font-size: 28px; }
+  .birka-product-featured .birka-kit-actions { grid-template-columns: 1.25fr 1fr; }
 }
 
 @media (max-width: 570px) {
@@ -414,6 +882,32 @@
   .birka-hero h1 { font-size: clamp(37px, 9.5vw, 51px); }
   .birka-art-monogram { font-size: 260px; }
   .birka-hero-rule { letter-spacing: 0; }
+  .birka-catalog-toolbar { align-items: stretch; gap: 12px; margin-bottom: 24px; }
+  .birka-catalog-toolbar .birka-filters {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 5px;
+    gap: 4px;
+  }
+  .birka-catalog-toolbar .birka-filters button {
+    flex: 1 1 auto;
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .birka-catalog-perks { width: 100%; }
+  .birka-catalog-perks > span { flex: 1 1 auto; justify-content: center; font-size: 11px; padding: 7px 10px; }
+  .birka-products { grid-template-columns: 1fr; gap: 20px; }
+  .birka-product-art,
+  .birka-product-featured .birka-product-art { height: 236px; min-height: 236px; }
+  .birka-product-body,
+  .birka-product-featured .birka-product-body { padding: 18px; }
+  .birka-product h3,
+  .birka-product-featured h3 { font-size: 26px; }
+  .birka-kit-actions,
+  .birka-product-featured .birka-kit-actions { grid-template-columns: 1.2fr 1fr; }
   .birka-faq-stats { grid-template-columns: 1fr; gap: 8px; margin: 20px 0; }
   .birka-faq-stats > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; }
   .birka-faq-stats dt { font-size: 21px; white-space: nowrap; }
