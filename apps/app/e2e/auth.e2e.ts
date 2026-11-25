@@ -1,4 +1,9 @@
-import { expect, type Page, test } from "@playwright/test";
+import {
+  type APIRequestContext,
+  expect,
+  type Page,
+  test,
+} from "@playwright/test";
 
 const PASSWORD = "e2e-password-123";
 
@@ -14,15 +19,45 @@ async function fillPasswordForm(page: Page, email: string) {
   await panel.getByLabel("Пароль", { exact: true }).fill(PASSWORD);
 }
 
-test("signs up, keeps the session and signs back in", async ({
+async function verificationLink(request: APIRequestContext, email: string) {
+  const mailbox = email.split("@")[0];
+  const inbox = `http://localhost:9000/api/v1/mailbox/${mailbox}`;
+  let link: string | undefined;
+  await expect
+    .poll(async () => {
+      const list = await request.get(inbox);
+      if (!list.ok()) return;
+      const [message]: { id: string }[] = await list.json();
+      if (!message) return;
+      const response = await request.get(`${inbox}/${message.id}`);
+      if (!response.ok()) return;
+      const { body }: { body: { text: string } } = await response.json();
+      link = body.text.match(
+        /https?:\/\/[^\s\])]+\/api\/auth\/verify-email\?[^\s\])]+/,
+      )?.[0];
+      return link;
+    })
+    .toBeTruthy();
+  if (!link) throw new Error("Verification email link missing");
+  return link;
+}
+
+test("signs up, verifies email, keeps the session and signs back in", async ({
   page,
   browser,
+  request,
 }) => {
   const email = uniqueEmail();
 
   await page.goto("/auth/signup");
   await fillPasswordForm(page, email);
   await page.getByRole("button", { name: "Создать аккаунт" }).click();
+
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  await page.goto(await verificationLink(request, email));
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  await fillPasswordForm(page, email);
+  await page.getByRole("button", { name: "Войти" }).click();
 
   await expect(page).toHaveURL("/");
   await page.reload();

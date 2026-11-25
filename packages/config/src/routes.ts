@@ -2,6 +2,7 @@ const ROOTS = {
   DASHBOARD: "/",
   AUTH: "/auth",
   SETTINGS: "/settings",
+  LEGAL: "/legal",
 } as const;
 
 export const paths = {
@@ -20,5 +21,13 @@ export const paths = {
     root: ROOTS.SETTINGS,
     profile: `${ROOTS.SETTINGS}/profile`,
     security: `${ROOTS.SETTINGS}/security`,
+  },
+  legal: {
+    root: ROOTS.LEGAL,
+    offer: `${ROOTS.LEGAL}/offer`,
+    privacy: `${ROOTS.LEGAL}/privacy`,
+    consent: `${ROOTS.LEGAL}/consent`,
+    delivery: `${ROOTS.LEGAL}/delivery`,
+    cookies: `${ROOTS.LEGAL}/cookies`,
   },
 } as const;

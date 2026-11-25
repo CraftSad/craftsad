@@ -11,10 +11,21 @@ test("validates demo login and keeps the account openable with the keyboard", as
   const requestCode = dialog.getByRole("button", { name: "Получить код" });
   await expect(phone).toBeFocused();
   await requestCode.focus();
+  const privacy = dialog.getByRole("link", {
+    name: "политикой конфиденциальности",
+  });
+  const consent = dialog.getByRole("link", {
+    name: "согласие на обработку персональных данных",
+  });
+  const close = dialog.getByRole("button", { name: "Закрыть", exact: true });
   await page.keyboard.press("Tab");
-  await expect(
-    dialog.getByRole("button", { name: "Закрыть", exact: true }),
-  ).toBeFocused();
+  await expect(privacy).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(consent).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(close).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(consent).toBeFocused();
   await phone.fill("8123");
   await requestCode.click();
   await expect(phone).toHaveAccessibleDescription(
@@ -94,7 +105,33 @@ test("shows the full inscription and validates checkout on a short viewport", as
   await cart.getByLabel("Имя", { exact: true }).fill("Тест");
   await cart.getByLabel("Телефон", { exact: true }).fill("8123456789");
   await cart.getByLabel("Город", { exact: true }).fill("Тестовый город");
-  await cart.getByLabel("Адрес удобного пункта Ozon").fill("Тестовая, 1");
+  const address = cart.getByLabel("Адрес удобного пункта Ozon");
+  await address.fill("Тестовая, 1");
+
+  for (const [name, path] of [
+    ["публичной оферты", "/legal/offer"],
+    ["согласие на обработку персональных данных", "/legal/consent"],
+    ["политикой конфиденциальности", "/legal/privacy"],
+  ] as const) {
+    const [document] = await Promise.all([
+      page.waitForEvent("popup"),
+      cart.getByRole("link", { name, exact: true }).click(),
+    ]);
+    await expect(document).toHaveURL(path);
+    expect(await document.evaluate(() => window.opener === null)).toBe(true);
+    await document.close();
+  }
+
+  await expect(cart).toBeVisible();
+  await expect(cart.getByText(/^21 шт\. ·/)).toBeVisible();
+  await expect(cart.getByLabel("Имя", { exact: true })).toHaveValue("Тест");
+  await expect(cart.getByLabel("Телефон", { exact: true })).toHaveValue(
+    "8123456789",
+  );
+  await expect(cart.getByLabel("Город", { exact: true })).toHaveValue(
+    "Тестовый город",
+  );
+  await expect(address).toHaveValue("Тестовая, 1");
   await submit.click();
   await expect(
     cart.getByRole("heading", { name: "Демонстрация завершена" }),

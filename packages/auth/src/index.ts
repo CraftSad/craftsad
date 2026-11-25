@@ -4,9 +4,10 @@ import { type Database, db } from "@acme/db";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { APIError } from "better-auth/api";
 import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 
-import { ADMIN_ROLE, hasAdminRole, isAdminEmail } from "./roles";
+import { ADMIN_ROLE, hasAdminRole, isAdmin, isAdminEmail } from "./roles";
 import { smsProvider } from "./sms";
 
 const tempEmail = (phone: string) =>
@@ -32,6 +33,7 @@ export function initAuth<
    */
   runInBackground?: (promise: Promise<unknown>) => void;
   extraPlugins?: TExtraPlugins;
+  adminOnly?: boolean;
   /** Defaults to the app database; tests pass an in-memory PGlite one. */
   database?: Database;
 }) {
@@ -68,7 +70,27 @@ export function initAuth<
       window: 60,
       max: 100,
     },
-    emailAndPassword: { enabled: false },
+    emailAndPassword: {
+      enabled: true,
+      requireEmailVerification: true,
+      async sendResetPassword({ user, url }) {
+        await options.sendEmail?.({
+          email: user.email,
+          url,
+          type: "forget-password",
+        });
+      },
+    },
+    emailVerification: {
+      sendOnSignIn: true,
+      async sendVerificationEmail({ user, url }) {
+        await options.sendEmail?.({
+          email: user.email,
+          url,
+          type: "email-verification",
+        });
+      },
+    },
     plugins: [
       emailOTP({
         otpLength: 6,
@@ -109,24 +131,35 @@ export function initAuth<
       admin({ defaultRole: "customer", adminRoles: [ADMIN_ROLE] }),
       ...(options.extraPlugins ?? []),
     ],
-    // ADMIN_EMAILS bootstrap: listed emails sign up as admins, and existing
-    // listed accounts are promoted on their next sign-in.
+    // Bootstrap admins only after Better Auth has verified their email.
     databaseHooks: {
       user: {
         create: {
           async before(user) {
-            if (!isAdminEmail(user.email)) return;
+            if (!user.emailVerified || !isAdminEmail(user.email)) return;
             return { data: { ...user, role: ADMIN_ROLE } };
           },
         },
       },
       session: {
         create: {
+          async before(session, ctx) {
+            if (!options.adminOnly) return;
+            const account = await ctx?.context.internalAdapter.findUserById(
+              session.userId,
+            );
+            if (!account || !isAdmin(account)) {
+              throw APIError.from("FORBIDDEN", {
+                code: "ADMIN_REQUIRED",
+                message: "Требуются права администратора",
+              });
+            }
+          },
           async after(session, ctx) {
             if (!ctx) return;
             const adapter = ctx.context.internalAdapter;
             const user = await adapter.findUserById(session.userId);
-            if (!user || !isAdminEmail(user.email)) return;
+            if (!user?.emailVerified || !isAdminEmail(user.email)) return;
             // `role` comes from the admin plugin; the adapter types the base user.
             if (hasAdminRole((user as { role?: unknown }).role)) return;
             await adapter.updateUser(user.id, { role: ADMIN_ROLE });

@@ -107,10 +107,8 @@ export const protectedProcedure = publicProcedure
  * authenticated user has admin privileges.
  *
  * Admin = the `admin` role from Better Auth's admin plugin (assigned with
- * `authClient.admin.setRole`), or an email listed in ADMIN_EMAILS — the
- * bootstrap list. Listed accounts are also given the role on sign-up and on
- * sign-in (see `initAuth`), which is what the plugin's own /api/auth/admin/*
- * endpoints check; the email fallback covers sessions started before that.
+ * `authClient.admin.setRole`), or a verified email listed in ADMIN_EMAILS.
+ * The email fallback covers sessions that predate role assignment.
  */
 export const adminProcedure = protectedProcedure
   .errors({

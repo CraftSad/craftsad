@@ -1,6 +1,8 @@
 "use client";
 
+import { paths } from "@acme/config";
 import { ArrowRight, PackageCheck, ShoppingBag, Truck, X } from "lucide-react";
+import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { colorPairs, shapes } from "./data";
@@ -288,6 +290,36 @@ export function CartDrawer({
               <p className="birka-helper">
                 Выбор на карте станет доступен после подключения службы
                 доставки.
+              </p>
+              <p className="birka-helper">
+                Нажимая кнопку оформления, вы принимаете условия{" "}
+                <Link
+                  href={paths.legal.offer}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  публичной оферты
+                </Link>{" "}
+                и даёте{" "}
+                <Link
+                  href={paths.legal.consent}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  согласие на обработку персональных данных
+                </Link>{" "}
+                в соответствии с{" "}
+                <Link
+                  href={paths.legal.privacy}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                >
+                  политикой конфиденциальности
+                </Link>
+                .
               </p>
             </form>
           )}

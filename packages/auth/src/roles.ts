@@ -9,10 +9,8 @@ import { env } from "@acme/config";
 export const ADMIN_ROLE = "admin";
 
 /**
- * Bootstrap admins from ADMIN_EMAILS (comma-separated): they get the `admin`
- * role on sign-up, and keep admin access even on accounts created before
- * roles existed. Everyone else is promoted through the admin plugin
- * (`authClient.admin.setRole`).
+ * Bootstrap admins from ADMIN_EMAILS (comma-separated) once their email is
+ * verified. Other admins are assigned through `authClient.admin.setRole`.
  */
 const adminEmails = new Set(
   (env.ADMIN_EMAILS ?? "")
@@ -32,6 +30,12 @@ export function hasAdminRole(role: unknown) {
     : false;
 }
 
-export function isAdmin(user: { email: string; role?: string | null }) {
-  return hasAdminRole(user.role) || isAdminEmail(user.email);
+export function isAdmin(user: {
+  email: string;
+  emailVerified: boolean;
+  role?: string | null;
+}) {
+  return (
+    hasAdminRole(user.role) || (user.emailVerified && isAdminEmail(user.email))
+  );
 }

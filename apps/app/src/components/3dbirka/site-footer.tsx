@@ -1,7 +1,9 @@
 "use client";
 
+import { paths } from "@acme/config";
 import { Leaf } from "lucide-react";
-import { ContactLink } from "./contact-link";
+import Link from "next/link";
+import { LEGAL_ENTITY } from "~/components/legal/legal-data";
 
 export function SiteFooter({
   year,
@@ -27,6 +29,11 @@ export function SiteFooter({
             <br />
             Сделано с любовью к вашим растениям.
           </p>
+          <p className="mt-3 text-xs text-[#9ba996]">
+            {LEGAL_ENTITY.shortName}
+            <br />
+            ИНН {LEGAL_ENTITY.inn} · Самозанятый (НПД)
+          </p>
         </div>
         <div>
           <span>Магазин</span>
@@ -36,10 +43,12 @@ export function SiteFooter({
           <button type="button" onClick={() => onNavigate("constructor")}>
             Создать свои бирки
           </button>
+          <Link href={paths.legal.delivery} className="birka-footer-link">
+            Оплата, доставка и возврат
+          </Link>
         </div>
         <div>
-          <span>Помощь</span>
-          <ContactLink />
+          <span>Помощь и документы</span>
           <p>
             Доставка в пункты Ozon
             <br />
@@ -48,10 +57,24 @@ export function SiteFooter({
           <button type="button" onClick={onShowLogin}>
             Личный кабинет
           </button>
+          <Link href={paths.legal.offer} className="birka-footer-link">
+            Публичная оферта
+          </Link>
+          <Link href={paths.legal.privacy} className="birka-footer-link">
+            Политика конфиденциальности
+          </Link>
+          <Link href={paths.legal.consent} className="birka-footer-link">
+            Согласие на обработку ПДн
+          </Link>
+          <Link href={paths.legal.cookies} className="birka-footer-link">
+            Файлы cookie
+          </Link>
         </div>
       </div>
       <div className="birka-footer-bottom birka-container">
-        <span>© {year} CraftSad</span>
+        <span>
+          © {year} 3D Бирка · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
+        </span>
         <span>Пусть всё растёт 🌱</span>
       </div>
     </footer>
