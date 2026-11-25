@@ -162,9 +162,9 @@ function crc32(data: Uint8Array): number {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
-function zip(entries: { name: string; data: Uint8Array }[]): Blob {
-  const chunks: Uint8Array[] = [];
-  const directory: Uint8Array[] = [];
+function zip(entries: { name: string; data: Uint8Array<ArrayBuffer> }[]): Blob {
+  const chunks: Uint8Array<ArrayBuffer>[] = [];
+  const directory: Uint8Array<ArrayBuffer>[] = [];
   let offset = 0;
   for (const { name, data } of entries) {
     const filename = encoder.encode(name);
