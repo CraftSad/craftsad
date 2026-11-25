@@ -321,6 +321,31 @@ export function UnifiedAuthForm({
               </>
             )}
           </div>
+
+          <p className="text-muted-foreground text-center text-xs leading-relaxed">
+            Продолжая, вы соглашаетесь с{" "}
+            <Link
+              href={paths.legal.offer}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              публичной офертой
+            </Link>
+            ,{" "}
+            <Link
+              href={paths.legal.privacy}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              политикой конфиденциальности
+            </Link>{" "}
+            и даёте{" "}
+            <Link
+              href={paths.legal.consent}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              согласие на обработку персональных данных
+            </Link>
+            .
+          </p>
         </div>
       </CardContent>
     </Card>
