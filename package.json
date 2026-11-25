@@ -6,6 +6,7 @@
     "bun": ">=1.4.0 <2"
   },
   "scripts": {
+    "icons:generate": "node scripts/generate-favicons.mjs",
     "build": "turbo run build",
     "clean": "bun scripts/clean.mjs",
     "clean:workspaces": "turbo run clean",
