@@ -437,12 +437,12 @@ This starter is inspired by [bun-turbo-starter](https://github.com/bunworks/bun-
 
 ### 3D Бирка storefront configuration
 
-- `NEXT_PUBLIC_3D Бирка_CONTACT_URL`: verified workshop Telegram (`https://t.me/...`) or WhatsApp (`https://wa.me/...`) URL. Set before building. Without it, the contact button explains that the contact is not yet available; no guessed account is linked.
-- `3D Бирка_NEWSLETTER_WEBHOOK_URL`: server-only subscription service endpoint receiving `POST { email, consent: true, source: "3D Бирка-new-products" }`. Return a successful HTTP status only after accepting the subscription. Configure deduplication, consent records, unsubscribe and rate limiting in that service before enabling it publicly.
-- `3D Бирка_NEWSLETTER_TOKEN`: optional server-only bearer token for the subscription endpoint. Without an endpoint, `/api/newsletter` returns 503 and the form explicitly says the address was not saved.
+- `NEXT_PUBLIC_CRAFTSAD_CONTACT_URL`: verified workshop Telegram (`https://t.me/...`) or WhatsApp (`https://wa.me/...`) URL. Set before building. Without it, the contact button explains that the contact is not yet available; no guessed account is linked.
+- `CRAFTSAD_NEWSLETTER_WEBHOOK_URL`: server-only subscription service endpoint receiving `POST { email, consent: true, source: "3D Бирка-new-products" }`. Return a successful HTTP status only after accepting the subscription. Configure deduplication, consent records, unsubscribe and rate limiting in that service before enabling it publicly.
+- `CRAFTSAD_NEWSLETTER_TOKEN`: optional server-only bearer token for the subscription endpoint. Without an endpoint, `/api/newsletter` returns 503 and the form explicitly says the address was not saved.
 
 Replace the `tagPhotos` entries in `apps/app/src/components/3dbirka/data.ts` with real images for each plastic/letter combination, update `alt`, and set `placeholder: false`. The garden review cards in `garden-sections.tsx` are visibly marked examples; replace them with approved customer stories before publication. Existing checkout remains a demonstration.
 
 Pricing is shared by the constructor, catalog and cart through `tag-config.ts`. The full-season kit alternates stakes and flags (15 of each for 30 inscriptions). Editing keeps that pattern; choosing a single shape exits mixed mode. Its requested 1,910 ₽ price is a special offer (the exact 15% calculation would be 1,912.50 ₽); other sizes use the normal 10% / 15% thresholds.
 
-Verification: `bun test apps/app/src/components/3dbirka/tag-config.test.ts`; from `apps/app`, `bunx playwright test e2e/3D Бирка.e2e.ts e2e/storefront.e2e.ts` covers 375px / 1440px, pricing, catalog configuration, clipboard failures, subscription errors, and existing demo checkout/login.
+Verification: `bun test apps/app/src/components/3dbirka/tag-config.test.ts`; from `apps/app`, `bunx playwright test e2e/craftsad.e2e.ts e2e/storefront.e2e.ts` covers 375px / 1440px, pricing, catalog configuration, clipboard failures, subscription errors, and existing demo checkout/login.

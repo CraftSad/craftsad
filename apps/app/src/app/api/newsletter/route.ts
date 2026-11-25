@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       { message: "Укажите корректную почту и согласие на письма." },
       { status: 400 },
     );
-  const webhook = process.env.3D Бирка_NEWSLETTER_WEBHOOK_URL;
+  const webhook = process.env.CRAFTSAD_NEWSLETTER_WEBHOOK_URL;
   if (!webhook)
     return Response.json(
       {
@@ -54,8 +54,8 @@ export async function POST(request: Request) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(process.env.3D Бирка_NEWSLETTER_TOKEN
-          ? { Authorization: `Bearer ${process.env.3D Бирка_NEWSLETTER_TOKEN}` }
+        ...(process.env.CRAFTSAD_NEWSLETTER_TOKEN
+          ? { Authorization: `Bearer ${process.env.CRAFTSAD_NEWSLETTER_TOKEN}` }
           : {}),
       },
       body: JSON.stringify({ ...result.data, source: "3D Бирка-new-products" }),
