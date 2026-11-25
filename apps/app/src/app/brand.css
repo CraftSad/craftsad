@@ -845,6 +845,435 @@
   justify-content: start;
 }
 
+/* Editorial Collection Continuation / Newsletter section */
+.birka-newsletter {
+  padding-top: 24px;
+  padding-bottom: 100px;
+}
+
+.birka-newsletter-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid #c9ba96;
+  background:
+    radial-gradient(ellipse at 92% 10%, #dce4d0b3, transparent 48%),
+    radial-gradient(ellipse at 8% 95%, #eadcc680, transparent 46%),
+    linear-gradient(145deg, #fffef9, #f3ede0);
+  padding: 44px;
+  box-shadow:
+    0 24px 56px #203c3210,
+    inset 0 1px 0 #ffffffcc;
+}
+
+.birka-newsletter-shell::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px dashed #a58b5938;
+  border-radius: 22px;
+  pointer-events: none;
+}
+
+.birka-newsletter-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.28fr) minmax(340px, 0.92fr);
+  gap: 40px;
+  align-items: stretch;
+}
+
+.birka-newsletter-lead {
+  display: flex;
+  flex-direction: column;
+}
+
+.birka-newsletter-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.birka-newsletter-lead .birka-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--terra);
+  font-weight: 600;
+}
+
+.birka-newsletter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: #e6ece0;
+  border: 1px solid #cdd8c3;
+  color: var(--forest);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.birka-newsletter-pill svg {
+  width: 13px;
+  height: 13px;
+  color: var(--terra);
+}
+
+.birka-newsletter-lead h2 {
+  margin: 14px 0 14px;
+  font-size: clamp(34px, 3.6vw, 48px);
+  line-height: 1.1;
+}
+
+.birka-newsletter-lead > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 580px;
+}
+
+.birka-newsletter-previews {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.birka-newsletter-preview-card {
+  background: #fffdf8d9;
+  border: 1px solid #dcd6c4;
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 22px #203c3208;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.birka-newsletter-preview-card:hover {
+  border-color: #b7a379;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px #203c3212;
+}
+
+.birka-newsletter-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.birka-newsletter-sketch {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: radial-gradient(circle at 30% 25%, #f4efe2, #e2e7d8);
+  border: 1px solid #ced6c3;
+  color: var(--forest);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.birka-newsletter-sketch svg {
+  width: 26px;
+  height: 26px;
+}
+
+.birka-newsletter-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.birka-newsletter-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: #f2ecde;
+  border: 1px solid #dfd5bf;
+  color: #655233;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.birka-newsletter-num {
+  font: 600 13px/1 var(--font-craft-serif), Georgia, serif;
+  color: #7d8678;
+}
+
+.birka-newsletter-preview-card h3 {
+  font: 600 22px/1.18 var(--font-craft-serif), Georgia, serif;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.birka-newsletter-preview-card > small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--forest);
+}
+
+.birka-newsletter-preview-card > p {
+  margin: 10px 0 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4b584f;
+  flex: 1;
+}
+
+.birka-newsletter-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.birka-newsletter-specs span {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #eff2e9;
+  border: 1px solid #d8e0cf;
+  color: #2f473c;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.birka-newsletter-palette {
+  margin-top: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #fffdf8b3;
+  border: 1px solid #ded9c9;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #4a574e;
+}
+
+.birka-newsletter-palette strong {
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.birka-newsletter-swatches {
+  display: inline-flex;
+  align-items: center;
+}
+
+.birka-newsletter-swatches span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  box-shadow: 0 2px 5px #00000014;
+}
+
+.birka-newsletter-swatches span + span {
+  margin-left: -6px;
+}
+
+.birka-newsletter-panel {
+  background:
+    radial-gradient(ellipse at 85% 0%, #315e4e80, transparent 55%),
+    linear-gradient(160deg, #214539, #132b23);
+  color: #f5f1e7;
+  border: 1px solid #b5965c59;
+  border-radius: 24px;
+  padding: 30px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 22px 48px #132b2324;
+}
+
+.birka-newsletter-panel-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.birka-newsletter-panel-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #e4cf9f1f;
+  border: 1px solid #e4cf9f4d;
+  color: #e4cf9f;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.birka-newsletter-panel-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.birka-newsletter-panel-top strong {
+  display: block;
+  font: 500 24px/1.18 var(--font-craft-serif), Georgia, serif;
+  color: #fbf8f0;
+  letter-spacing: -0.015em;
+}
+
+.birka-newsletter-panel-top span {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #c4d0c2;
+}
+
+.birka-newsletter-perks {
+  list-style: none;
+  margin: 20px 0;
+  padding: 16px 0;
+  border-top: 1px solid #ffffff17;
+  border-bottom: 1px solid #ffffff17;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.birka-newsletter-perks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #dce4d9;
+}
+
+.birka-newsletter-perks li svg {
+  width: 16px;
+  height: 16px;
+  color: #e4cf9f;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.birka-newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.birka-newsletter-form > label:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d6c59d;
+}
+
+.birka-newsletter-form .birka-subscribe-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.birka-newsletter-form .birka-subscribe-row input {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px solid #ffffff29;
+  background: #ffffff12;
+  color: #fbf8f0;
+  font-size: 15px;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.birka-newsletter-form .birka-subscribe-row input::placeholder {
+  color: #9fb0a4;
+}
+
+.birka-newsletter-form .birka-subscribe-row input:focus {
+  background: #ffffff1c;
+  border-color: #e4cf9f;
+}
+
+.birka-newsletter-form .birka-subscribe-row .birka-button {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  background: #e4cf9f;
+  color: #173128;
+  font-size: 15px;
+  font-weight: 700;
+  border: 0;
+  box-shadow: 0 10px 24px #00000024;
+}
+
+.birka-newsletter-form .birka-subscribe-row .birka-button:hover:not(:disabled) {
+  background: #efe0bb;
+}
+
+.birka-newsletter-form .birka-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b8c6b7;
+  cursor: pointer;
+}
+
+.birka-newsletter-form .birka-consent input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #e4cf9f;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.birka-newsletter-status {
+  margin: 0;
+  min-height: 20px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e4cf9f;
+}
+
+.birka-newsletter-status:not(:empty) {
+  padding: 10px 13px;
+  border-radius: 12px;
+  background: #ffffff12;
+  border: 1px solid #ffffff24;
+}
+
+.birka-newsletter-status.is-success:not(:empty) {
+  background: #2b5a4680;
+  border-color: #84b89c66;
+  color: #e7f5ec;
+}
+
+.birka-newsletter-status.is-error:not(:empty) {
+  background: #5c281e73;
+  border-color: #e29b8759;
+  color: #fadbd2;
+}
+
 @media (max-width: 1100px) {
   .birka-header-inner { gap: 16px; }
   .birka-header-actions { gap: 16px; }
@@ -855,6 +1284,8 @@
   .birka-product h3 { font-size: 25px; }
   .birka-kit-actions { grid-template-columns: 1fr; }
   .birka-product-featured .birka-kit-actions { grid-template-columns: repeat(2, minmax(0, 200px)); }
+  .birka-newsletter-shell { padding: 34px; }
+  .birka-newsletter-grid { gap: 28px; grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.95fr); }
 }
 
 @media (max-width: 900px) {
@@ -871,6 +1302,8 @@
   .birka-product-featured .birka-product-body { padding: 20px 22px 22px; }
   .birka-product-featured h3 { font-size: 28px; }
   .birka-product-featured .birka-kit-actions { grid-template-columns: 1.25fr 1fr; }
+  .birka-newsletter-grid { grid-template-columns: 1fr; gap: 24px; }
+  .birka-newsletter-lead > p { max-width: none; }
 }
 
 @media (max-width: 570px) {
@@ -924,6 +1357,16 @@
   .birka-faq-icon { width: 32px; height: 32px; }
   .birka-faq-body { padding: 0 16px 18px; }
   .birka-faq-body p { font-size: 14px; }
+  .birka-newsletter { padding-top: 12px; padding-bottom: 64px; }
+  .birka-newsletter-shell { padding: 22px 18px; border-radius: 22px; }
+  .birka-newsletter-shell::after { inset: 9px; border-radius: 16px; }
+  .birka-newsletter-lead h2 { font-size: 32px; }
+  .birka-newsletter-lead > p { font-size: 14px; }
+  .birka-newsletter-previews { grid-template-columns: 1fr; gap: 12px; margin-top: 18px; }
+  .birka-newsletter-preview-card { padding: 16px; border-radius: 16px; }
+  .birka-newsletter-palette { padding: 11px 14px; font-size: 12px; }
+  .birka-newsletter-panel { padding: 22px 18px; border-radius: 18px; }
+  .birka-newsletter-panel-top strong { font-size: 21px; }
 }
 
 @media (max-width: 370px) {

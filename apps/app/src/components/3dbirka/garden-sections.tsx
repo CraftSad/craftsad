@@ -1,11 +1,12 @@
 "use client";
 
 import { paths } from "@acme/config";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, BellRing, Check, Plus, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, useState } from "react";
 import { ContactLink } from "./contact-link";
+import { colorPairs } from "./data";
 
 const examples = [
   {
@@ -83,12 +84,36 @@ const questions = [
   },
 ];
 
+const upcomingItems = [
+  {
+    id: "trellis",
+    num: "01",
+    badge: "В тестировании",
+    title: "Модульные опоры",
+    subtitle: "Для рассады и комнатных растений",
+    description:
+      "Ажурные решётки и кольца, которые наращиваются по высоте вместе с кустом и не травмируют стебли.",
+    specs: ["Высота 25–45 см", "Стыковка в 1 клик"],
+  },
+  {
+    id: "planter",
+    num: "02",
+    badge: "Прототип",
+    title: "Фактурные кашпо",
+    subtitle: "С дренажем и пазом под бирку",
+    description:
+      "Кашпо с матовым рельефом, скрытым поддоном для лишней воды и аккуратным держателем под именную бирку.",
+    specs: ["Объём 0,8 и 1,6 л", "Скрытый поддон"],
+  },
+] as const;
+
 export function GardenSections({
   onNavigate,
 }: {
   onNavigate?: (id: string) => void;
 }) {
   const [status, setStatus] = useState("");
+  const [statusOk, setStatusOk] = useState(false);
   const [pending, setPending] = useState(false);
   async function subscribe(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -97,6 +122,7 @@ export function GardenSections({
     const data = new FormData(form);
     setPending(true);
     setStatus("");
+    setStatusOk(false);
     try {
       const response = await fetch("/api/newsletter", {
         method: "POST",
@@ -107,11 +133,13 @@ export function GardenSections({
         }),
       });
       const result = await response.json();
+      setStatusOk(response.ok);
       setStatus(
         result.message ?? "Не удалось отправить заявку. Попробуйте позже.",
       );
       if (response.ok) form.reset();
     } catch {
+      setStatusOk(false);
       setStatus("Нет связи с сервером. Попробуйте ещё раз позже.");
     } finally {
       setPending(false);
@@ -240,39 +268,179 @@ export function GardenSections({
       </section>
       <section className="birka-section birka-newsletter" id="newsletter">
         <div className="birka-container">
-          <div>
-            <span className="birka-eyebrow">Продолжение вашей коллекции</span>
-            <h2>Скоро: опоры и кашпо</h2>
-            <p>
-              Оставьте почту — сообщим, когда новинки появятся в мастерской.
-            </p>
-          </div>
-          <form onSubmit={subscribe}>
-            <label htmlFor="newsletter-email">Электронная почта</label>
-            <div className="birka-subscribe-row">
-              <input
-                type="email"
-                id="newsletter-email"
-                name="email"
-                autoComplete="email"
-                placeholder="you@example.ru"
-                required
-                maxLength={254}
-              />
-              <button
-                type="submit"
-                className="birka-button birka-button-primary"
-                disabled={pending}
-              >
-                {pending ? "Отправляем…" : "Сообщить о новинках"}
-              </button>
+          <div className="birka-newsletter-shell">
+            <div className="birka-newsletter-grid">
+              <div className="birka-newsletter-lead">
+                <div className="birka-newsletter-topline">
+                  <span className="birka-eyebrow">
+                    Продолжение вашей коллекции
+                  </span>
+                  <span className="birka-newsletter-pill">
+                    <Sparkles aria-hidden="true" /> Анонс мастерской
+                  </span>
+                </div>
+                <h2>
+                  Скоро: опоры <em>и кашпо</em> в цвет ваших бирок
+                </h2>
+                <p>
+                  Готовим новые предметы для подоконника, балкона и теплицы из
+                  того же матового атмосферостойкого пластика. Оставьте почту —
+                  пришлём приглашение на первый тираж.
+                </p>
+
+                <div className="birka-newsletter-previews">
+                  {upcomingItems.map((item) => (
+                    <article
+                      key={item.id}
+                      className="birka-newsletter-preview-card"
+                    >
+                      <div className="birka-newsletter-preview-head">
+                        <div
+                          className="birka-newsletter-sketch"
+                          aria-hidden="true"
+                        >
+                          {item.id === "trellis" ? (
+                            <svg
+                              viewBox="0 0 40 40"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.75"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <title>Модульная опора</title>
+                              <path d="M13 35V12a7 7 0 0 1 14 0v23" />
+                              <path d="M9 20h22" />
+                              <path d="M10 27h20" />
+                              <circle cx="20" cy="12" r="2.5" />
+                            </svg>
+                          ) : (
+                            <svg
+                              viewBox="0 0 40 40"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.75"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <title>Фактурное кашпо</title>
+                              <path d="M9 14h22l-2.4 17a3 3 0 0 1-3 2.6H14.4a3 3 0 0 1-3-2.6L9 14Z" />
+                              <path d="M7 14h26" />
+                              <path d="M15 19v9" />
+                              <path d="M20 19v9" />
+                              <path d="M25 19v9" />
+                              <path d="M26 9.5l3-4.5" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="birka-newsletter-preview-meta">
+                          <span className="birka-newsletter-badge">
+                            {item.badge}
+                          </span>
+                          <span className="birka-newsletter-num">
+                            № {item.num}
+                          </span>
+                        </div>
+                      </div>
+                      <h3>{item.title}</h3>
+                      <small>{item.subtitle}</small>
+                      <p>{item.description}</p>
+                      <div className="birka-newsletter-specs">
+                        {item.specs.map((spec) => (
+                          <span key={spec}>{spec}</span>
+                        ))}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                <div className="birka-newsletter-palette">
+                  <div className="birka-newsletter-swatches" aria-hidden="true">
+                    {colorPairs.map((pair) => (
+                      <span
+                        key={pair.name}
+                        title={pair.name}
+                        style={{
+                          background: pair.base,
+                          borderColor: pair.ink,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <span>
+                    Единая палитра мастерской — <strong>6 оттенков</strong> в
+                    тон вашим биркам
+                  </span>
+                </div>
+              </div>
+
+              <div className="birka-newsletter-panel">
+                <div className="birka-newsletter-panel-top">
+                  <span
+                    className="birka-newsletter-panel-icon"
+                    aria-hidden="true"
+                  >
+                    <BellRing />
+                  </span>
+                  <div>
+                    <strong>Лист ожидания первого тиража</strong>
+                    <span>Напишем один раз, когда откроем предзаказ</span>
+                  </div>
+                </div>
+
+                <ul className="birka-newsletter-perks">
+                  <li>
+                    <Check aria-hidden="true" />
+                    <span>Ранний доступ к первой партии и выбору оттенков</span>
+                  </li>
+                  <li>
+                    <Check aria-hidden="true" />
+                    <span>
+                      Закрытая скидка 10% для подписчиков листа ожидания
+                    </span>
+                  </li>
+                </ul>
+
+                <form onSubmit={subscribe} className="birka-newsletter-form">
+                  <label htmlFor="newsletter-email">Электронная почта</label>
+                  <div className="birka-subscribe-row">
+                    <input
+                      type="email"
+                      id="newsletter-email"
+                      name="email"
+                      autoComplete="email"
+                      placeholder="you@example.ru"
+                      required
+                      maxLength={254}
+                    />
+                    <button
+                      type="submit"
+                      className="birka-button birka-button-primary"
+                      disabled={pending}
+                    >
+                      {pending ? "Отправляем…" : "Сообщить о новинках"}
+                    </button>
+                  </div>
+                  <label className="birka-consent">
+                    <input type="checkbox" name="consent" required />
+                    <span>
+                      Согласен получать письма о новинках 3D Бирка на указанную
+                      почту. Без спама — отписка в один клик.
+                    </span>
+                  </label>
+                  <p
+                    role="status"
+                    aria-live="polite"
+                    className={`birka-newsletter-status ${status ? (statusOk ? "is-success" : "is-error") : ""}`}
+                  >
+                    {status}
+                  </p>
+                </form>
+              </div>
             </div>
-            <label className="birka-consent">
-              <input type="checkbox" name="consent" required />
-              Согласен получать письма о новинках 3D Бирка на указанную почту.
-            </label>
-            <p role="status">{status}</p>
-          </form>
+          </div>
         </div>
       </section>
     </>
