@@ -50,7 +50,7 @@ describe("ADMIN_EMAILS bootstrap hooks", () => {
       secret: "test-secret-0123456789-0123456789-abcdef",
       database: testDb.db,
       adminOnly,
-      sendEmail: async ({ email, otp }) => {
+      sendEmail: async ({ email, otp, url, type }) => {
         if (otp) codes.set(email, otp);
         if (url) links.set(type, url);
       },
