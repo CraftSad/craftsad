@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@acme/config";
-import { cn, ThemeProvider, Toaster } from "@acme/ui";
+import { CookieBanner, cn, ThemeProvider, Toaster } from "@acme/ui";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import {
@@ -79,6 +79,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <ThemeProvider>
           <ORPCReactProvider>{props.children}</ORPCReactProvider>
           <Toaster />
+          <CookieBanner />
         </ThemeProvider>
         <Analytics />
       </body>
