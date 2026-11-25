@@ -3,6 +3,7 @@
 import {
   Badge,
   Button,
+  buttonVariants,
   Card,
   CardContent,
   CardHeader,
@@ -285,10 +286,27 @@ export function OrderDetail({ id }: { id: string }) {
               </div>
             </div>
             <div>
-              <div className="text-muted-foreground">Архив STL</div>
-              <div className="font-medium break-all">
-                {data.printJob.stlArchiveUrl ?? "—"}
-              </div>
+              <div className="text-muted-foreground">Файлы для печати</div>
+              {data.printJob.status === "done" &&
+              data.printJob.stlArchiveUrl ? (
+                <a
+                  href={`/api/orders/${data.id}/archive`}
+                  download
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "sm",
+                    className: "mt-1",
+                  })}
+                >
+                  Скачать STL и 3MF
+                </a>
+              ) : (
+                <div className="font-medium">
+                  {data.printJob.status === "failed"
+                    ? "Ошибка генерации"
+                    : "Готовятся"}
+                </div>
+              )}
             </div>
             <div>
               <div className="text-muted-foreground">Ошибка</div>

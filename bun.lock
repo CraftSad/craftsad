@@ -20,6 +20,7 @@
         "@acme/config": "workspace:*",
         "@acme/db": "workspace:*",
         "@acme/jobs": "workspace:*",
+        "@acme/store": "workspace:*",
         "@acme/ui": "workspace:*",
         "@orpc/client": "2.0.0-beta.46",
         "@orpc/server": "2.0.0-beta.53",

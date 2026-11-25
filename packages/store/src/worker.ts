@@ -6,6 +6,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { zipSync } from "fflate";
 import { generateStl } from "./model";
 import { storeArchive } from "./storage";
+import { stlTo3mf } from "./three-mf";
 
 async function claim() {
   const result =
@@ -55,7 +56,13 @@ async function processJob(job: { id: string; order_id: string }) {
             path,
             template ?? "tag.scad",
           );
-          entries[filename] = new Uint8Array(await readFile(path));
+          const stl = new Uint8Array(await readFile(path));
+          entries[filename] = stl;
+          entries[filename.replace(/\.stl$/, ".3mf")] = stlTo3mf(stl, {
+            name: variety,
+            baseColor: item.customizationJson.baseColor,
+            textColor: item.customizationJson.textColor,
+          });
         }
     }
     if (!index) throw new Error("В заказе нет бирок для генерации");
