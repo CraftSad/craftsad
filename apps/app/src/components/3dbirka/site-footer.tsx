@@ -4,6 +4,7 @@ import { paths } from "@acme/config";
 import { Leaf } from "lucide-react";
 import Link from "next/link";
 import { LEGAL_ENTITY } from "~/components/legal/legal-data";
+import { ContactLink } from "./contact-link";
 
 export function SiteFooter({
   year,
@@ -49,6 +50,7 @@ export function SiteFooter({
         </div>
         <div>
           <span>Помощь и документы</span>
+          <ContactLink />
           <p>
             Доставка в пункты Ozon
             <br />
@@ -73,7 +75,7 @@ export function SiteFooter({
       </div>
       <div className="birka-footer-bottom birka-container">
         <span>
-          © {year} 3D Бирка · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
+          © {year} CraftSad · {LEGAL_ENTITY.shortName}, ИНН {LEGAL_ENTITY.inn}
         </span>
         <span>Пусть всё растёт 🌱</span>
       </div>
