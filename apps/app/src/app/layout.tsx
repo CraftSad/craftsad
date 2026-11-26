@@ -14,6 +14,7 @@ import { ORPCReactProvider } from "~/orpc/react";
 import "~/app/styles.css";
 import "~/app/3dbirka.css";
 import "~/app/brand.css";
+import "~/app/error-pages.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
