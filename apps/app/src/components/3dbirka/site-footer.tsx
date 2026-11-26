@@ -44,6 +44,9 @@ export function SiteFooter({
           <button type="button" onClick={() => onNavigate("faq")}>
             Частые вопросы
           </button>
+          <Link href={paths.blog.root} className="birka-footer-link">
+            Журнал мастерской
+          </Link>
           <Link href={paths.legal.delivery} className="birka-footer-link">
             Оплата, доставка и возврат
           </Link>

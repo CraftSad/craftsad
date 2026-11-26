@@ -3,6 +3,7 @@ const ROOTS = {
   AUTH: "/auth",
   SETTINGS: "/settings",
   LEGAL: "/legal",
+  BLOG: "/blog",
 } as const;
 
 export const paths = {
@@ -29,5 +30,8 @@ export const paths = {
     consent: `${ROOTS.LEGAL}/consent`,
     delivery: `${ROOTS.LEGAL}/delivery`,
     cookies: `${ROOTS.LEGAL}/cookies`,
+  },
+  blog: {
+    root: ROOTS.BLOG,
   },
 } as const;

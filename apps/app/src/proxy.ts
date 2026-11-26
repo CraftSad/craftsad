@@ -16,6 +16,7 @@ export async function proxy(request: NextRequest) {
   if (
     publicBrandAssets.has(request.nextUrl.pathname) ||
     request.nextUrl.pathname === "/" ||
+    request.nextUrl.pathname.startsWith("/blog") ||
     request.nextUrl.pathname.startsWith("/legal") ||
     request.nextUrl.pathname.startsWith("/images/") ||
     request.nextUrl.pathname.startsWith("/fonts/")

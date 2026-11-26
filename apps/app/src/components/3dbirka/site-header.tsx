@@ -1,6 +1,8 @@
 "use client";
 
+import { paths } from "@acme/config";
 import { ChevronDown, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import Link from "next/link";
 import { BrandLockup } from "./brand";
 import { ContactLink } from "./contact-link";
 import { type Category, money } from "./shared";
@@ -64,6 +66,9 @@ export function SiteHeader({
           <button type="button" onClick={() => onNavigate("faq")}>
             Вопросы
           </button>
+          <Link href={paths.blog.root} className="birka-nav-link">
+            Журнал
+          </Link>
         </nav>
         <div className="birka-header-actions">
           <ContactLink compact />
