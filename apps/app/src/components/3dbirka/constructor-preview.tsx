@@ -1,11 +1,17 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { type Ref, useState } from "react";
-import type { ShapeId } from "./data";
-import { tagPhotos } from "./data";
+import { toast } from "sonner";
+import {
+  getPaletteForShape,
+  type ShapeId,
+  shapeToSeries,
+  tagPhotos,
+  tagSeries,
+} from "./data";
 import { ScalePreview } from "./scale-preview";
 import type { View } from "./shared";
 import type { TryOnMode } from "./try-on-types";
@@ -46,7 +52,12 @@ export function ConstructorPreview({
     ["photo", "Живое фото"],
   ];
   const total = Math.max(names.length, 1);
-  const currentName = names[previewIndex % total] ?? "Ваш сорт";
+  const safeIndex = previewIndex % total;
+  const currentName = names[safeIndex] ?? "Ваш сорт";
+  const series = shapeToSeries(shape);
+  const seriesMeta =
+    tagSeries.find((entry) => entry.id === series) ?? tagSeries[0];
+  const palette = getPaletteForShape(shape, color);
 
   return (
     <div className="birka-builder-left">
@@ -93,27 +104,52 @@ export function ConstructorPreview({
         aria-labelledby={`preview-tab-${tab}`}
       >
         {tab === "scale" ? (
-          <ScalePreview shape={shape} color={color} name={currentName} />
+          <ScalePreview
+            shape={shape}
+            color={color}
+            name={currentName}
+            itemIndex={safeIndex}
+          />
         ) : tab === "photo" ? (
           <div className="birka-photo-gallery">
-            <p>
-              Реальные фотографии скоро появятся. Сейчас здесь заглушки, они не
-              передают оттенок пластика.
-            </p>
-            {tagPhotos[color]?.photos.map((photo) => (
-              <figure key={photo.caption}>
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={640}
-                  height={440}
-                />
-                <figcaption>
-                  {tagPhotos[color]?.color} · {photo.caption}{" "}
-                  {photo.placeholder && "· Фото-заглушка"}
-                </figcaption>
-              </figure>
-            ))}
+            {seriesMeta.coverImage ? (
+              <>
+                <p>{seriesMeta.description}</p>
+                <figure className="birka-series-photo-figure">
+                  <Image
+                    src={seriesMeta.coverImage}
+                    alt={`${seriesMeta.fullTitle} — ${palette.name}`}
+                    width={1024}
+                    height={682}
+                  />
+                  <figcaption>
+                    {seriesMeta.fullTitle} · {palette.name} ·{" "}
+                    {seriesMeta.coverCaption}
+                  </figcaption>
+                </figure>
+              </>
+            ) : (
+              <>
+                <p>
+                  Реальные фотографии скоро появятся. Сейчас здесь заглушки, они
+                  не передают оттенок пластика.
+                </p>
+                {tagPhotos[color]?.photos.map((photo) => (
+                  <figure key={photo.caption}>
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt}
+                      width={640}
+                      height={440}
+                    />
+                    <figcaption>
+                      {tagPhotos[color]?.color} · {photo.caption}{" "}
+                      {photo.placeholder && "· Фото-заглушка"}
+                    </figcaption>
+                  </figure>
+                ))}
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -127,7 +163,9 @@ export function ConstructorPreview({
                       : tryOn === "garden"
                         ? "🌾 Грядка"
                         : "🏡 Теплица"
-                    : "Живой просмотр"}
+                    : series === "classic"
+                      ? "Живой просмотр"
+                      : `${seriesMeta.fullTitle} · 3D`}
                 </span>
                 {!tryOn && (
                   <span>
@@ -142,12 +180,14 @@ export function ConstructorPreview({
                   shape={shape}
                   color={color}
                   name={currentName}
+                  itemIndex={safeIndex}
                   fallback={
                     <LabelPreview
                       shape={shape}
                       color={color}
                       name={currentName}
                       view="front"
+                      itemIndex={safeIndex}
                     />
                   }
                 />
@@ -157,6 +197,7 @@ export function ConstructorPreview({
                   color={color}
                   name={currentName}
                   view={view}
+                  itemIndex={safeIndex}
                   resetViewRef={resetViewRef}
                   fallback={
                     <LabelPreview
@@ -164,6 +205,7 @@ export function ConstructorPreview({
                       color={color}
                       name={currentName}
                       view={view}
+                      itemIndex={safeIndex}
                     />
                   }
                 />
@@ -179,7 +221,7 @@ export function ConstructorPreview({
                     <ChevronLeft />
                   </button>
                   <span aria-live="polite">
-                    {names[previewIndex % total] || "Ваша надпись"}
+                    {names[safeIndex] || "Ваша надпись"}
                   </span>
                   <button
                     type="button"
@@ -252,6 +294,28 @@ export function ConstructorPreview({
         Точный предпросмотр шрифта и переноса строк. Реальный оттенок пластика
         при дневном свете смотрите во вкладке „Живое фото“
       </p>
+      <div className="birka-export-actions">
+        <button
+          type="button"
+          className="birka-inline-export"
+          onClick={async () => {
+            try {
+              const { downloadPrintFile } = await import("./print-export");
+              await downloadPrintFile(
+                shape,
+                color,
+                currentName,
+                "3mf",
+                safeIndex,
+              );
+            } catch {
+              toast.error("Не удалось скачать пробник. Попробуйте ещё раз.");
+            }
+          }}
+        >
+          <Download aria-hidden="true" /> Скачать пробник 3MF
+        </button>
+      </div>
     </div>
   );
 }

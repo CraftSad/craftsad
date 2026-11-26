@@ -7,4 +7,5 @@ export type TagProps = {
   shape: ShapeId;
   color: number;
   name: string;
+  itemIndex?: number;
 };

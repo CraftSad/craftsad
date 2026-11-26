@@ -44,7 +44,7 @@ function GardenBed() {
 }
 
 /** Рассада на полке, бирка-колышек рядом с первым горшком */
-function SeedlingScene({ shape, color, name }: TagProps) {
+function SeedlingScene({ shape, color, name, itemIndex }: TagProps) {
   const potPositions: [number, number, number][] = [
     [-2.4, 0, 0.3],
     [0, 0, 0],
@@ -79,6 +79,7 @@ function SeedlingScene({ shape, color, name }: TagProps) {
           shape={shape}
           color={color}
           name={name}
+          itemIndex={itemIndex}
           position={tagPos}
           rotation={tagRot}
           animate
@@ -89,7 +90,7 @@ function SeedlingScene({ shape, color, name }: TagProps) {
 }
 
 /** Грядка, бирка-флажок у переднего края */
-function GardenScene({ shape, color, name }: TagProps) {
+function GardenScene({ shape, color, name, itemIndex }: TagProps) {
   const plantPositions: Array<[number, number, number]> = [
     [-3.2, 0.01, -0.6],
     [-1.6, 0.01, -0.5],
@@ -117,6 +118,7 @@ function GardenScene({ shape, color, name }: TagProps) {
           shape={shape}
           color={color}
           name={name}
+          itemIndex={itemIndex}
           position={tagPos}
           rotation={tagRot}
           animate
@@ -127,7 +129,7 @@ function GardenScene({ shape, color, name }: TagProps) {
 }
 
 /** Теплица, подвесная бирка на верёвочке */
-function GreenhouseScene({ shape, color, name }: TagProps) {
+function GreenhouseScene({ shape, color, name, itemIndex }: TagProps) {
   const potPositions: [number, number, number][] = [
     [-2.0, 0, 0],
     [0, 0, 0],
@@ -160,6 +162,7 @@ function GreenhouseScene({ shape, color, name }: TagProps) {
           shape={shape}
           color={color}
           name={name}
+          itemIndex={itemIndex}
           position={tagPos}
           rotation={tagRot}
           animate
@@ -175,6 +178,7 @@ export function InnerScene({
   shape,
   color,
   name,
+  itemIndex,
 }: TagProps & { mode: TryOnMode }) {
   return (
     <>
@@ -187,13 +191,28 @@ export function InnerScene({
 
       <Suspense fallback={null}>
         {mode === "seedling" && (
-          <SeedlingScene shape={shape} color={color} name={name} />
+          <SeedlingScene
+            shape={shape}
+            color={color}
+            name={name}
+            itemIndex={itemIndex}
+          />
         )}
         {mode === "garden" && (
-          <GardenScene shape={shape} color={color} name={name} />
+          <GardenScene
+            shape={shape}
+            color={color}
+            name={name}
+            itemIndex={itemIndex}
+          />
         )}
         {mode === "greenhouse" && (
-          <GreenhouseScene shape={shape} color={color} name={name} />
+          <GreenhouseScene
+            shape={shape}
+            color={color}
+            name={name}
+            itemIndex={itemIndex}
+          />
         )}
       </Suspense>
 

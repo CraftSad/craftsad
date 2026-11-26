@@ -7,9 +7,10 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
-import { colorPairs, type ShapeId } from "./data";
+import { colorPairs, getTagVisual, type ShapeId, shapeToSeries } from "./data";
 import { money, type View } from "./shared";
 import { wrapName } from "./tag-config";
+import { ThemedTagSvg } from "./themed-tag-svg";
 
 export function RollingNumber({ value }: { value: number }) {
   return (
@@ -119,13 +120,31 @@ export function LabelPreview({
   name,
   view = "front",
   small = false,
+  itemIndex = 0,
 }: {
   shape: ShapeId;
   color: number;
   name: string;
   view?: View;
   small?: boolean;
+  itemIndex?: number;
 }) {
+  const series = shapeToSeries(shape);
+  if (series !== "classic") {
+    const visual = getTagVisual(shape, color, name, itemIndex);
+    return (
+      <div
+        className={`birka-preview birka-preview-themed ${small ? "birka-preview-small" : ""} birka-preview-${view}`}
+        role="img"
+        aria-label={`Бирка: ${name || "ваша надпись"}`}
+      >
+        <div className="birka-themed-card">
+          <ThemedTagSvg visual={visual} name={name} />
+        </div>
+        {!small && <div className="birka-preview-shadow" />}
+      </div>
+    );
+  }
   const pair = colorPairs[color] ?? colorPairs[0];
   const lines = wrapName(name || "Ваш сорт");
   const longestLine = Math.max(

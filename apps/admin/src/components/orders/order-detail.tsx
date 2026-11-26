@@ -251,7 +251,7 @@ export function OrderDetail({ id }: { id: string }) {
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {item.customizationJson
-                      ? `${item.customizationJson.lengthMm}×${item.customizationJson.heightMm} мм · ${item.customizationJson.varieties.join(", ")}`
+                      ? `${item.customizationJson.series ? `[${item.customizationJson.series}] ` : ""}${item.customizationJson.lengthMm}×${item.customizationJson.heightMm} мм · ${item.customizationJson.varieties.join(", ")}`
                       : "—"}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
