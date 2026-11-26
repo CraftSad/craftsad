@@ -190,9 +190,7 @@ function BlogPostContent({ slug }: { slug: string }) {
   );
 }
 
-export default async function BlogPostPage(
-  props: PageProps<"/blog/[slug]">,
-) {
+export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const { slug } = await props.params;
   if (!getPost(slug)) notFound();
 
