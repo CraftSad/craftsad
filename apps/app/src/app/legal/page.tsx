@@ -4,8 +4,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandLockup } from "~/components/3dbirka/brand";
 import { LEGAL_DOC_LIST, LEGAL_ENTITY } from "~/components/legal/legal-data";
+import { absoluteUrl } from "~/seo";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: absoluteUrl(paths.legal.root),
+  },
   title: "Правовая информация и реквизиты — 3D Бирка",
   description: `Юридические документы магазина «3D Бирка»: публичная оферта, политика обработки персональных данных, условия доставки и возврата. ${LEGAL_ENTITY.shortName}, ИНН ${LEGAL_ENTITY.inn}.`,
 };
