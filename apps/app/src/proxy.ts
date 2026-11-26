@@ -1,29 +1,7 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-const publicFiles = new Set([
-  "/favicon.ico",
-  "/favicon.svg",
-  "/brand-mark.svg",
-  "/apple-touch-icon.png",
-  "/icon-192.png",
-  "/icon-512.png",
-  "/icon-maskable-512.png",
-  "/manifest.webmanifest",
-  "/robots.txt",
-  "/sitemap.xml",
-]);
-
-export async function proxy(request: NextRequest) {
-  if (
-    publicFiles.has(request.nextUrl.pathname) ||
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/legal") ||
-    request.nextUrl.pathname.startsWith("/images/") ||
-    request.nextUrl.pathname.startsWith("/fonts/")
-  ) {
-    return NextResponse.next();
-  }
+export function proxy(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
 
   // THIS IS NOT SECURE!
@@ -37,5 +15,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|auth|favicon.ico).*)"],
+  // Keep public pages and unknown URLs public so they can render the 404 page.
+  // Authentication is still enforced by the dashboard layout and procedures.
+  matcher: ["/dashboard/:path*", "/settings/:path*"],
 };

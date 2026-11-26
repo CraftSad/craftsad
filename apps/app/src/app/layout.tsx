@@ -13,6 +13,7 @@ import { DEPLOYMENT_URL, INDEXING_ENABLED, SITE_URL } from "~/seo";
 import "~/app/styles.css";
 import "~/app/3dbirka.css";
 import "~/app/brand.css";
+import "~/app/error-pages.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(DEPLOYMENT_URL),
