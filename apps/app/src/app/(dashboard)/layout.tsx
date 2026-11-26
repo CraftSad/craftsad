@@ -7,10 +7,19 @@ import {
   Skeleton,
   ThemeToggle,
 } from "@acme/ui";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
 import { getSession } from "~/auth/server";
 import { AppSidebar } from "~/components/sidebar";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 /**
  * The shell (sidebar frame, page slot) is static and prerendered; only the

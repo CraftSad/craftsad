@@ -1,8 +1,17 @@
 import { paths } from "@acme/config";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
 
 import { getSession } from "~/auth/server";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 /**
  * Auth pages are static (prerendered); the "already signed in" check reads

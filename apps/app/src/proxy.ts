@@ -1,7 +1,7 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-const publicBrandAssets = new Set([
+const publicFiles = new Set([
   "/favicon.ico",
   "/favicon.svg",
   "/brand-mark.svg",
@@ -10,11 +10,13 @@ const publicBrandAssets = new Set([
   "/icon-512.png",
   "/icon-maskable-512.png",
   "/manifest.webmanifest",
+  "/robots.txt",
+  "/sitemap.xml",
 ]);
 
 export async function proxy(request: NextRequest) {
   if (
-    publicBrandAssets.has(request.nextUrl.pathname) ||
+    publicFiles.has(request.nextUrl.pathname) ||
     request.nextUrl.pathname === "/" ||
     request.nextUrl.pathname.startsWith("/legal") ||
     request.nextUrl.pathname.startsWith("/images/") ||

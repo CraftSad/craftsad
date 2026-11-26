@@ -6,6 +6,18 @@ test("redirects anonymous visitors to the login page", async ({ page }) => {
   await expect(page).toHaveURL(/\/auth\/login$/);
 });
 
+test("serves robots.txt and sitemap.xml without authorization", async ({
+  request,
+}) => {
+  const robots = await request.get("/robots.txt");
+  expect(robots.ok()).toBeTruthy();
+  expect(await robots.text()).toContain("User-Agent: *");
+
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.ok()).toBeTruthy();
+  expect(await sitemap.text()).toContain("<urlset");
+});
+
 test("renders the login form", async ({ page }) => {
   await page.goto("/auth/login");
 
