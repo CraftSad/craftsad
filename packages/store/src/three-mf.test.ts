@@ -63,7 +63,7 @@ test("assigns three filament materials when accentColor is provided", () => {
       "solid kids",
       "facet normal 0 0 1\nouter loop\nvertex 0 0 1\nvertex 5 0 1\nvertex 0 5 1\nendloop\nendfacet",
       "facet normal 0 0 1\nouter loop\nvertex 0 0 2.4\nvertex 5 0 2.4\nvertex 0 5 2.4\nendloop\nendfacet",
-      "facet normal 0 0 1\nouter loop\nvertex 0 0 2.9\nvertex 5 0 2.9\nvertex 0 5 2.9\nendloop\nendfacet",
+      "facet normal 0 0 1\nouter loop\nvertex 0 0 2.19\nvertex 5 0 2.9\nvertex 0 5 2.9\nendloop\nendfacet",
       "endsolid kids",
     ].join("\n"),
   );
@@ -80,4 +80,17 @@ test("assigns three filament materials when accentColor is provided", () => {
   expect(xml).toContain('p1="2"');
   expect(xml).toContain('p1="1"');
   expect(xml).toContain('p1="0"');
+
+  const withoutAccent = stlTo3mf(ascii, {
+    name: "Морковь",
+    baseColor: "морковный",
+    textColor: "мел",
+    series: "kids",
+  });
+  const twoColorXml = new TextDecoder().decode(
+    unzipSync(withoutAccent)["3D/3dmodel.model"],
+  );
+  expect(
+    [...twoColorXml.matchAll(/ p1="(\d)"/g)].map((match) => match[1]),
+  ).toEqual(["0", "0", "1"]);
 });

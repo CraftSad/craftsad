@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Download, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { type Ref, useState } from "react";
+import { toast } from "sonner";
 import {
   getPaletteForShape,
   type ShapeId,
@@ -298,8 +299,18 @@ export function ConstructorPreview({
           type="button"
           className="birka-inline-export"
           onClick={async () => {
-            const { downloadPrintFile } = await import("./print-export");
-            await downloadPrintFile(shape, color, currentName, "3mf");
+            try {
+              const { downloadPrintFile } = await import("./print-export");
+              await downloadPrintFile(
+                shape,
+                color,
+                currentName,
+                "3mf",
+                safeIndex,
+              );
+            } catch {
+              toast.error("Не удалось скачать пробник. Попробуйте ещё раз.");
+            }
           }}
         >
           <Download aria-hidden="true" /> Скачать пробник 3MF

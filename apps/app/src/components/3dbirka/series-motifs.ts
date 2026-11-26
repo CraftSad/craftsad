@@ -89,33 +89,24 @@ export type ResolvedTagVisual = {
   uppercase: boolean;
 };
 
-const MOTIF_PATTERNS: [RegExp, PlantMotif][] = [
-  [
-    /томат|помидор|черри|бычье|де\s*барао|санька|любаш|кумир|малиновк|розовый\s*м[её]д/iu,
-    "tomato",
-  ],
-  [/огур|зозул|герман|корнишон|апрельск/iu, "cucumber"],
-  [/перец|перц|калифорн|огон[её]к|халапень|паприк|чили/iu, "pepper"],
-  [/баклажан|алмаз|синеньк/iu, "eggplant"],
-  [/кабач|цуккин|патиссон|искандер/iu, "zucchini"],
-  [/базилик|геновез|рейхан/iu, "basil"],
-  [/укроп|аллигатор|фенхел/iu, "dill"],
-  [/петрушк|сельдер|кинз|кориандр|богатыр/iu, "parsley"],
-  [/клубник|земляник|елизавет|руян|виктори|малин|ежевик/iu, "strawberry"],
-  [
-    /морков|нантск|св[её]кл|бордо|редис|сор[аы]|редьк|реп[аы]|пастернак/iu,
-    "carrot",
-  ],
-  [
-    /салат|лолло|капуст|слав[аы]|руккол|покер|шпинат|матадор|щавел|мангольд/iu,
-    "lettuce",
-  ],
+const CROP_PATTERNS: [RegExp, PlantMotif][] = [
+  [/томат|помидор|черри/iu, "tomato"],
+  [/огур|корнишон/iu, "cucumber"],
+  [/перец|перц|халапень|паприк|чили/iu, "pepper"],
+  [/баклажан|синеньк/iu, "eggplant"],
+  [/кабач|цуккин|патиссон/iu, "zucchini"],
+  [/базилик|рейхан/iu, "basil"],
+  [/укроп|фенхел/iu, "dill"],
+  [/петрушк|сельдер|кинз|кориандр/iu, "parsley"],
+  [/клубник|земляник|малин(?!овк)|ежевик/iu, "strawberry"],
+  [/морков|св[её]кл|редис|редьк|реп[аы]|пастернак/iu, "carrot"],
+  [/салат|капуст|руккол|шпинат|щавел|мангольд/iu, "lettuce"],
   [
     /подсолн|георгин|астр|ромашк|бархатц|петуни|пион|роз[аы]|лили|ирис|флокс|цвет|кукуруз/iu,
     "sunflower",
   ],
-  [/горох|альф[аы]|фасол|сакс|боб[ыо]/iu, "pea"],
-  [/тыкв|баттернат|арбуз|дын[яи]|колхозниц/iu, "pumpkin"],
+  [/горох|фасол|боб[ыо]/iu, "pea"],
+  [/тыкв|арбуз|дын[яи]/iu, "pumpkin"],
   [/розмарин|тархун|эстрагон|шалфей/iu, "rosemary"],
   [/лаванд|иссоп|котовник/iu, "lavender"],
   [/чабрец/iu, "marjoram"],
@@ -125,10 +116,28 @@ const MOTIF_PATTERNS: [RegExp, PlantMotif][] = [
   [/орегано|майоран/iu, "oregano"],
 ];
 
+const VARIETY_PATTERNS: [RegExp, PlantMotif][] = [
+  [/бычье|де\s*барао|санька|любаш|кумир|малиновк|розовый\s*м[её]д/iu, "tomato"],
+  [/зозул|герман|апрельск/iu, "cucumber"],
+  [/калифорн|огон[её]к/iu, "pepper"],
+  [/алмаз/iu, "eggplant"],
+  [/искандер/iu, "zucchini"],
+  [/геновез/iu, "basil"],
+  [/аллигатор/iu, "dill"],
+  [/богатыр/iu, "parsley"],
+  [/елизавет|руян|виктори/iu, "strawberry"],
+  [/нантск|бордо|сор[аы]/iu, "carrot"],
+  [/лолло|слав[аы]|покер|матадор/iu, "lettuce"],
+  [/альф[аы]|сакс/iu, "pea"],
+  [/баттернат|колхозниц/iu, "pumpkin"],
+];
+
 export function detectPlantMotif(name: string, fallbackIndex = 0): PlantMotif {
   const clean = name.trim();
-  for (const [pattern, motif] of MOTIF_PATTERNS) {
-    if (pattern.test(clean)) return motif;
+  for (const patterns of [CROP_PATTERNS, VARIETY_PATTERNS]) {
+    for (const [pattern, motif] of patterns) {
+      if (pattern.test(clean)) return motif;
+    }
   }
   const cycle: PlantMotif[] = [
     "basil",
@@ -416,7 +425,8 @@ export function resolveTagVisual({
     accent: palette.accent,
     secondary: series === "slate" ? palette.ink : "#f8f1e4",
     detail: palette.accent,
-    tallStake: shape === "flag" || shape === "slate-tall",
+    tallStake:
+      shape === "flag" || shape === "slate-tall" || shape === "kids-sunflower",
     uppercase: series === "kids" || series === "provence",
   };
 }

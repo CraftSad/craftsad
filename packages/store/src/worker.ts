@@ -63,6 +63,7 @@ async function processJob(job: { id: string; order_id: string }) {
             baseColor: item.customizationJson.baseColor,
             textColor: item.customizationJson.textColor,
             accentColor: item.customizationJson.accentColor,
+            series: item.customizationJson.series,
           });
         }
     }

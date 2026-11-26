@@ -1,3 +1,4 @@
+import type { TagSeries } from "@acme/db";
 import { zipSync } from "fflate";
 
 type Vertex = [number, number, number];
@@ -106,11 +107,13 @@ export function stlTo3mf(
     baseColor: string;
     textColor: string;
     accentColor?: string;
+    series?: TagSeries;
   },
 ): Uint8Array {
   const triangles = readTriangles(stl);
   if (!triangles.length) throw new Error("STL не содержит треугольников");
   const hasAccent = Boolean(options.accentColor);
+  const themed = hasAccent || (options.series && options.series !== "classic");
   const vertices: string[] = [];
   const faces: string[] = [];
   const vertexIds = new Map<string, number>();
@@ -130,10 +133,12 @@ export function stlTo3mf(
       return id;
     });
     const maxZ = Math.max(triangle[0][2], triangle[1][2], triangle[2][2]);
-    const material = hasAccent
+    // Classify exposed relief walls by their upper edge: their bases now
+    // reach the body, but their tops still define the filament bands.
+    const material = themed
       ? maxZ > 2.6001
         ? 1
-        : maxZ > 2.2001
+        : hasAccent && maxZ > 2.2001
           ? 2
           : 0
       : maxZ > 2.0001

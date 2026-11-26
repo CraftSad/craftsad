@@ -78,8 +78,10 @@ translate([0, 0, 2.2])
     sprig_2d();
   }
 
-translate([0, 0, 2.6])
-  linear_extrude(height=letter_relief) {
+// Recess the relief into its supporting surface while keeping its top at 2.6 + letter_relief.
+relief_bottom = 2.19;
+translate([0, 0, relief_bottom])
+  linear_extrude(height=2.6 + letter_relief - relief_bottom) {
     translate([0, -tag_height * 0.11 + (tag_text_2 == "" ? 0 : font_size * 0.52)])
       text(tag_text_1, size=font_size, font=font_name, halign="center", valign="center");
     if (tag_text_2 != "")

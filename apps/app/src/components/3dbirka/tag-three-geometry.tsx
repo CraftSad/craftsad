@@ -394,11 +394,11 @@ export function buildTagLayers(
 
     if (char === "carrot") {
       const body = new Shape();
-      body.moveTo(0, -0.82);
+      body.moveTo(0, -0.51);
       body.quadraticCurveTo(-1.18, -0.2, -1.12, 0.44);
       body.quadraticCurveTo(-1.05, 0.82, 0, 0.82);
       body.quadraticCurveTo(1.05, 0.82, 1.12, 0.44);
-      body.quadraticCurveTo(1.18, -0.2, 0, -0.82);
+      body.quadraticCurveTo(1.18, -0.2, 0, -0.51);
       layers.push(
         { shape: body, z: 0, depth: 0.11, color: visual.base, bevel: 0.028 },
         ...([-0.42, -0.14, 0.14, 0.42] as const).map((lx, idx) => ({

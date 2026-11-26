@@ -6,6 +6,7 @@ import { layoutText } from "./layout";
 export const seriesSchema = z.enum(["classic", "slate", "kids", "provence"]);
 
 export const customizationSchema = z.object({
+  // Accepted for older clients; the catalog determines the order series.
   series: seriesSchema.optional(),
   shape: z.enum([
     "rounded",
@@ -87,7 +88,9 @@ export async function priceCart(database: Database, cart: Cart) {
       productId: product.id,
       quantity: item.quantity,
       unitPrice: product.priceKopecks,
-      customizationJson: item.customization ?? null,
+      customizationJson: item.customization
+        ? { ...item.customization, series: product.series }
+        : null,
       lineTotal,
     };
   });

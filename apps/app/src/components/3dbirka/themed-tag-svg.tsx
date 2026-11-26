@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import type { PlantMotif, ResolvedTagVisual } from "./series-motifs";
 import { wrapName } from "./tag-config";
 
@@ -184,7 +185,7 @@ function SlateSvg({
   const longest = Math.max(...lines.map((l) => Array.from(l).length), 1);
   const fontSize = Math.min(23, Math.max(12, Math.round(230 / longest)));
   return (
-    <svg viewBox="0 0 220 260" className="birka-themed-svg" aria-hidden="true">
+    <>
       <path
         d={bodyPath}
         fill={visual.base}
@@ -230,7 +231,7 @@ function SlateSvg({
         <path d="M78 136Q94 139 104 136M116 136Q126 139 142 136" fill="none" />
         <circle cx="110" cy="136" r="2.2" fill={visual.ink} />
       </g>
-    </svg>
+    </>
   );
 }
 
@@ -243,11 +244,15 @@ function KidsSvg({
 }) {
   const upperLines = lines.map((line) => line.toUpperCase());
   const longest = Math.max(...upperLines.map((l) => Array.from(l).length), 1);
-  const fontSize = Math.min(20, Math.max(10, Math.round(195 / longest)));
   const char = visual.kidsCharacter;
+  // The carrot narrows under the inscription. Budget for wide glyphs and spacing.
+  const fontSize =
+    char === "carrot"
+      ? Math.min(18, 84 / (longest * 1.4))
+      : Math.min(20, Math.max(10, Math.round(195 / longest)));
 
   return (
-    <svg viewBox="0 0 220 260" className="birka-themed-svg" aria-hidden="true">
+    <>
       {/* Stake */}
       <path
         d="M97 148L123 148L117 242L110 254L103 242Z"
@@ -576,7 +581,7 @@ function KidsSvg({
           </tspan>
         ))}
       </text>
-    </svg>
+    </>
   );
 }
 
@@ -694,7 +699,7 @@ function ProvenceSvg({
   };
 
   return (
-    <svg viewBox="0 0 220 260" className="birka-themed-svg" aria-hidden="true">
+    <>
       {plaque === "watering-can" && (
         <g fill={visual.secondary} stroke={visual.ink} strokeOpacity="0.22">
           <circle cx="88" cy="48" r="10" />
@@ -757,23 +762,70 @@ function ProvenceSvg({
           </tspan>
         ))}
       </text>
-    </svg>
+    </>
   );
 }
 
 export function ThemedTagSvg({
   visual,
   name,
+  scaleViewport,
 }: {
   visual: ResolvedTagVisual;
   name: string;
+  scaleViewport?: { x: number; y: number; width: number; height: number };
 }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const artRef = useRef<SVGGElement>(null);
   const lines = wrapName(name || "Ваш сорт");
-  if (visual.series === "slate") {
-    return <SlateSvg visual={visual} lines={lines} />;
-  }
-  if (visual.series === "kids") {
-    return <KidsSvg visual={visual} lines={lines} />;
-  }
-  return <ProvenceSvg visual={visual} lines={lines} />;
+
+  useLayoutEffect(() => {
+    if (!scaleViewport || !artRef.current || !svgRef.current) return;
+    const { y, height } = artRef.current.getBBox();
+    if (height <= 0) return;
+
+    // getBBox excludes strokes. Only these outlines extend above the artwork.
+    const topStroke =
+      visual.series === "slate"
+        ? 2.5
+        : visual.series === "kids"
+          ? ((
+              {
+                strawberry: 3,
+                tomato: 2,
+                pea: 2.25,
+                pumpkin: 4.5,
+                hedgehog: 2.5,
+              } as Partial<Record<ResolvedTagVisual["kidsCharacter"], number>>
+            )[visual.kidsCharacter] ?? 0)
+          : visual.provencePlaque === "watering-can"
+            ? 0.5
+            : 0;
+    const bottomStroke = visual.series === "slate" ? 2.5 : 0;
+    svgRef.current.setAttribute(
+      "viewBox",
+      `14 ${y - topStroke} 192 ${height + topStroke + bottomStroke}`,
+    );
+  });
+
+  return (
+    <svg
+      {...scaleViewport}
+      ref={svgRef}
+      viewBox={scaleViewport ? "14 12 192 244" : "0 0 220 260"}
+      className={scaleViewport ? undefined : "birka-themed-svg"}
+      preserveAspectRatio={scaleViewport ? "none" : undefined}
+      aria-hidden="true"
+    >
+      <g ref={artRef}>
+        {visual.series === "slate" ? (
+          <SlateSvg visual={visual} lines={lines} />
+        ) : visual.series === "kids" ? (
+          <KidsSvg visual={visual} lines={lines} />
+        ) : (
+          <ProvenceSvg visual={visual} lines={lines} />
+        )}
+      </g>
+    </svg>
+  );
 }

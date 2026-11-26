@@ -13,8 +13,10 @@ letter_relief = 0.5;
 font_name = "Liberation Sans:style=Bold";
 stake_length = 68;
 
-is_hedgehog = (tag_shape == "hedgehog" || tag_motif == "zucchini" || tag_motif == "hedgehog");
-is_sunflower = (tag_shape == "sunflower" || tag_motif == "sunflower");
+is_hedgehog = tag_shape == "hedgehog" ||
+  (tag_shape == "figurine" && (tag_motif == "zucchini" || tag_motif == "hedgehog"));
+is_sunflower = tag_shape == "sunflower" ||
+  (tag_shape == "figurine" && tag_motif == "sunflower");
 
 module stake_2d() {
   polygon([
@@ -91,8 +93,10 @@ translate([0, 0, 2.2])
   linear_extrude(height=0.4)
     accent_2d();
 
-translate([0, 0, 2.6])
-  linear_extrude(height=letter_relief) {
+// Recess the relief into its supporting surface while keeping its top at 2.6 + letter_relief.
+relief_bottom = is_sunflower ? 2.59 : 2.19;
+translate([0, 0, relief_bottom])
+  linear_extrude(height=2.6 + letter_relief - relief_bottom) {
     translate([0, (tag_text_2 == "" ? 0 : font_size * 0.55)])
       text(tag_text_1, size=font_size, font=font_name, halign="center", valign="center");
     if (tag_text_2 != "")

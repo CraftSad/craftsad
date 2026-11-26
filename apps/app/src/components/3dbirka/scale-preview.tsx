@@ -92,20 +92,11 @@ export function ScalePreview({
             </text>
           </>
         ) : (
-          <svg
-            x={318 - width / 2}
-            y={top}
-            width={width}
-            height={height}
-            viewBox="14 12 192 244"
-            preserveAspectRatio="xMidYMax meet"
-            aria-hidden="true"
-          >
-            <ThemedTagSvg
-              visual={getTagVisual(shape, color, name, itemIndex)}
-              name={name}
-            />
-          </svg>
+          <ThemedTagSvg
+            visual={getTagVisual(shape, color, name, itemIndex)}
+            name={name}
+            scaleViewport={{ x: 318 - width / 2, y: top, width, height }}
+          />
         )}
         <path d={`M390 ${top}h8m-4 0V258m-4 0h8`} stroke="#bfccb7" />
         <text x="402" y={top + height / 2} fill="#e4e9d8" fontSize="12">

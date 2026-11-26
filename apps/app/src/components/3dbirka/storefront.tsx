@@ -6,7 +6,13 @@ import { CartDrawer } from "./cart-drawer";
 import { CatalogSection } from "./catalog-section";
 import { ConstructorPreview } from "./constructor-preview";
 import { ConstructorSteps } from "./constructor-steps";
-import { type Preset, type SeriesId, type ShapeId, tagSeries } from "./data";
+import {
+  type Preset,
+  type SeriesId,
+  type ShapeId,
+  shapeToSeries,
+  tagSeries,
+} from "./data";
 import { GardenSections } from "./garden-sections";
 import { HeroSection } from "./hero-section";
 import { HowSection } from "./how-section";
@@ -70,6 +76,7 @@ export function Storefront() {
       return (current + direction + total) % total;
     });
   const selectSeries = (seriesId: SeriesId) => {
+    if (seriesId === shapeToSeries(shape)) return;
     const target =
       tagSeries.find((entry) => entry.id === seriesId) ?? tagSeries[0];
     setShape(target.defaultShape);

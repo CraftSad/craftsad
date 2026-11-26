@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
+import type { Database } from "@acme/db";
 import { detectScadMotif, layoutText, resolveScadTemplate } from "./model";
-import { cartSchema, itemTotal } from "./pricing";
+import { cartSchema, itemTotal, priceCart } from "./pricing";
 
 test("price counts each variety in each set", () => {
   expect(itemTotal(7900, 2, 3)).toBe(47400);
@@ -69,4 +70,38 @@ test("accepts themed series customizations and resolves OpenSCAD templates", () 
     ],
   });
   expect(parsed.success).toBe(true);
+});
+
+test("pricing persists the catalog series for generation, including legacy requests", async () => {
+  const product = {
+    id: crypto.randomUUID(),
+    series: "kids",
+    priceKopecks: 14500,
+    isCustomizable: true,
+  };
+  const database = {
+    select: () => ({ from: () => ({ where: async () => [product] }) }),
+  } as unknown as Database;
+  for (const series of ["classic", undefined]) {
+    const cart = cartSchema.parse({
+      items: [
+        {
+          productId: product.id,
+          quantity: 2,
+          customization: {
+            series,
+            shape: "figurine",
+            lengthMm: 80,
+            heightMm: 56,
+            baseColor: "морковный",
+            textColor: "белый",
+            varieties: ["Морковь"],
+          },
+        },
+      ],
+    });
+    const priced = await priceCart(database, cart);
+    expect(priced.totalAmount).toBe(29000);
+    expect(priced.items[0]?.customizationJson?.series).toBe("kids");
+  }
 });

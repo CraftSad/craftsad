@@ -1,4 +1,5 @@
 import {
+  Box3,
   type BufferGeometry,
   ExtrudeGeometry,
   Path,
@@ -77,25 +78,28 @@ async function makeModel(
   shape: ShapeId,
   color: number,
   name: string,
+  itemIndex = 0,
 ): Promise<PrintModel> {
   const response = await fetch("/fonts/manrope.typeface.json");
   if (!response.ok) throw new Error("Не удалось загрузить шрифт для печати.");
   const font = new FontLoader().parse(await response.json());
 
   if (shapeToSeries(shape) !== "classic") {
-    const spec = buildTagLayers(shape, color, name);
+    const spec = buildTagLayers(shape, color, name, itemIndex);
     const entry = getShapeEntry(shape);
-    const mmPerUnit = 26;
+    const depthScale = 26;
+    const modelBounds = new Box3();
     const parts: PrintPart[] = [];
     for (const [idx, layer] of spec.layers.entries()) {
       const geo = new ExtrudeGeometry(layer.shape, {
-        depth: layer.depth * mmPerUnit,
+        depth: layer.depth * depthScale,
         bevelEnabled: false,
         curveSegments: 14,
         steps: 1,
       });
-      geo.scale(mmPerUnit, mmPerUnit, 1);
-      geo.translate(0, 0, layer.z * mmPerUnit);
+      geo.translate(0, 0, layer.z * depthScale);
+      geo.computeBoundingBox();
+      if (geo.boundingBox) modelBounds.union(geo.boundingBox);
       parts.push({
         triangles: trianglesFromGeometry(geo),
         color: layer.color,
@@ -103,11 +107,37 @@ async function makeModel(
       });
       geo.dispose();
     }
+    const size = modelBounds.getSize(new Vector3());
+    const scaleX = (entry.widthCm * 10) / size.x;
+    const scaleY = (entry.heightCm * 10) / size.y;
+    modelBounds.makeEmpty();
+    for (const part of parts) {
+      for (const triangle of part.triangles) {
+        for (const point of triangle) {
+          point.x *= scaleX;
+          point.y *= scaleY;
+          modelBounds.expandByPoint(point);
+        }
+      }
+    }
+
+    // The kids layers start with the stake. The sunflower and hedgehog
+    // inscriptions sit on their raised name panels.
+    const character = spec.visual.kidsCharacter;
+    const surfaceIndex =
+      spec.visual.series !== "kids"
+        ? 0
+        : character === "sunflower" || character === "hedgehog"
+          ? 3
+          : 1;
+    const surface = spec.layers[surfaceIndex];
+    if (!surface) throw new Error("Не удалось построить корпус бирки.");
+    const textZ = (surface.z + surface.depth) * depthScale - 0.15;
     const rawLines = wrapName(name);
     const lines = spec.visual.uppercase
       ? rawLines.map((line) => line.toUpperCase())
       : rawLines;
-    const maxTextWidth = spec.maxTextWidth * mmPerUnit;
+    const maxTextWidth = spec.maxTextWidth * scaleX;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i] ?? "";
       if (!line) continue;
@@ -127,15 +157,17 @@ async function makeModel(
         text.computeBoundingBox();
         const fitted = text.boundingBox;
         if (fitted) {
-          const baseY = spec.textY * mmPerUnit;
+          const baseY = spec.textY * scaleY;
           const y = lines.length === 1 ? baseY : baseY + 4 - i * 8.2;
           text.translate(
-            spec.textX * mmPerUnit - (fitted.min.x + fitted.max.x) / 2,
+            spec.textX * scaleX - (fitted.min.x + fitted.max.x) / 2,
             y - (fitted.min.y + fitted.max.y) / 2,
-            spec.textZ * mmPerUnit - 0.15,
+            textZ - fitted.min.z,
           );
         }
       }
+      text.computeBoundingBox();
+      if (text.boundingBox) modelBounds.union(text.boundingBox);
       parts.push({
         triangles: trianglesFromGeometry(text),
         color: spec.visual.ink,
@@ -143,11 +175,8 @@ async function makeModel(
       });
       text.dispose();
     }
-    return {
-      parts,
-      width: entry.widthCm * 10,
-      height: entry.heightCm * 10,
-    };
+    modelBounds.getSize(size);
+    return { parts, width: size.x, height: size.y };
   }
 
   const pair = colorPairs[color] ?? colorPairs[0];
@@ -344,8 +373,9 @@ export async function downloadPrintFile(
   color: number,
   name: string,
   format: "stl" | "3mf",
+  itemIndex = 0,
 ) {
-  const model = await makeModel(shape, color, name);
+  const model = await makeModel(shape, color, name, itemIndex);
   const blob = format === "stl" ? stl(model) : threeMf(model, name);
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");

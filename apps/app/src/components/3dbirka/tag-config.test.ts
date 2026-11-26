@@ -53,6 +53,10 @@ describe("kit pricing and inscriptions", () => {
     assert.equal(detectPlantMotif("Томат Бычье сердце"), "tomato");
     assert.equal(detectPlantMotif("Клубника Елизавета"), "strawberry");
     assert.equal(detectPlantMotif("Лаванда"), "lavender");
+    assert.equal(detectPlantMotif("Арбуз Огонёк"), "pumpkin");
+    assert.equal(detectPlantMotif("Огонёк"), "pepper");
+    assert.equal(detectPlantMotif("Малиновка"), "tomato");
+    assert.equal(detectPlantMotif("Клубника Малиновка"), "strawberry");
 
     const hedgehog = getTagVisual("kids-auto", 0, "Кабачок");
     assert.equal(hedgehog.kidsCharacter, "hedgehog");
