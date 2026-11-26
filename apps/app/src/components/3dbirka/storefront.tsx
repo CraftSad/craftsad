@@ -6,7 +6,7 @@ import { CartDrawer } from "./cart-drawer";
 import { CatalogSection } from "./catalog-section";
 import { ConstructorPreview } from "./constructor-preview";
 import { ConstructorSteps } from "./constructor-steps";
-import type { Preset, ShapeId } from "./data";
+import { type Preset, type SeriesId, type ShapeId, tagSeries } from "./data";
 import { GardenSections } from "./garden-sections";
 import { HeroSection } from "./hero-section";
 import { HowSection } from "./how-section";
@@ -69,6 +69,15 @@ export function Storefront() {
       const total = Math.max(names.length, 1);
       return (current + direction + total) % total;
     });
+  const selectSeries = (seriesId: SeriesId) => {
+    const target =
+      tagSeries.find((entry) => entry.id === seriesId) ?? tagSeries[0];
+    setShape(target.defaultShape);
+    setColor(0);
+    setMixed(false);
+    setAdded(false);
+    setPreviewIndex(0);
+  };
   const selectShape = (id: ShapeId) => {
     setShape(id);
     setMixed(false);
@@ -195,6 +204,7 @@ export function Storefront() {
                   names={names}
                   added={added}
                   mixed={mixed}
+                  onSelectSeries={selectSeries}
                   onSelectShape={selectShape}
                   onSelectColor={selectColor}
                   onNamesChange={handleNamesChange}

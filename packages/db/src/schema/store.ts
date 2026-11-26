@@ -31,6 +31,12 @@ export const printJobStatus = pgEnum("print_job_status", [
   "done",
   "failed",
 ]);
+export const tagSeries = pgEnum("tag_series", [
+  "classic",
+  "slate",
+  "kids",
+  "provence",
+]);
 export const orderNumberSequence = pgSequence("birka_order_number_seq", {
   startWith: 1001,
 });
@@ -54,6 +60,7 @@ export const products = pgTable(
     description: text("description"),
     priceKopecks: integer("price_kopecks").notNull(),
     isCustomizable: boolean("is_customizable").notNull().default(false),
+    series: tagSeries("series").notNull().default("classic"),
     scadTemplate: text("scad_template"),
     active: boolean("active").notNull().default(true),
   },
@@ -103,12 +110,25 @@ export const orders = pgTable(
   ],
 );
 
+export type TagSeries = "classic" | "slate" | "kids" | "provence";
+
 export type TagCustomization = {
-  shape: "rounded" | "rectangular";
+  series?: TagSeries;
+  shape:
+    | "rounded"
+    | "rectangular"
+    | "contour"
+    | "cloud"
+    | "figurine"
+    | "hedgehog"
+    | "sunflower"
+    | "plaque"
+    | "watering_can";
   lengthMm: number;
   heightMm: number;
   baseColor: string;
   textColor: string;
+  accentColor?: string;
   varieties: string[];
 };
 export const orderItems = pgTable(

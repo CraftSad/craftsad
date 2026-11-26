@@ -66,6 +66,16 @@ const namedColors: Record<string, string> = {
   терракота: "#AE6849",
   песочный: "#DDC6A4",
   хвойный: "#28513E",
+  грифель: "#1F2221",
+  мел: "#F2EAD9",
+  дуб: "#B99066",
+  шалфей: "#8D987E",
+  лаванда: "#9D899C",
+  сливочный: "#EFE5D4",
+  морковный: "#EB7C28",
+  клубничный: "#D84A3D",
+  шоколадный: "#6E4B36",
+  оливковый: "#7AA854",
 };
 
 function color(value: string, fallback: string) {
@@ -91,10 +101,16 @@ function escapeXml(value: string) {
 /** Turn the exact OpenSCAD STL into a millimetre 3MF with filament colors. */
 export function stlTo3mf(
   stl: Uint8Array,
-  options: { name: string; baseColor: string; textColor: string },
+  options: {
+    name: string;
+    baseColor: string;
+    textColor: string;
+    accentColor?: string;
+  },
 ): Uint8Array {
   const triangles = readTriangles(stl);
   if (!triangles.length) throw new Error("STL не содержит треугольников");
+  const hasAccent = Boolean(options.accentColor);
   const vertices: string[] = [];
   const faces: string[] = [];
   const vertexIds = new Map<string, number>();
@@ -113,15 +129,26 @@ export function stlTo3mf(
       }
       return id;
     });
-    const textFace = triangle.some((point) => point[2] > 2.0001);
-    const material = textFace ? 1 : 0;
+    const maxZ = Math.max(triangle[0][2], triangle[1][2], triangle[2][2]);
+    const material = hasAccent
+      ? maxZ > 2.6001
+        ? 1
+        : maxZ > 2.2001
+          ? 2
+          : 0
+      : maxZ > 2.0001
+        ? 1
+        : 0;
     faces.push(
       `<triangle v1="${indices[0]}" v2="${indices[1]}" v3="${indices[2]}" pid="1" p1="${material}" p2="${material}" p3="${material}"/>`,
     );
   }
   const base = color(options.baseColor, "#F4EFE4");
   const text = color(options.textColor, "#26302A");
-  const model = `<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="ru-RU" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><metadata name="Title">${escapeXml(options.name)}</metadata><resources><basematerials id="1"><base name="Корпус" displaycolor="${base}FF"/><base name="Надпись" displaycolor="${text}FF"/></basematerials><object id="2" type="model"><mesh><vertices>${vertices.join("")}</vertices><triangles>${faces.join("")}</triangles></mesh></object></resources><build><item objectid="2"/></build></model>`;
+  const accent = options.accentColor
+    ? `<base name="Декор" displaycolor="${color(options.accentColor, "#7AA854")}FF"/>`
+    : "";
+  const model = `<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xml:lang="ru-RU" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><metadata name="Title">${escapeXml(options.name)}</metadata><resources><basematerials id="1"><base name="Корпус" displaycolor="${base}FF"/><base name="Надпись" displaycolor="${text}FF"/>${accent}</basematerials><object id="2" type="model"><mesh><vertices>${vertices.join("")}</vertices><triangles>${faces.join("")}</triangles></mesh></object></resources><build><item objectid="2"/></build></model>`;
   return zipSync(
     {
       "[Content_Types].xml": encoder.encode(

@@ -1,4 +1,4 @@
-import { type ShapeId, shapes } from "./data";
+import { allShapes, type ShapeId } from "./data";
 
 export type TagConfig = {
   shape: ShapeId;
@@ -45,7 +45,7 @@ export function kitShapes(
 
 export function calculateKit(count: number, shape: ShapeId, mixed = false) {
   const original = kitShapes(count, shape, mixed).reduce(
-    (sum, id) => sum + (shapes.find((entry) => entry.id === id)?.price ?? 0),
+    (sum, id) => sum + (allShapes.find((entry) => entry.id === id)?.price ?? 0),
     0,
   );
   const discount = count >= 30 ? 15 : count >= 15 ? 10 : 0;

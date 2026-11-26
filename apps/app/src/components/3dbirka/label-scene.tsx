@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Center,
-  ContactShadows,
-  Environment,
-  OrbitControls,
-  Text3D,
-} from "@react-three/drei";
+import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import {
@@ -20,15 +14,16 @@ import {
   useRef,
   useState,
 } from "react";
-import { type Group, Path, Shape } from "three";
-import { colorPairs, type ShapeId } from "./data";
-import { wrapName } from "./tag-config";
+import type { Group } from "three";
+import type { ShapeId } from "./data";
+import { ProceduralTagMeshes } from "./tag-three-geometry";
 
 type Props = {
   shape: ShapeId;
   color: number;
   name: string;
   view: "front" | "side" | "rotate";
+  itemIndex?: number;
 };
 
 class SceneBoundary extends Component<
@@ -44,33 +39,9 @@ class SceneBoundary extends Component<
   }
 }
 
-function Tag({ shape, color, name, view }: Props) {
+function Tag({ shape, color, name, view, itemIndex = 0 }: Props) {
   const group = useRef<Group>(null);
   const reduced = useReducedMotion();
-  const pair = colorPairs[color] ?? colorPairs[0];
-  const outline = new Shape();
-  outline.moveTo(-1.4, -0.57);
-  outline.lineTo(1.4, -0.57);
-  outline.quadraticCurveTo(1.55, -0.57, 1.55, -0.42);
-  outline.lineTo(1.55, 0.57);
-  outline.quadraticCurveTo(1.55, 0.72, 1.4, 0.72);
-  outline.lineTo(-1.4, 0.72);
-  outline.quadraticCurveTo(-1.55, 0.72, -1.55, 0.57);
-  outline.lineTo(-1.55, -0.42);
-  outline.quadraticCurveTo(-1.55, -0.57, -1.4, -0.57);
-  if (shape === "hanging") {
-    const hole = new Path();
-    hole.absarc(0, 0.53, 0.07, 0, Math.PI * 2, true);
-    outline.holes.push(hole);
-  }
-  const stem = new Shape();
-  const x = shape === "flag" ? -1.2 : 0;
-  stem.moveTo(x - 0.16, -0.45);
-  stem.lineTo(x + 0.16, -0.45);
-  stem.lineTo(x + 0.12, -2.05);
-  stem.lineTo(x, -2.35);
-  stem.lineTo(x - 0.12, -2.05);
-  stem.closePath();
   useFrame((_, delta) => {
     if (!group.current) return;
     const target = view === "side" ? 1.18 : -0.12;
@@ -79,66 +50,18 @@ function Tag({ shape, color, name, view }: Props) {
       group.current.rotation.y +=
         (target - group.current.rotation.y) * Math.min(delta * 6, 1);
   });
-  const lines = wrapName(name);
   return (
     <group
       ref={group}
       position={[0, shape === "hanging" ? 0 : 0.65, 0]}
       rotation={[0.05, -0.12, -0.12]}
     >
-      <mesh castShadow receiveShadow>
-        <extrudeGeometry
-          args={[
-            outline,
-            {
-              depth: 0.1,
-              bevelEnabled: true,
-              bevelSegments: 3,
-              steps: 1,
-              bevelSize: 0.025,
-              bevelThickness: 0.025,
-            },
-          ]}
-        />
-        <meshStandardMaterial color={pair.base} roughness={0.8} />
-      </mesh>
-      {shape !== "hanging" && (
-        <mesh castShadow>
-          <extrudeGeometry
-            args={[
-              stem,
-              {
-                depth: 0.1,
-                bevelEnabled: true,
-                bevelSize: 0.018,
-                bevelThickness: 0.018,
-                bevelSegments: 2,
-              },
-            ]}
-          />
-          <meshStandardMaterial color={pair.base} roughness={0.8} />
-        </mesh>
-      )}
-      {lines.map((line, index) => (
-        <Center
-          key={index === 0 ? "first-line" : "second-line"}
-          cacheKey={line}
-          position={[0, lines.length === 1 ? 0.02 : 0.21 - index * 0.36, 0.13]}
-        >
-          <Text3D
-            font="/fonts/manrope.typeface.json"
-            size={Math.min(0.28, 3.3 / Math.max(line.length, 1))}
-            height={0.035}
-            bevelEnabled
-            bevelSize={0.003}
-            bevelThickness={0.003}
-            curveSegments={6}
-          >
-            {line}
-            <meshStandardMaterial color={pair.ink} roughness={0.65} />
-          </Text3D>
-        </Center>
-      ))}
+      <ProceduralTagMeshes
+        shape={shape}
+        color={color}
+        name={name}
+        itemIndex={itemIndex}
+      />
     </group>
   );
 }

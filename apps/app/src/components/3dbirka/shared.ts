@@ -2,7 +2,13 @@ import { z } from "zod";
 import type { ShapeId } from "./data";
 import type { TagConfig } from "./tag-config";
 
-export type Category = "all" | "seedling" | "garden" | "greenhouse" | "large";
+export type Category =
+  | "all"
+  | "collections"
+  | "seedling"
+  | "garden"
+  | "greenhouse"
+  | "large";
 export type View = "front" | "side" | "rotate";
 
 export type CartItem = TagConfig & {

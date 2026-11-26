@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { layoutText } from "./model";
+import { detectScadMotif, layoutText, resolveScadTemplate } from "./model";
 import { cartSchema, itemTotal } from "./pricing";
 
 test("price counts each variety in each set", () => {
@@ -40,4 +40,33 @@ test("rejects empty or oversized variety names", () => {
       ],
     }).success,
   ).toBe(false);
+});
+
+test("accepts themed series customizations and resolves OpenSCAD templates", () => {
+  expect(resolveScadTemplate("slate")).toBe("tag_slate.scad");
+  expect(resolveScadTemplate("kids")).toBe("tag_kids.scad");
+  expect(resolveScadTemplate("provence")).toBe("tag_provence.scad");
+  expect(resolveScadTemplate(undefined)).toBe("tag.scad");
+  expect(detectScadMotif("Клубника Елизавета")).toBe("strawberry");
+  expect(detectScadMotif("Розмарин")).toBe("rosemary");
+
+  const parsed = cartSchema.safeParse({
+    items: [
+      {
+        productId: crypto.randomUUID(),
+        quantity: 1,
+        customization: {
+          series: "kids",
+          shape: "figurine",
+          lengthMm: 80,
+          heightMm: 56,
+          baseColor: "морковный",
+          textColor: "белый",
+          accentColor: "оливковый",
+          varieties: ["Морковь", "Клубника", "Кабачок"],
+        },
+      },
+    ],
+  });
+  expect(parsed.success).toBe(true);
 });

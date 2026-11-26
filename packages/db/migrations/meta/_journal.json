@@ -8,6 +8,13 @@
       "when": 1795553870663,
       "tag": "0000_perfect_the_twelve",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795673514138,
+      "tag": "0001_add_product_series",
+      "breakpoints": true
     }
   ]
 }

@@ -7,13 +7,21 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
-import { colorPairs, type Preset, presets, shapes } from "./data";
+import Image from "next/image";
+import {
+  getPaletteForShape,
+  getShapeEntry,
+  type Preset,
+  presets,
+  shapeToSeries,
+} from "./data";
 import { type Category, money } from "./shared";
 import { calculateKit } from "./tag-config";
 import { LabelPreview, Pill } from "./ui";
 
 const filters: [Category, string][] = [
   ["all", "Все"],
+  ["collections", "Авторские серии"],
   ["seedling", "Для рассады · 10 см"],
   ["garden", "Для грядок · 18 см"],
   ["greenhouse", "В теплицу · 8 см"],
@@ -32,9 +40,13 @@ function pluralizeVarieties(count: number): string {
 
 function matchesCategory(kit: Preset, category: Category): boolean {
   if (category === "all") return true;
+  if (category === "collections") {
+    return Boolean(kit.series && kit.series !== "classic");
+  }
   if (category === "large") return kit.items.length >= 30;
   return (
     !kit.mixed &&
+    shapeToSeries(kit.shape) === "classic" &&
     kit.shape ===
       (
         {
@@ -60,6 +72,9 @@ export function CatalogSection({
   const visiblePresets = presets.filter((kit) =>
     matchesCategory(kit, category),
   );
+  const collectionShowcase = presets.filter(
+    (kit) => kit.series && kit.series !== "classic" && kit.coverImage,
+  );
 
   return (
     <section id="catalog" className="birka-section birka-catalog">
@@ -68,14 +83,76 @@ export function CatalogSection({
           <div>
             <span className="birka-eyebrow">Каталог мастерской</span>
             <h2>
-              Готовые наборы с запасом под <em>популярные сорта</em>
+              Готовые наборы и <em>авторские коллекции</em>
             </h2>
           </div>
           <p>
-            Собрали проверенные сочетания для рассады, теплицы и грядок. Любое
-            название можно заменить в один клик перед заказом.
+            Грифельная классика, детские фигурки, французский Прованс и базовые
+            наборы. Любое название можно заменить в один клик перед заказом.
           </p>
         </div>
+
+        {(category === "all" || category === "collections") && (
+          <section
+            className="birka-series-showcase"
+            aria-label="Авторские коллекции садовых табличек"
+          >
+            {collectionShowcase.map((kit) => {
+              const { price } = calculateKit(
+                kit.items.length,
+                kit.shape,
+                kit.mixed,
+              );
+              return (
+                <article className="birka-series-card" key={kit.title}>
+                  <div className="birka-series-card-media">
+                    {kit.coverImage && (
+                      <Image
+                        src={kit.coverImage}
+                        alt={kit.title}
+                        width={1024}
+                        height={682}
+                      />
+                    )}
+                    <span className="birka-series-card-badge">
+                      {kit.badge ?? "Авторская серия"}
+                    </span>
+                    <span className="birka-series-card-count">
+                      {kit.items.length} табличек
+                    </span>
+                  </div>
+                  <div className="birka-series-card-body">
+                    <h3>{kit.title}</h3>
+                    {kit.subtitle && <p>{kit.subtitle}</p>}
+                    <div className="birka-series-card-footer">
+                      <div>
+                        <strong>{money(price)} ₽</strong>
+                        <small>за набор · или свои сорта в 3D</small>
+                      </div>
+                      <div className="birka-series-card-actions">
+                        <button
+                          type="button"
+                          className="birka-button birka-button-primary"
+                          onClick={() => onApplyPreset(kit)}
+                        >
+                          <SlidersHorizontal aria-hidden="true" />В 3D-студию
+                        </button>
+                        <button
+                          type="button"
+                          className="birka-button birka-button-light"
+                          aria-label={`Добавить «${kit.title}» в корзину`}
+                          onClick={() => onAddPreset(kit)}
+                        >
+                          <ShoppingBag aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+        )}
 
         <div className="birka-catalog-toolbar">
           <fieldset className="birka-filters" aria-label="Категории">
@@ -110,11 +187,13 @@ export function CatalogSection({
               preset.shape,
               preset.mixed,
             );
-            const form = shapes.find((item) => item.id === preset.shape);
-            const colorPair = colorPairs[preset.color] ?? colorPairs[0];
+            const form = getShapeEntry(preset.shape);
+            const colorPair = getPaletteForShape(preset.shape, preset.color);
             const previewItems = preset.items.slice(0, 6);
             const extraItems = preset.items.slice(6);
             const isFeatured = Boolean(preset.mixed);
+            const isThemed = shapeToSeries(preset.shape) !== "classic";
+            const showDuo = isFeatured || isThemed;
             const unitPrice = money(
               Math.round((price / preset.items.length) * 100) / 100,
             );
@@ -125,7 +204,7 @@ export function CatalogSection({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -4 }}
-                className={`birka-product ${isFeatured ? "birka-product-featured" : ""}`}
+                className={`birka-product ${isFeatured ? "birka-product-featured" : ""} ${isThemed ? `birka-product-series-${shapeToSeries(preset.shape)}` : ""}`}
                 key={preset.title}
               >
                 <div className={`birka-product-art birka-art-${index % 3}`}>
@@ -148,19 +227,21 @@ export function CatalogSection({
                   </div>
 
                   <div
-                    className={`birka-product-stage ${isFeatured ? "birka-product-stage-duo" : ""}`}
+                    className={`birka-product-stage ${showDuo ? "birka-product-stage-duo" : ""}`}
                   >
                     <LabelPreview
                       shape={preset.shape}
                       color={preset.color}
                       name={preset.items[0] ?? ""}
+                      itemIndex={0}
                       small
                     />
-                    {isFeatured && (
+                    {showDuo && (
                       <LabelPreview
-                        shape="flag"
+                        shape={isFeatured ? "flag" : preset.shape}
                         color={preset.color}
                         name={preset.items[1] ?? preset.items[0] ?? ""}
+                        itemIndex={1}
                         small
                       />
                     )}
@@ -170,7 +251,7 @@ export function CatalogSection({
                     <span className="birka-product-shape-chip">
                       {preset.mixed
                         ? "Колышек 10 см + Флажок 18 см"
-                        : `${form?.title} · ${form?.size}`}
+                        : `${form.title} · ${form.size}`}
                     </span>
                     <span
                       className="birka-product-color-chip"
@@ -193,7 +274,7 @@ export function CatalogSection({
                   <span className="birka-product-category">
                     {preset.mixed
                       ? "Микс 10 см + 18 см"
-                      : `${form?.title} · ${form?.size}`}{" "}
+                      : `${form.title} · ${form.size}`}{" "}
                     · {preset.items.length} шт. · {colorPair.name}
                     {preset.mixed && " · Скидка 15%"}
                   </span>

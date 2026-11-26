@@ -3,12 +3,26 @@ import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { layoutText } from "./layout";
 
+export const seriesSchema = z.enum(["classic", "slate", "kids", "provence"]);
+
 export const customizationSchema = z.object({
-  shape: z.enum(["rounded", "rectangular"]),
-  lengthMm: z.number().int().min(80).max(200),
-  heightMm: z.number().int().min(15).max(50),
+  series: seriesSchema.optional(),
+  shape: z.enum([
+    "rounded",
+    "rectangular",
+    "contour",
+    "cloud",
+    "figurine",
+    "hedgehog",
+    "sunflower",
+    "plaque",
+    "watering_can",
+  ]),
+  lengthMm: z.number().int().min(60).max(200),
+  heightMm: z.number().int().min(15).max(100),
   baseColor: z.string().min(1).max(40),
   textColor: z.string().min(1).max(40),
+  accentColor: z.string().min(1).max(40).optional(),
   varieties: z.array(z.string().trim().min(1).max(80)).min(1).max(100),
 });
 

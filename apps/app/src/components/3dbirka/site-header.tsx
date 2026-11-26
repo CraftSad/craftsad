@@ -49,6 +49,12 @@ export function SiteHeader({
             <div className="birka-nav-menu">
               <button
                 type="button"
+                onClick={() => onSelectCategory("collections")}
+              >
+                Авторские серии
+              </button>
+              <button
+                type="button"
                 onClick={() => onSelectCategory("seedling")}
               >
                 Бирки для рассады

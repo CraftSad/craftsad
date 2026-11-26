@@ -1,26 +1,39 @@
-import { colorPairs, type ShapeId, shapes } from "./data";
+import {
+  colorPairs,
+  getShapeEntry,
+  getTagVisual,
+  type ShapeId,
+  shapeToSeries,
+} from "./data";
 import { wrapName } from "./tag-config";
+import { ThemedTagSvg } from "./themed-tag-svg";
 
 export function ScalePreview({
   shape,
   color,
   name,
+  itemIndex = 0,
 }: {
   shape: ShapeId;
   color: number;
   name: string;
+  itemIndex?: number;
 }) {
+  const entry = getShapeEntry(shape);
+  const series = shapeToSeries(shape);
   const pair = colorPairs[color] ?? colorPairs[0];
   // One centimetre = 12 SVG units for all objects. Cup dimensions are illustrative.
-  const height = shape === "flag" ? 216 : shape === "stake" ? 120 : 96;
-  const width = shape === "flag" ? 96 : shape === "stake" ? 78 : 96;
+  const height = entry.heightCm * 12;
+  const width = entry.widthCm * 12;
   const top = 258 - height;
+  const sizeLabel = String(entry.heightCm).replace(".", ",");
+
   return (
     <div className="birka-scale">
       <svg
         viewBox="0 0 440 320"
         role="img"
-        aria-label={`${shapes.find((entry) => entry.id === shape)?.title}, ${height / 12} см рядом со стаканчиком 0,5 л высотой около 10 см и спичечным коробком 5 см`}
+        aria-label={`${entry.title}, ${sizeLabel} см рядом со стаканчиком 0,5 л высотой около 10 см и спичечным коробком 5 см`}
       >
         <title>Сравнение размеров в едином масштабе</title>
         <path d="M20 258H420" stroke="#a9b497" />
@@ -41,43 +54,62 @@ export function ScalePreview({
         <text x="187" y="233" textAnchor="middle" fill="#fff" fontSize="10">
           спички
         </text>
-        {shape !== "hanging" && (
-          <path
-            d={`M${shape === "flag" ? 276 : 310} ${top + 28}v${height - 38}l6 10 6-10V${top + 28}`}
-            fill={pair.base}
-          />
-        )}
-        <rect
-          x="270"
-          y={top}
-          width={width}
-          height={shape === "hanging" ? height : 38}
-          rx="6"
-          fill={pair.base}
-        />
-        {shape === "hanging" && (
-          <circle cx="318" cy={top + 8} r="2.4" fill="#1b2721" />
-        )}
-        <text
-          x={270 + width / 2}
-          y={top + (shape === "hanging" ? 43 : 16)}
-          textAnchor="middle"
-          fill={pair.ink}
-          fontSize="6"
-        >
-          {wrapName(name).map((line, index) => (
-            <tspan
-              key={index === 0 ? "first" : "second"}
+        {series === "classic" ? (
+          <>
+            {shape !== "hanging" && (
+              <path
+                d={`M${shape === "flag" ? 276 : 310} ${top + 28}v${height - 38}l6 10 6-10V${top + 28}`}
+                fill={pair.base}
+              />
+            )}
+            <rect
+              x="270"
+              y={top}
+              width={width}
+              height={shape === "hanging" ? height : 38}
+              rx="6"
+              fill={pair.base}
+            />
+            {shape === "hanging" && (
+              <circle cx="318" cy={top + 8} r="2.4" fill="#1b2721" />
+            )}
+            <text
               x={270 + width / 2}
-              dy={index ? 9 : 0}
+              y={top + (shape === "hanging" ? 43 : 16)}
+              textAnchor="middle"
+              fill={pair.ink}
+              fontSize="6"
             >
-              {line}
-            </tspan>
-          ))}
-        </text>
+              {wrapName(name).map((line, index) => (
+                <tspan
+                  key={index === 0 ? "first" : "second"}
+                  x={270 + width / 2}
+                  dy={index ? 9 : 0}
+                >
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          </>
+        ) : (
+          <svg
+            x={318 - width / 2}
+            y={top}
+            width={width}
+            height={height}
+            viewBox="14 12 192 244"
+            preserveAspectRatio="xMidYMax meet"
+            aria-hidden="true"
+          >
+            <ThemedTagSvg
+              visual={getTagVisual(shape, color, name, itemIndex)}
+              name={name}
+            />
+          </svg>
+        )}
         <path d={`M390 ${top}h8m-4 0V258m-4 0h8`} stroke="#bfccb7" />
         <text x="402" y={top + height / 2} fill="#e4e9d8" fontSize="12">
-          {height / 12} см
+          {sizeLabel} см
         </text>
         <g fill="#bfccb7" fontSize="11" textAnchor="middle">
           <text x="79" y="282">
