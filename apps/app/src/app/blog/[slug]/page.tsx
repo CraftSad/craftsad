@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ContactLink } from "~/components/3dbirka/contact-link";
 import { BlogFooter } from "~/components/blog/blog-chrome";
 import { PostBody } from "~/components/blog/post-body";
