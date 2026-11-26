@@ -48,6 +48,7 @@ interface ErrorPageProps {
   errorId?: string;
   onRetry?: () => void;
   compact?: boolean;
+  global?: boolean;
 }
 
 export function ErrorPage({
@@ -55,15 +56,17 @@ export function ErrorPage({
   errorId,
   onRetry,
   compact = false,
+  global = false,
 }: ErrorPageProps) {
   const content = CONTENT[code];
+  const HomeLink = global ? "a" : Link;
 
   return (
     <div
       className={`birka-error-page${compact ? " birka-error-page-compact" : ""}`}
     >
       <header className="birka-error-header">
-        <Link
+        <HomeLink
           href="/"
           className="birka-error-brand"
           aria-label="3D Бирка — на главную"
@@ -77,7 +80,7 @@ export function ErrorPage({
             </span>
             <small>Сад начинается с имени</small>
           </span>
-        </Link>
+        </HomeLink>
         <span className="birka-error-header-note">
           <i /> Мастерская садовых бирок
         </span>
@@ -115,10 +118,10 @@ export function ErrorPage({
                   <RotateCcw aria-hidden="true" />
                   Попробовать ещё раз
                 </button>
-                <Link href="/" className="birka-error-button-secondary">
+                <HomeLink href="/" className="birka-error-button-secondary">
                   На главную
                   <ArrowRight aria-hidden="true" />
-                </Link>
+                </HomeLink>
               </>
             ) : code === "401" ? (
               <>
@@ -129,20 +132,20 @@ export function ErrorPage({
                   <LogIn aria-hidden="true" />
                   Войти в аккаунт
                 </Link>
-                <Link href="/" className="birka-error-button-secondary">
+                <HomeLink href="/" className="birka-error-button-secondary">
                   На главную
                   <ArrowRight aria-hidden="true" />
-                </Link>
+                </HomeLink>
               </>
             ) : (
               <>
-                <Link
+                <HomeLink
                   href="/"
                   className="birka-error-button birka-error-button-primary"
                 >
                   Вернуться на главную
                   <ArrowRight aria-hidden="true" />
-                </Link>
+                </HomeLink>
                 <Link href="/#catalog" className="birka-error-button-secondary">
                   Перейти в каталог
                 </Link>

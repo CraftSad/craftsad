@@ -14,7 +14,7 @@ export default function GlobalError({
     <html lang="ru">
       <body className="birka-error-document">
         <title>Что-то пошло не так — 3D Бирка</title>
-        <RuntimeErrorPage error={error} retry={retry} />
+        <RuntimeErrorPage error={error} retry={retry} global />
       </body>
     </html>
   );

@@ -7,12 +7,14 @@ interface RuntimeErrorPageProps {
   error: unknown;
   retry: () => void;
   compact?: boolean;
+  global?: boolean;
 }
 
 export function RuntimeErrorPage({
   error,
   retry,
   compact = false,
+  global = false,
 }: RuntimeErrorPageProps) {
   useEffect(() => {
     console.error(error);
@@ -24,6 +26,7 @@ export function RuntimeErrorPage({
       errorId={getErrorDigest(error)}
       onRetry={retry}
       compact={compact}
+      global={global}
     />
   );
 }
