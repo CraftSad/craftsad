@@ -5,7 +5,12 @@ import { ArrowRight, PackageCheck, ShoppingBag, Truck, X } from "lucide-react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import { colorPairs, shapes } from "./data";
+import {
+  getPaletteForShape,
+  getShapeEntry,
+  shapeToSeries,
+  tagSeries,
+} from "./data";
 import { type CartItem, money, phoneSchema } from "./shared";
 import { LabelPreview, StorefrontDialog } from "./ui";
 
@@ -120,54 +125,62 @@ export function CartDrawer({
             </span>
           </div>
           <div className="birka-cart-items">
-            {items.map((item) => (
-              <article className="birka-cart-item" key={item.id}>
-                <LabelPreview
-                  shape={item.shape}
-                  color={item.color}
-                  name={item.names[0] ?? ""}
-                  small
-                />
-                <div>
-                  <strong>
-                    {item.mixed
-                      ? "Микс 10 см + 18 см"
-                      : shapes.find((shape) => shape.id === item.shape)?.title}
-                  </strong>
-                  <p>
-                    {item.names.length} шт. ·{" "}
-                    {(colorPairs[item.color] ?? colorPairs[0]).name}
-                  </p>
-                  <b>{money(item.price)} ₽</b>
-                  {item.originalPrice != null &&
-                    item.originalPrice > item.price && (
-                      <del>{money(item.originalPrice)} ₽</del>
-                    )}
-                  {item.mixed && (
+            {items.map((item) => {
+              const entry = getShapeEntry(item.shape);
+              const palette = getPaletteForShape(item.shape, item.color);
+              const seriesId = shapeToSeries(item.shape);
+              const seriesTitle =
+                seriesId === "classic"
+                  ? ""
+                  : `${tagSeries.find((s) => s.id === seriesId)?.title ?? ""} · `;
+              return (
+                <article className="birka-cart-item" key={item.id}>
+                  <LabelPreview
+                    shape={item.shape}
+                    color={item.color}
+                    name={item.names[0] ?? ""}
+                    small
+                  />
+                  <div>
+                    <strong>
+                      {item.mixed
+                        ? "Микс 10 см + 18 см"
+                        : `${seriesTitle}${entry.title}`}
+                    </strong>
                     <p>
-                      Колышек ·{" "}
-                      {
-                        item.itemShapes?.filter((shape) => shape === "stake")
-                          .length
-                      }{" "}
-                      шт. / Флажок ·{" "}
-                      {
-                        item.itemShapes?.filter((shape) => shape === "flag")
-                          .length
-                      }{" "}
-                      шт.
+                      {item.names.length} шт. · {palette.name}
                     </p>
-                  )}
-                  <button
-                    type="button"
-                    className="birka-text-button"
-                    onClick={() => onRemove(item.id)}
-                  >
-                    Убрать
-                  </button>
-                </div>
-              </article>
-            ))}
+                    <b>{money(item.price)} ₽</b>
+                    {item.originalPrice != null &&
+                      item.originalPrice > item.price && (
+                        <del>{money(item.originalPrice)} ₽</del>
+                      )}
+                    {item.mixed && (
+                      <p>
+                        Колышек ·{" "}
+                        {
+                          item.itemShapes?.filter((shape) => shape === "stake")
+                            .length
+                        }{" "}
+                        шт. / Флажок ·{" "}
+                        {
+                          item.itemShapes?.filter((shape) => shape === "flag")
+                            .length
+                        }{" "}
+                        шт.
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="birka-text-button"
+                      onClick={() => onRemove(item.id)}
+                    >
+                      Убрать
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
           {checkout && (
             <form

@@ -54,7 +54,7 @@ async function processJob(job: { id: string; order_id: string }) {
             item.customizationJson,
             variety,
             path,
-            template ?? "tag.scad",
+            template ?? undefined,
           );
           const stl = new Uint8Array(await readFile(path));
           entries[filename] = stl;
@@ -62,6 +62,8 @@ async function processJob(job: { id: string; order_id: string }) {
             name: variety,
             baseColor: item.customizationJson.baseColor,
             textColor: item.customizationJson.textColor,
+            accentColor: item.customizationJson.accentColor,
+            series: item.customizationJson.series,
           });
         }
     }

@@ -180,3 +180,46 @@ test("newsletter rejects invalid input and displays server failures", async ({
     "Адрес не сохранён",
   );
 });
+
+test("themed series work across constructor, scale, live photo, catalog, and cart", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const seriesGroup = page.getByRole("group", { name: "Серия бирок" });
+  await seriesGroup.getByRole("button", { name: /^Грифельная/ }).click();
+  await expect(
+    page.getByRole("button", { name: /^Фигурный контур · 12 см/ }),
+  ).toHaveAttribute("aria-pressed", "true");
+
+  await page.getByRole("tab", { name: "Живое фото" }).click();
+  await expect(
+    page.getByRole("tabpanel").getByRole("img").first(),
+  ).toHaveAttribute("alt", /Грифельная коллекция/);
+
+  await seriesGroup.getByRole("button", { name: /^Детская/ }).click();
+  await page.getByRole("tab", { name: "В масштабе" }).click();
+  await expect(
+    page.getByRole("tabpanel").getByRole("img"),
+  ).toHaveAccessibleName(/13 см/);
+
+  await page
+    .getByRole("button", { name: "Авторские серии", exact: true })
+    .click();
+  await expect(page.locator(".birka-product")).toHaveCount(3);
+  await expect(page.locator(".birka-series-card")).toHaveCount(3);
+
+  const provenceCard = page
+    .locator(".birka-product")
+    .filter({ hasText: "Прованс: Пряные травы" });
+  await provenceCard.getByRole("button", { name: "В корзину" }).click();
+
+  const cart = page.getByRole("dialog");
+  await expect(cart).toContainText("Прованс · Ассорти Прованс");
+  await expect(cart).toContainText("8 шт. · Прованс Микс");
+  const thumbnail = cart.locator(".birka-preview");
+  await expect(thumbnail).toHaveCSS("width", "95px");
+  await expect(thumbnail).toHaveCSS("height", "95px");
+});

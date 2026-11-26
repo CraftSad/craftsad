@@ -1,4 +1,5 @@
 import {
+  Box3,
   type BufferGeometry,
   ExtrudeGeometry,
   Path,
@@ -7,12 +8,12 @@ import {
 } from "three";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import type { ShapeId } from "./data";
-import { colorPairs } from "./data";
+import { colorPairs, getShapeEntry, type ShapeId, shapeToSeries } from "./data";
 import { wrapName } from "./tag-config";
+import { buildTagLayers } from "./tag-three-geometry";
 
 type Triangle = [Vector3, Vector3, Vector3];
-type PrintPart = { triangles: Triangle[]; color: string };
+type PrintPart = { triangles: Triangle[]; color: string; label?: string };
 type PrintModel = { parts: PrintPart[]; width: number; height: number };
 
 const encoder = new TextEncoder();
@@ -77,7 +78,107 @@ async function makeModel(
   shape: ShapeId,
   color: number,
   name: string,
+  itemIndex = 0,
 ): Promise<PrintModel> {
+  const response = await fetch("/fonts/manrope.typeface.json");
+  if (!response.ok) throw new Error("Не удалось загрузить шрифт для печати.");
+  const font = new FontLoader().parse(await response.json());
+
+  if (shapeToSeries(shape) !== "classic") {
+    const spec = buildTagLayers(shape, color, name, itemIndex);
+    const entry = getShapeEntry(shape);
+    const depthScale = 26;
+    const modelBounds = new Box3();
+    const parts: PrintPart[] = [];
+    for (const [idx, layer] of spec.layers.entries()) {
+      const geo = new ExtrudeGeometry(layer.shape, {
+        depth: layer.depth * depthScale,
+        bevelEnabled: false,
+        curveSegments: 14,
+        steps: 1,
+      });
+      geo.translate(0, 0, layer.z * depthScale);
+      geo.computeBoundingBox();
+      if (geo.boundingBox) modelBounds.union(geo.boundingBox);
+      parts.push({
+        triangles: trianglesFromGeometry(geo),
+        color: layer.color,
+        label: idx === 0 ? "Корпус" : `Декор ${idx}`,
+      });
+      geo.dispose();
+    }
+    const size = modelBounds.getSize(new Vector3());
+    const scaleX = (entry.widthCm * 10) / size.x;
+    const scaleY = (entry.heightCm * 10) / size.y;
+    modelBounds.makeEmpty();
+    for (const part of parts) {
+      for (const triangle of part.triangles) {
+        for (const point of triangle) {
+          point.x *= scaleX;
+          point.y *= scaleY;
+          modelBounds.expandByPoint(point);
+        }
+      }
+    }
+
+    // The kids layers start with the stake. The sunflower and hedgehog
+    // inscriptions sit on their raised name panels.
+    const character = spec.visual.kidsCharacter;
+    const surfaceIndex =
+      spec.visual.series !== "kids"
+        ? 0
+        : character === "sunflower" || character === "hedgehog"
+          ? 3
+          : 1;
+    const surface = spec.layers[surfaceIndex];
+    if (!surface) throw new Error("Не удалось построить корпус бирки.");
+    const textZ = (surface.z + surface.depth) * depthScale - 0.15;
+    const rawLines = wrapName(name);
+    const lines = spec.visual.uppercase
+      ? rawLines.map((line) => line.toUpperCase())
+      : rawLines;
+    const maxTextWidth = spec.maxTextWidth * scaleX;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i] ?? "";
+      if (!line) continue;
+      const text = new TextGeometry(line, {
+        font,
+        size: 6.4,
+        depth: 0.85,
+        curveSegments: 6,
+        bevelEnabled: false,
+      });
+      text.computeBoundingBox();
+      const bounds = text.boundingBox;
+      if (bounds) {
+        const textWidth = bounds.max.x - bounds.min.x;
+        const scale = Math.min(1, maxTextWidth / Math.max(textWidth, 1));
+        text.scale(scale, scale, 1);
+        text.computeBoundingBox();
+        const fitted = text.boundingBox;
+        if (fitted) {
+          const baseY = spec.textY * scaleY;
+          const y = lines.length === 1 ? baseY : baseY + 4 - i * 8.2;
+          text.translate(
+            spec.textX * scaleX - (fitted.min.x + fitted.max.x) / 2,
+            y - (fitted.min.y + fitted.max.y) / 2,
+            textZ - fitted.min.z,
+          );
+        }
+      }
+      text.computeBoundingBox();
+      if (text.boundingBox) modelBounds.union(text.boundingBox);
+      parts.push({
+        triangles: trianglesFromGeometry(text),
+        color: spec.visual.ink,
+        label: "Надпись",
+      });
+      text.dispose();
+    }
+    modelBounds.getSize(size);
+    return { parts, width: size.x, height: size.y };
+  }
+
   const pair = colorPairs[color] ?? colorPairs[0];
   const { outline, width, height } = tagOutline(shape);
   const body = new ExtrudeGeometry(outline, {
@@ -87,13 +188,14 @@ async function makeModel(
     steps: 1,
   });
   const parts: PrintPart[] = [
-    { triangles: trianglesFromGeometry(body), color: pair.base },
+    {
+      triangles: trianglesFromGeometry(body),
+      color: pair.base,
+      label: "Корпус",
+    },
   ];
   body.dispose();
 
-  const response = await fetch("/fonts/manrope.typeface.json");
-  if (!response.ok) throw new Error("Не удалось загрузить шрифт для печати.");
-  const font = new FontLoader().parse(await response.json());
   const lines = wrapName(name);
   const maxTextWidth = width - 10;
   for (let i = 0; i < lines.length; i++) {
@@ -123,7 +225,11 @@ async function makeModel(
         );
       }
     }
-    parts.push({ triangles: trianglesFromGeometry(text), color: pair.ink });
+    parts.push({
+      triangles: trianglesFromGeometry(text),
+      color: pair.ink,
+      label: "Надпись",
+    });
     text.dispose();
   }
   return { parts, width, height };
@@ -165,7 +271,6 @@ function xmlEscape(value: string): string {
 }
 
 function modelXml(model: PrintModel, name: string): string {
-  const colors = model.parts.map((part) => part.color.toUpperCase());
   const objects = model.parts
     .map((part, partIndex) => {
       // Separate printable shells retain their assigned filament colors in 3MF.
@@ -182,10 +287,10 @@ function modelXml(model: PrintModel, name: string): string {
       return `<object id="${partIndex + 2}" type="model" pid="1" pindex="${partIndex}"><mesh><vertices>${vertexXml}</vertices><triangles>${triangles}</triangles></mesh></object>`;
     })
     .join("");
-  const materials = colors
+  const materials = model.parts
     .map(
-      (hex, i) =>
-        `<base name="${i === 0 ? "Корпус" : "Надпись"}" displaycolor="${hex}FF"/>`,
+      (part, i) =>
+        `<base name="${xmlEscape(part.label ?? (i === 0 ? "Корпус" : "Надпись"))}" displaycolor="${part.color.toUpperCase()}FF"/>`,
     )
     .join("");
   const build = model.parts
@@ -268,8 +373,9 @@ export async function downloadPrintFile(
   color: number,
   name: string,
   format: "stl" | "3mf",
+  itemIndex = 0,
 ) {
-  const model = await makeModel(shape, color, name);
+  const model = await makeModel(shape, color, name, itemIndex);
   const blob = format === "stl" ? stl(model) : threeMf(model, name);
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");

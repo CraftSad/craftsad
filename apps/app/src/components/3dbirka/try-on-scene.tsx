@@ -45,6 +45,7 @@ export default function TryOnScene({
   shape,
   color,
   name,
+  itemIndex = 0,
   fallback,
 }: SceneProps & { fallback: ReactNode }) {
   const [supported, setSupported] = useState(false);
@@ -75,7 +76,13 @@ export default function TryOnScene({
         }`}
       >
         <Canvas shadows dpr={[1, 1.5]} camera={cam} fallback={fallback}>
-          <InnerScene mode={mode} shape={shape} color={color} name={name} />
+          <InnerScene
+            mode={mode}
+            shape={shape}
+            color={color}
+            name={name}
+            itemIndex={itemIndex}
+          />
           <OrbitControls
             enableDamping
             enablePan={false}

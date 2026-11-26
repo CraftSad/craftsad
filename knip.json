@@ -7,12 +7,14 @@
   "ignoreBinaries": ["generate"],
   "workspaces": {
     ".": {
-      "entry": [".claude/hooks/*.ts", "scripts/*.mjs"]
+      "entry": [".claude/hooks/*.ts", "scripts/*.mjs"],
+      "ignoreDependencies": ["next"]
     },
     "apps/admin": {
       "ignoreDependencies": ["@tailwindcss/postcss"]
     },
     "apps/app": {
+      "entry": ["src/**/*.test.ts"],
       "ignoreDependencies": ["@acme/db", "@tailwindcss/postcss"]
     },
     "packages/auth": {
