@@ -41,10 +41,10 @@ export function Toolbar({ onOpen }: Props) {
     if (file) void file.text().then(onOpen);
   };
   return (
-    <div className="brk-toolbar">
+    <div className="flex items-center gap-[4px] ml-auto max-[700px]:[order:3] max-[700px]:w-full max-[700px]:ml-0">
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label="Отменить (Ctrl+Z)"
         title="Отменить (Ctrl+Z)"
         disabled={!canUndo}
@@ -54,7 +54,7 @@ export function Toolbar({ onOpen }: Props) {
       </button>
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label="Вернуть (Ctrl+Shift+Z)"
         title="Вернуть (Ctrl+Shift+Z)"
         disabled={!canRedo}
@@ -62,10 +62,10 @@ export function Toolbar({ onOpen }: Props) {
       >
         <Undo2 style={{ transform: "scaleX(-1)" }} />
       </button>
-      <span className="brk-tool-sep" />
+      <span className="w-[1px] h-[22px] my-[0] mx-[6px] [background:#e6e2da]" />
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label="Заготовки"
         title="Заготовки"
         onClick={() => useEditor.getState().setDialog("templates")}
@@ -74,7 +74,7 @@ export function Toolbar({ onOpen }: Props) {
       </button>
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label="Открыть проект"
         title="Открыть проект"
         onClick={() => fileInput.current?.click()}
@@ -83,7 +83,7 @@ export function Toolbar({ onOpen }: Props) {
       </button>
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label="Сохранить проект (Ctrl+S)"
         title="Сохранить проект (Ctrl+S)"
         onClick={save}
@@ -98,12 +98,15 @@ export function Toolbar({ onOpen }: Props) {
         hidden
         onChange={open}
       />
-      <span className="brk-saved" role="status">
+      <span
+        className="min-w-0 text-[var(--ok)] text-[13px] whitespace-nowrap max-[1000px]:hidden"
+        role="status"
+      >
         {saved ? "Проект сохранён" : ""}
       </span>
       <button
         type="button"
-        className="brk-tool"
+        className="grid place-items-center w-[38px] h-[38px] border border-solid border-linen rounded-[10px] [background:var(--paper)] hover:disabled:border-forest hover:disabled:[background:#f5f1e8] [&_svg]:w-[18px] [&_svg]:h-[18px]"
         aria-label={panel ? "Скрыть параметры" : "Показать параметры"}
         aria-pressed={panel}
         title="Показать или скрыть параметры"

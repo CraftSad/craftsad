@@ -1,7 +1,7 @@
 "use client";
 
 import { RuntimeErrorPage } from "~/components/errors/runtime-error-page";
-import "~/app/error-pages.css";
+import "~/app/styles.css";
 
 export default function GlobalError({
   error,
@@ -12,7 +12,7 @@ export default function GlobalError({
 }) {
   return (
     <html lang="ru">
-      <body className="birka-error-document">
+      <body className="m-0 bg-milk">
         <title>Что-то пошло не так — 3D Бирка</title>
         <RuntimeErrorPage error={error} retry={retry} global />
       </body>

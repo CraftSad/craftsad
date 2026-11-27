@@ -37,10 +37,10 @@ export function BrandMark({ className }: { className?: string }) {
 export function BrandLockup() {
   return (
     <>
-      <span className="birka-brand-mark">
+      <span className="w-[48px] h-[52px] border border-solid border-[#b5965c66] rounded-[15px_15px_15px_3px] grid place-items-center [background:#203e33] text-[#e4cf9f] shadow-[3px_3px_0#b5965c30] shrink-0 max-[570px]:w-[34px] max-[570px]:h-[39px] max-[570px]:rounded-[11px_11px_11px_2px] max-[800px]:w-[24px] max-[800px]:h-[37px] [&_svg]:w-[38px] [&_svg]:h-[38px] max-[800px]:[&_svg]:w-[24px] max-[570px]:[&_svg]:w-[29px] max-[570px]:[&_svg]:h-[29px]">
         <BrandMark />
       </span>
-      <span className="birka-wordmark">
+      <span className="flex flex-col gap-[5px]">
         <span className="birka-wordmark-name">3D Бирка</span>
         <small>Сад начинается с имени</small>
       </span>

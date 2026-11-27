@@ -134,3 +134,57 @@
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
+
+/* 3D Бирка brand palette + craft fonts + storefront animations */
+@theme inline {
+  --font-display: var(--font-craft-serif), Georgia, serif;
+  --font-craft: var(--font-craft-sans), Arial, sans-serif;
+}
+
+@theme {
+  --color-milk: #f5f1e8;
+  --color-paper: #fffdf7;
+  --color-forest: #23483e;
+  --color-forest-dark: #15372e;
+  --color-ink: #203c32;
+  --color-brass: #a57d46;
+  --color-sage: #77816a;
+  --color-hedge: #526056;
+  --color-linen: #e6e2da;
+
+  --animate-tag-float: tag-float 7s ease-in-out infinite;
+  --animate-sway: sway 8s ease-in-out infinite;
+
+  @keyframes tag-float {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) rotate(7deg);
+    }
+    50% {
+      transform: translate(-50%, calc(-50% - 7px)) rotate(5.5deg);
+    }
+  }
+
+  @keyframes sway {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(1.5deg);
+    }
+  }
+}
+
+@theme {
+  --animate-birka-spin: birka-spin 5s ease-in-out infinite alternate;
+
+  @keyframes birka-spin {
+    from {
+      transform: rotate(-7deg) rotateY(-45deg);
+    }
+    to {
+      transform: rotate(4deg) rotateY(40deg);
+    }
+  }
+}

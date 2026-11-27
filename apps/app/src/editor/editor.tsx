@@ -24,7 +24,11 @@ const Viewport = dynamic(
   () => import("./viewport").then((mod) => mod.Viewport),
   {
     ssr: false,
-    loading: () => <div className="brk-canvas-note">Загрузка 3D-сцены…</div>,
+    loading: () => (
+      <div className="grid place-items-center min-h-[60vh] text-hedge">
+        Загрузка 3D-сцены…
+      </div>
+    ),
   },
 );
 
@@ -174,13 +178,16 @@ export function TagEditor() {
     : "";
 
   return (
-    <div className="brk-app">
-      <header className="brk-topbar">
-        <Link href="/" className="brk-home">
+    <div className="flex flex-col h-[100dvh] overflow-hidden text-ink [background:#f5f1e8] [font-family:var(--sans)] text-[14px] leading-[1.45] [&_:is(button]:[outline:3px_solid_#a57d46] [&_:is(button]:outline-offset-[2px] [&_button]:[font:inherit] [&_button]:text-[inherit] [&_button]:cursor-pointer [&_button]:touch-manipulation [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-[0.45] [&_:is(input[type=text]]:w-full [&_:is(input[type=text]]:py-[8px] [&_:is(input[type=text]]:px-[10px] [&_:is(input[type=text]]:border [&_:is(input[type=text]]:border-solid [&_:is(input[type=text]]:border-linen [&_:is(input[type=text]]:rounded-[8px] [&_:is(input[type=text]]:[background:#f5f1e8] [&_:is(input[type=text]]:text-ink [&_:is(input[type=text]]:[font:inherit]">
+      <header className="flex items-center gap-[16px] min-h-[58px] py-[8px] px-[16px] border-bottom-[1px] border-bottom-[#e6e2da] [background:var(--paper)] max-[700px]:flex-wrap max-[700px]:gap-[8px]">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-[4px] pt-[8px] pr-[12px] pb-[8px] pl-[8px] rounded-full text-forest no-underline whitespace-nowrap hover:[background:#23483e14] [&_svg]:w-[18px] [&_svg]:h-[18px]"
+        >
           <ChevronLeft /> На сайт
         </Link>
         <input
-          className="brk-title"
+          className="min-w-0 max-w-[34vw] py-[7px] px-[10px] border border-solid border-[transparent] rounded-[10px] [background:transparent] text-ink [font-family:var(--serif)] text-[22px] font-medium focus:border-linen focus:[background:#f5f1e8] focus:[outline:none] hover:border-linen hover:[background:#f5f1e8] hover:[outline:none] max-[1000px]:max-w-none max-[1000px]:text-[18px]"
           value={project.title}
           maxLength={60}
           aria-label="Название проекта"
@@ -192,13 +199,13 @@ export function TagEditor() {
             }, "title")
           }
         />
-        <span className="brk-count">
+        <span className="text-hedge whitespace-nowrap max-[1000px]:hidden">
           {count} {plural(count, "бирка", "бирки", "бирок")} · {printer.name}
         </span>
         <Toolbar onOpen={open} />
         <button
           type="button"
-          className="brk-button primary"
+          className="inline-flex items-center justify-center gap-[8px] min-h-[38px] py-[8px] px-[16px] border border-solid border-linen rounded-[10px] [background:#23483e] whitespace-nowrap border-forest text-[#fff] hover:disabled:border-forest hover:disabled:[background:#15372e] [&_svg]:w-[18px] [&_svg]:h-[18px] primary"
           onClick={() => setDialog("export")}
         >
           <Download /> Печать
@@ -207,13 +214,19 @@ export function TagEditor() {
 
       {notice && <Notice text={notice} onClose={() => setNotice("")} />}
 
-      <main className={panel ? "brk-main" : "brk-main no-panel"}>
-        <section className="brk-stage" aria-label="3D-вид">
+      <main
+        className={
+          panel
+            ? "grid grid-cols-[minmax(0,1fr)] flex-[1] min-h-0 max-[700px]:grid-cols-[minmax(0,1fr)]"
+            : "grid grid-cols-[minmax(0,1fr)] flex-[1] min-h-0 max-[700px]:grid-cols-[minmax(0,1fr)] no-panel"
+        }
+      >
+        <section className="flex flex-col min-w-0 min-h-0" aria-label="3D-вид">
           <StageBar />
-          <div className="brk-canvas">
+          <div className="relative flex-[1] min-h-0 [background:radial-gradient(ellipse_at_50%_12%,#ffffffcc,transparent_58%),linear-gradient(#ece8dc,#dcd8ca)] max-[1000px]:min-h-[240px] [&_canvas]:block">
             <Viewport />
           </div>
-          <div className="brk-facts">
+          <div className="grid flex-wrap gap-[4px_16px] py-[8px] px-[16px] border-top-[1px] border-top-[#e6e2da] text-hedge tabular-nums grid-cols-[auto_1fr] mb-[14px] [&_dt]:text-hedge [&_dd]:m-0 [&_dd]:font-semibold">
             <span>
               {shown
                 ? `${mm(shown.size.x)} × ${mm(shown.size.y)} × ${mm(shown.size.z)} мм`

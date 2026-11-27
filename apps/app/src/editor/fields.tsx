@@ -33,11 +33,14 @@ export function NumberField({
       onChange(Math.min(max, Math.max(min, parsed)));
   };
   return (
-    <div className="brk-field">
-      <label className="brk-field-label" htmlFor={`${id}-range`}>
+    <div className="block my-[10px] mx-[0]">
+      <label
+        className="block mb-[5px] text-hedge text-[13px]"
+        htmlFor={`${id}-range`}
+      >
         {label}
       </label>
-      <div className="brk-number">
+      <div className="grid grid-cols-[minmax(0,1fr)_92px] items-center gap-[10px] [&_input[type=range]]:w-full [&_input[type=range]]:min-w-0 [&_input[type=range]]:[accent-color:#23483e]">
         <input
           id={`${id}-range`}
           type="range"
@@ -47,7 +50,7 @@ export function NumberField({
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
         />
-        <span className="brk-number-box">
+        <span className="flex items-center border border-solid border-linen rounded-[8px] [background:#f5f1e8] focus-within:border-forest [&_input]:w-full [&_input]:min-w-0 [&_input]:pt-[6px] [&_input]:pr-[4px] [&_input]:pb-[6px] [&_input]:pl-[8px] [&_input]:border-0 [&_input]:[background:none] [&_input]:text-ink [&_input]:[font:inherit] [&_input]:text-right [&_input]:appearance-textfield [&_input::-webkit-inner-spin-button]:m-0 [&_input::-webkit-inner-spin-button]:appearance-none [&_input::-webkit-outer-spin-button]:m-0 [&_input::-webkit-outer-spin-button]:appearance-none [&>span]:pr-[8px] [&>span]:text-hedge">
           <input
             id={`${id}-exact`}
             type="number"
@@ -90,9 +93,13 @@ export function Segmented<T extends string>({
   onChange,
 }: SegmentedProps<T>) {
   return (
-    <div className="brk-field">
-      <span className="brk-field-label">{label}</span>
-      <div className="brk-seg" role="radiogroup" aria-label={label}>
+    <div className="block my-[10px] mx-[0]">
+      <span className="block mb-[5px] text-hedge text-[13px]">{label}</span>
+      <div
+        className="inline-flex p-[3px] border border-solid border-linen rounded-[10px] [background:#f5f1e8] [&>button]:min-h-[30px] [&>button]:py-[4px] [&>button]:px-[12px] [&>button]:border-0 [&>button]:rounded-[8px] [&>button]:[background:none] [&>button]:text-hedge [&>button]:whitespace-nowrap [&>button]:flex-[1] [&>button[aria-pressed=true]]:[background:#23483e] [&>button[aria-pressed=true]]:text-[#fff] [&>button[aria-checked=true]]:[background:#23483e] [&>button[aria-checked=true]]:text-[#fff] [&>button[aria-selected=true]]:[background:#23483e] [&>button[aria-selected=true]]:text-[#fff] [&>button:hover:not(:disabled]:text-ink"
+        role="radiogroup"
+        aria-label={label}
+      >
         {options.map((option) => (
           <button
             type="button"
@@ -123,10 +130,13 @@ export function Toggle({
       type="button"
       role="switch"
       aria-checked={checked}
-      className="brk-switch"
+      className="flex items-center gap-[10px] w-full py-[6px] px-[0] border-0 [background:none] font-semibold text-left"
       onClick={() => onChange(!checked)}
     >
-      <span className="brk-switch-track" aria-hidden="true">
+      <span
+        className="relative shrink-0 w-[40px] h-[22px] rounded-full [background:#b9b5a8] [transition:background_0.15s] [&>span]:absolute [&>span]:top-[3px] [&>span]:left-[3px] [&>span]:w-[16px] [&>span]:h-[16px] [&>span]:rounded-full [&>span]:[background:#fff] [&>span]:[transition:translate_0.15s] [&>span]:[translate:18px_0]"
+        aria-hidden="true"
+      >
         <span />
       </span>
       {label}
@@ -144,8 +154,8 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="brk-section">
-      <div className="brk-section-head">
+    <section className="py-[14px] px-[0] border-bottom-[1px] border-bottom-[#e6e2da] [&_h3]:m-0 [&_h3]:text-forest [&_h3]:[font-family:var(--serif)] [&_h3]:text-[19px] [&_h3]:font-medium">
+      <div className="flex items-baseline justify-between gap-[12px] mb-[8px]">
         <h3>{title}</h3>
         {aside}
       </div>
@@ -165,7 +175,11 @@ export function Swatches({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="brk-swatches" role="radiogroup" aria-label="Цвет">
+    <div
+      className="flex flex-wrap gap-[8px] [&>button]:grid [&>button]:place-items-center [&>button]:w-[36px] [&>button]:h-[36px] [&>button]:border-[2px] [&>button]:border-solid [&>button]:border-[transparent] [&>button]:rounded-full [&>button]:[font-family:var(--serif)] [&>button]:text-[17px] [&>button[aria-checked=true]]:border-forest [&>button[aria-checked=true]]:shadow-[inset_0_0_0_2px_var(--paper)]"
+      role="radiogroup"
+      aria-label="Цвет"
+    >
       {options.map((option) => (
         <button
           type="button"
