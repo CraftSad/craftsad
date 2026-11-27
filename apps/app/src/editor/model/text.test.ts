@@ -100,6 +100,16 @@ describe("text layout", () => {
     expect(right.right).toBeLessThan(zone.width / 2 + 0.01);
   });
 
+  test("tabs are spaced like words and tracking matches the drawn word gap", async () => {
+    const style = { size: 8, align: "left" } as const;
+    const plain = await layout("А А", style);
+    expect(await layout("А\tА", style)).toEqual(plain);
+    const tracked = await layout("А А", { ...style, tracking: 0.1 });
+    const advance =
+      bounds(tracked.contours).right - bounds(plain.contours).right;
+    expect(advance).toBeCloseTo(tracked.width - plain.width, 5);
+  });
+
   test("tracking widens the text", async () => {
     const plain = await layout("Томат");
     const wide = await layout("Томат", { tracking: 0.1, size: 8 });

@@ -126,6 +126,48 @@ describe("tag geometry", () => {
     expect(box(flag.body).xMin).toBeCloseTo(-30, 4);
   });
 
+  test("side stakes overlap curved plates and capped tongues", async () => {
+    for (const kind of ["ellipse", "tongue", "rounded"] as const) {
+      const tag = design({
+        shape: { kind, width: 100, height: 18, radius: 9 },
+        mount: { type: "stake", length: 50, width: 3, side: "right" },
+      });
+      const { body } = await build(tag);
+      const seen = new Set<string>();
+      const triangles: string[][] = [];
+      for (let i = 0; i < body.positions.length; i += 9) {
+        const keys = [0, 3, 6].map((j) =>
+          body.positions.subarray(i + j, i + j + 3).join(","),
+        );
+        triangles.push(keys);
+      }
+      // Walk the exported surface through shared vertices to detect loose parts.
+      const neighbors = new Map<string, string[]>();
+      for (const face of triangles)
+        for (const key of face)
+          neighbors.set(key, [...(neighbors.get(key) ?? []), ...face]);
+      const pending = [triangles[0]?.[0] ?? ""];
+      for (const key of pending) {
+        if (seen.has(key)) continue;
+        seen.add(key);
+        pending.push(...(neighbors.get(key) ?? []));
+      }
+      expect(seen.size).toBe(neighbors.size);
+      expect(box(body).yMin).toBeCloseTo(-59, 4);
+    }
+  });
+
+  test("a raised layer outside the plate adds no part or height", async () => {
+    const tag = design({
+      layers: [{ ...createLayer(), offsetX: 80, size: 3 }],
+    });
+    const built = await build(tag);
+    expect(built.text[0]?.contours.length).toBeGreaterThan(0);
+    expect(built.relief).toBeNull();
+    expect(built.single).toBeUndefined();
+    expect(built.size.z).toBeCloseTo(tag.thickness, 4);
+  });
+
   test("holes cut exactly their cylinder out of the plate", async () => {
     const hole = await build(
       design({ mount: { type: "hole", diameter: 4, margin: 6 } }),
@@ -207,6 +249,32 @@ describe("print checks", () => {
     expect(
       checkTag(through, await build(through)).map((i) => i.level),
     ).toContain("error");
+  });
+
+  test("checks both sides of the plate and the actual width of a capped tongue", async () => {
+    for (const [tag, message] of [
+      [
+        design({ mount: { type: "hole", diameter: 4, margin: 29 } }),
+        "выходит за край",
+      ],
+      [
+        design({ mount: { type: "hole", diameter: 4, margin: 40 } }),
+        "не пересекает",
+      ],
+      [
+        design({
+          shape: { kind: "tongue", width: 100, height: 18 },
+          mount: { type: "screws", diameter: 4, margin: 6 },
+        }),
+        "не пересекает",
+      ],
+    ] as const) {
+      expect(
+        checkTag(tag, await build(tag)).some((issue) =>
+          issue.message.includes(message),
+        ),
+      ).toBe(true);
+    }
   });
 
   test("reports a tag larger than the printer bed", async () => {

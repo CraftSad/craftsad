@@ -402,7 +402,7 @@ function LayerCard({
   const text = useEditor((state) => state.built?.text[index]);
   const def = fontDef(layer.font);
   const preview = {
-    fontFamily: `${fontFamily(def.id)}, sans-serif`,
+    fontFamily: `${fontFamily(def)}, sans-serif`,
     fontWeight: def.weight,
   };
   const edit = (recipe: (draft: TextLayer) => void, control: string) =>
@@ -771,12 +771,6 @@ function BatchPanel() {
   const active = useEditor((state) => state.active);
   const size = useEditor((state) => state.built?.size) ?? { x: 60, y: 30 };
   const { names, copies, gap, margin } = project.batch;
-  const joined = names.join("\n");
-  const [text, setText] = useState(joined);
-  // Follow undo and project loads, but not the line being typed.
-  useEffect(() => {
-    if (text.split(/\r?\n/).join("\n") !== joined) setText(joined);
-  }, [joined, text]);
   const list = batchNames(project);
   const plate = layoutPlate(size, list.length, gap, margin);
   const fits = list.length <= plate.capacity;
@@ -794,16 +788,20 @@ function BatchPanel() {
           <textarea
             className="brk-textarea"
             rows={10}
-            value={text}
+            value={names.join("\n")}
             placeholder={"Томат Бычье сердце\nОгурец Зозуля\nПерец Сладкий"}
             onChange={(event) => {
-              setText(event.target.value);
-              const names = event.target.value
-                .split(/\r?\n/)
-                .map((line) => line.trimEnd());
+              const lines = event.currentTarget.value.split(/\r?\n/);
               update((draft) => {
-                draft.names = names;
+                draft.names = lines;
               }, "batch.names");
+            }}
+            onBlur={() => {
+              const trimmed = names.map((line) => line.trimEnd());
+              if (trimmed.some((line, index) => line !== names[index]))
+                update((draft) => {
+                  draft.names = trimmed;
+                }, "batch.names");
             }}
           />
         </label>
@@ -840,7 +838,7 @@ function BatchPanel() {
           unit="шт."
           onChange={(copies) =>
             update((draft) => {
-              draft.copies = copies;
+              draft.copies = Math.trunc(copies);
             }, "batch.copies")
           }
         />
@@ -891,18 +889,44 @@ const TABS = [
 
 export function Inspector() {
   const tab = useEditor((state) => state.tab);
+  const [focusedTab, setFocusedTab] = useState<typeof tab | null>(null);
   const warnings = useEditor((state) =>
     state.issues.some((issue) => issue.level !== "info"),
   );
   return (
     <aside className="brk-inspector" aria-label="Параметры бирки">
-      <div className="brk-tabs" role="tablist" aria-label="Разделы редактора">
+      <div
+        className="brk-tabs"
+        role="tablist"
+        aria-label="Разделы редактора"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            setFocusedTab(null);
+        }}
+        onKeyDown={(event) => {
+          const direction =
+            event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : 0;
+          if (!direction || !(event.target instanceof HTMLButtonElement))
+            return;
+          const tabs = Array.from(
+            event.currentTarget.querySelectorAll<HTMLButtonElement>(
+              '[role="tab"]',
+            ),
+          );
+          const index = tabs.indexOf(event.target);
+          if (index < 0) return;
+          event.preventDefault();
+          tabs[(index + direction + tabs.length) % tabs.length]?.focus();
+        }}
+      >
         {TABS.map(({ id, label }) => (
           <button
             type="button"
             key={id}
             role="tab"
             aria-selected={tab === id}
+            tabIndex={(focusedTab ?? tab) === id ? 0 : -1}
+            onFocus={() => setFocusedTab(id)}
             onClick={() => useEditor.getState().setTab(id)}
           >
             {label}

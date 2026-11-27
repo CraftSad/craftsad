@@ -179,15 +179,16 @@ describe("3MF writer", () => {
     expect(model.match(/<item objectid=/g)).toHaveLength(3);
   });
 
-  test("rounds coordinates to micrometres and shares vertices", () => {
+  test("shares exact vertices without collapsing nearby ones; rounds offsets", () => {
+    const mesh = cube(0.0002);
     const model = decoder.decode(
       unzipSync(
         encode3mf(
           [
             {
               name: "x",
-              parts: [{ name: "x", mesh: cube(), extruder: 1 }],
-              x: 0,
+              parts: [{ name: "x", mesh, extruder: 1 }],
+              x: 1.23456,
               y: 0,
             },
           ],
@@ -198,7 +199,8 @@ describe("3MF writer", () => {
     );
     expect(model.match(/<vertex /g)).toHaveLength(4);
     expect(model.match(/<triangle /g)).toHaveLength(2);
-    expect(model).toContain('x="1"');
+    expect(model).toContain(`x="${mesh.positions[0]}"`);
+    expect(model).toContain('1.235 0 0"');
   });
 });
 
@@ -213,6 +215,16 @@ describe("project files", () => {
     expect(() => parseProject("not json")).toThrow();
     expect(() => parseProject("[1,2,3]")).toThrow();
     expect(() => parseProject(JSON.stringify({ version: 99 }))).toThrow();
+  });
+
+  test("normalizes fractional copies without changing other numbers", () => {
+    const project = projectSchema.parse({
+      version: 1,
+      batch: { copies: 3.8, gap: 4.5 },
+    });
+    expect(project.batch.copies).toBe(3);
+    expect(project.batch.gap).toBe(4.5);
+    expect(batchNames(project)).toHaveLength(3);
   });
 
   test("repair damaged values instead of refusing the file", () => {

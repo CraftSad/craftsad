@@ -10,6 +10,7 @@ describe("handoff from the storefront", () => {
       color: 2,
       names: ["Томат", "Перец", "  ", "Огурец"],
     });
+    expect(project?.batch.names).toEqual(["Томат", "Перец", "  ", "Огурец"]);
     expect(project?.template).toBe("flag");
     expect(project?.colors).toEqual({
       body: colorPairs[2]?.base,
@@ -33,6 +34,7 @@ describe("handoff from the storefront", () => {
       { shape: "stake", color: 99, names: [] },
       { shape: "stake", color: "0", names: [] },
       { shape: "stake", color: 0, names: ["Ок", 42] },
+      { shape: "stake", color: 0, names: ["Ок", "я".repeat(81)] },
     ])
       expect(handoffProject(bad)).toBeNull();
   });

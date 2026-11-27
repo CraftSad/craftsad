@@ -69,8 +69,8 @@ function prepare(font: Font, text: string, trackingEm: number): Prepared {
   // Control characters have no glyph; line breaks are handled separately.
   const clean = text
     .replace(/\r\n?/g, "\n")
-    .replace(/\p{C}/gu, (char) => (char === "\n" ? char : ""))
-    .replace(/\t/g, " ");
+    .replace(/\t/g, " ")
+    .replace(/\p{C}/gu, (char) => (char === "\n" ? char : ""));
   const paragraphs: Word[][] = [];
   for (const line of clean.split("\n")) {
     const words: Word[] = [];
@@ -424,11 +424,7 @@ export function layoutText(
       if (wordIndex) pen += prepared.gap * scale + 2 * extra;
       word.glyphs.forEach((placed, glyphIndex) => {
         const previous = word.glyphs[glyphIndex - 1];
-        if (wordIndex || glyphIndex)
-          pen +=
-            (glyphIndex && previous ? kerning(font, previous, placed) : 0) *
-              scale +
-            extra;
+        if (previous) pen += kerning(font, previous, placed) * scale + extra;
         for (const contour of glyphContours(font, placed.glyph))
           layout.contours.push(
             contour.map(([x, y]) => [pen + x * scale, baseline + y * scale]),

@@ -100,28 +100,28 @@ export const fonts: FontDef[] = [
   },
   {
     id: "comfortaa-400",
-    family: "Comfortaa",
+    family: "Garden Round",
     weight: 400,
     weightLabel: "Обычный",
     group: "display",
   },
   {
     id: "comfortaa-700",
-    family: "Comfortaa",
+    family: "Garden Round",
     weight: 700,
     weightLabel: "Жирный",
     group: "display",
   },
   {
     id: "lora-500",
-    family: "Lora",
+    family: "Garden Serif",
     weight: 500,
     weightLabel: "Средний",
     group: "serif",
   },
   {
     id: "lora-700",
-    family: "Lora",
+    family: "Garden Serif",
     weight: 700,
     weightLabel: "Жирный",
     group: "serif",
@@ -156,21 +156,21 @@ export const fonts: FontDef[] = [
   },
   {
     id: "pt-sans-narrow-700",
-    family: "PT Sans Narrow",
+    family: "Garden Condensed",
     weight: 700,
     weightLabel: "Жирный",
     group: "sans",
   },
   {
     id: "russo-one-400",
-    family: "Russo One",
+    family: "Garden Block",
     weight: 400,
     weightLabel: "Обычный",
     group: "display",
   },
   {
     id: "marck-script-400",
-    family: "Marck Script",
+    family: "Garden Script",
     weight: 400,
     weightLabel: "Обычный",
     group: "hand",
@@ -187,7 +187,8 @@ export const fontGroups: { id: FontGroup; label: string }[] = [
 
 const FONT_DIR = "/fonts/editor";
 /** CSS family of a font id; each file is registered once as its own family. */
-export const fontFamily = (id: string) => `brk-${id}`;
+export const fontFamily = (font: FontDef) =>
+  `"${font.family} 3dbirka ${font.weight}"`;
 
 export function fontDef(id: string): FontDef {
   const font =
@@ -205,7 +206,7 @@ export function fontFaceCss(): string {
   return fonts
     .map(
       (font) =>
-        `@font-face{font-family:${fontFamily(font.id)};font-weight:${font.weight};font-display:swap;src:url(${FONT_DIR}/${font.id}.woff) format("woff")}`,
+        `@font-face{font-family:${fontFamily(font)};font-weight:${font.weight};font-display:swap;src:url(${FONT_DIR}/${font.id}.woff) format("woff")}`,
     )
     .join("\n");
 }

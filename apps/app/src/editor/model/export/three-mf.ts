@@ -19,7 +19,7 @@ export type PrintItem = {
 export type PrintMaterials = { name: string; color: string }[];
 
 const CORE = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02";
-/** 3MF coordinates are micrometres at most. */
+/** Round only placement offsets, never mesh vertices. */
 const micrometres = (value: number) => String(Math.round(value * 1000) / 1000);
 
 function escapeXml(value: string) {
@@ -42,9 +42,9 @@ function meshXml(mesh: MeshData, id: number, material: number): string {
   const rows: string[] = [];
   const index: number[] = [];
   for (let corner = 0; corner < mesh.triangles * 3; corner++) {
-    const x = micrometres(mesh.positions[corner * 3] ?? 0);
-    const y = micrometres(mesh.positions[corner * 3 + 1] ?? 0);
-    const z = micrometres(mesh.positions[corner * 3 + 2] ?? 0);
+    const x = mesh.positions[corner * 3] ?? 0;
+    const y = mesh.positions[corner * 3 + 1] ?? 0;
+    const z = mesh.positions[corner * 3 + 2] ?? 0;
     const key = `${x},${y},${z}`;
     let vertex = vertices.get(key);
     if (vertex === undefined) {

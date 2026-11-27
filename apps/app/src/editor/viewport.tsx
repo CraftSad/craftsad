@@ -18,9 +18,10 @@ import * as THREE from "three";
 import { designKey } from "./lib";
 import { batchNames } from "./model/export/print";
 import type { BuiltTag, MeshData } from "./model/geometry";
+import { platePoints, stakePoints } from "./model/outline";
 import { layoutPlate } from "./model/plate";
 import { printer } from "./model/printer";
-import type { Shape, TagDesign } from "./model/schema";
+import type { TagDesign } from "./model/schema";
 import { useEditor } from "./store";
 
 type At = [number, number, number];
@@ -117,74 +118,15 @@ function toShape(points: [number, number][]): THREE.Shape {
   return shape;
 }
 
-/** Plate outline in model coordinates (millimetres, y up). */
-function platePoints(shape: Shape): [number, number][] {
-  const { width, height } = shape;
-  const points: [number, number][] = [];
-  const arc = (cx: number, cy: number, r: number, from: number, to: number) => {
-    const steps = Math.max(6, Math.round(((to - from) / 90) * 10));
-    for (let step = 0; step <= steps; step++) {
-      const angle = ((from + ((to - from) * step) / steps) * Math.PI) / 180;
-      points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
-    }
-  };
-  if (shape.kind === "ellipse") {
-    for (let step = 0; step < 96; step++) {
-      const angle = (step / 96) * Math.PI * 2;
-      points.push([
-        (width / 2) * Math.cos(angle),
-        (height / 2) * Math.sin(angle),
-      ]);
-    }
-  } else if (shape.kind === "tongue") {
-    const radius = Math.min(width / 2, height);
-    points.push([-radius, -height / 2]);
-    arc(0, height / 2 - radius, radius, 180, 360);
-    points.push([radius, -height / 2]);
-  } else {
-    const radius = Math.min(shape.radius, width / 2, height / 2);
-    const x = width / 2 - radius;
-    const y = height / 2 - radius;
-    arc(x, -y, radius, 270, 360);
-    arc(x, y, radius, 0, 90);
-    arc(-x, y, radius, 90, 180);
-    arc(-x, -y, radius, 180, 270);
-  }
-  return points;
-}
-
-/** Stake outline in model coordinates; null when the tag has none. */
-function stakePoints(tag: TagDesign): [number, number][] | null {
-  if (tag.mount.type !== "stake") return null;
-  const { width, length, tipLength, side } = tag.mount;
-  const half = width / 2;
-  const x =
-    side === "left"
-      ? -tag.shape.width / 2 + half + 1.6
-      : side === "right"
-        ? tag.shape.width / 2 - half - 1.6
-        : 0;
-  const edge = -tag.shape.height / 2;
-  const tip = Math.min(tipLength, length - 2, width * 1.5);
-  return [
-    [x - half, edge],
-    [x + half, edge],
-    [x + half, edge - length + tip],
-    [x + 0.8, edge - length],
-    [x - 0.8, edge - length],
-    [x - half, edge - length + tip],
-  ];
-}
-
 /** See-through stand-in for a tag of the batch that is not built yet. */
 function Blank({ tag, at }: { tag: TagDesign; at: At }) {
-  const shapes = useMemo(
-    () =>
-      [platePoints(tag.shape), stakePoints(tag)]
-        .filter((points): points is [number, number][] => points !== null)
-        .map(toShape),
-    [tag],
-  );
+  const shapes = useMemo(() => {
+    const plate = platePoints(tag.shape);
+    const parts = [toShape(plate)];
+    if (tag.mount.type === "stake")
+      parts.push(toShape(stakePoints(tag.shape, tag.mount, plate)));
+    return parts;
+  }, [tag]);
   const bottom = tag.mount.type === "stake" ? -tag.mount.length : 0;
   const origin: At = [0, -bottom / 2, 0];
   return (

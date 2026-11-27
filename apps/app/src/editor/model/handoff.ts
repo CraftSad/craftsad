@@ -1,6 +1,6 @@
 import type { ShapeId } from "~/components/3dbirka/data";
 import { colorPairs } from "~/components/3dbirka/data";
-import { batchSchema, type Project, projectSchema } from "./schema";
+import { handoffNamesSchema, type Project, projectSchema } from "./schema";
 import { findTemplate } from "./templates";
 
 /** Session storage key the storefront leaves its setup under. */
@@ -23,19 +23,18 @@ export function handoffProject(input: unknown): Project | null {
   if (typeof input !== "object" || input === null) return null;
   const { shape, color, names } = input as Partial<StorefrontSetup>;
   if (typeof shape !== "string" || typeof color !== "number") return null;
-  // The schema repairs broken lists; a handoff must be complete instead.
-  if (!Array.isArray(names) || !names.every((name) => typeof name === "string"))
-    return null;
   const template = findTemplate(shape);
   const pair = colorPairs[color];
   if (!template || !pair) return null;
-  const batch = batchSchema.safeParse({ names });
-  if (!batch.success) return null;
-  return projectSchema.parse({
+  const parsedNames = handoffNamesSchema.safeParse(names);
+  if (!parsedNames.success) return null;
+  const project = projectSchema.parse({
     ...template.project,
     colors: { body: pair.base, relief: pair.ink },
-    batch: { names: batch.data.names },
+    batch: {},
   });
+  project.batch.names = parsedNames.data;
+  return project;
 }
 
 /** Leaves the setup for the editor to pick up on the next page. */
@@ -49,15 +48,10 @@ export function saveHandoff(setup: StorefrontSetup) {
 
 /** The storefront setup once; it is consumed so a reload starts fresh. */
 export function takeHandoff(): Project | null {
-  let raw: string | null = null;
   try {
-    raw = window.sessionStorage.getItem(HANDOFF_KEY);
+    const raw = window.sessionStorage.getItem(HANDOFF_KEY);
+    if (raw === null) return null;
     window.sessionStorage.removeItem(HANDOFF_KEY);
-  } catch {
-    return null;
-  }
-  if (raw === null) return null;
-  try {
     return handoffProject(JSON.parse(raw));
   } catch {
     return null;

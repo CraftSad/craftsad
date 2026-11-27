@@ -134,13 +134,18 @@ const colorsSchema = z.object({
     .catch(milk.relief),
 });
 
-export const batchSchema = z.object({
+/** Handoffs must keep the entire list, with no repair or trimming. */
+export const handoffNamesSchema = z
+  .array(z.string().refine((name) => name.trim().length <= 80))
+  .max(MAX_BATCH);
+
+const batchSchema = z.object({
   names: z
     .array(z.string().trim().max(80))
     .catch([])
     .transform((names) => names.slice(0, MAX_BATCH)),
   /** Copies printed of every batch line. */
-  copies: mm(1, 20, 1),
+  copies: mm(1, 20, 1).transform(Math.trunc),
   gap: mm(2, 40, 6),
   margin: mm(2, 40, 12),
 });

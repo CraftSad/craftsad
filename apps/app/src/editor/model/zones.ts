@@ -1,3 +1,4 @@
+import { cornerRadius } from "./outline";
 import type { TagDesign } from "./schema";
 import type { Zone } from "./text";
 
@@ -14,7 +15,14 @@ function bandWidth(
   top: number,
 ): number {
   const { width, height } = shape;
-  if (shape.kind === "rounded") return width;
+  if (shape.kind === "rounded") {
+    const radius = cornerRadius(shape);
+    const edge = Math.max(Math.abs(bottom), Math.abs(top));
+    const rise = Math.max(0, edge - (height / 2 - radius));
+    return (
+      width - 2 * radius + 2 * Math.sqrt(Math.max(0, radius ** 2 - rise ** 2))
+    );
+  }
   if (shape.kind === "ellipse") {
     const edge = Math.max(Math.abs(bottom), Math.abs(top));
     return edge >= height / 2

@@ -315,10 +315,22 @@ export function ExportDialog() {
         </div>
       </div>
       <ol className="brk-steps">
-        <li>
-          <strong>Откройте файл в QIDI Studio.</strong> Бирки уже расставлены на
-          столе {printer.bed.x} × {printer.bed.y} мм.
-        </li>
+        {format === "3mf" ? (
+          <li>
+            <strong>Откройте файл в QIDI Studio.</strong> Бирки уже расставлены
+            на столе {printer.bed.x} × {printer.bed.y} мм.
+          </li>
+        ) : count > 1 ? (
+          <li>
+            <strong>Распакуйте ZIP-архив.</strong> Импортируйте файлы STL и
+            расставьте модели на столе в QIDI Studio.
+          </li>
+        ) : (
+          <li>
+            <strong>Импортируйте файл STL в QIDI Studio.</strong> Разместите
+            модель на столе.
+          </li>
+        )}
         {format === "3mf" ? (
           <li>
             <strong>Назначьте филаменты.</strong> Корпус — экструдер 1, надпись

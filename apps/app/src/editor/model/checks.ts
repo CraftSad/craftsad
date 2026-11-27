@@ -1,4 +1,5 @@
 import type { BuiltTag } from "./geometry";
+import { mountCenters, plateClearance, platePoints } from "./outline";
 import { printer } from "./printer";
 import { resolveText, type TagDesign } from "./schema";
 import { MIN_FONT_SIZE } from "./text";
@@ -55,19 +56,22 @@ export function checkTag(tag: TagDesign, built: BuiltTag | null): Issue[] {
     );
 
   if (mount.type === "hole" || mount.type === "screws") {
-    const wall =
-      mount.type === "hole"
-        ? mount.margin - mount.diameter / 2
-        : Math.min(
-            mount.margin - mount.diameter / 2,
-            shape.height / 2 - mount.diameter / 2,
-          );
+    const points = platePoints(shape);
+    const distance = Math.min(
+      ...mountCenters(shape, mount).map((center) =>
+        plateClearance(points, center),
+      ),
+    );
+    const radius = mount.diameter / 2;
+    const wall = distance - radius;
     if (mount.diameter < 2)
       add(
         "warning",
         `Отверстие ${mm(mount.diameter)} уже 2 мм — может зарасти`,
       );
-    if (wall < walls)
+    if (distance <= -radius) add("warning", "Отверстие не пересекает плашку");
+    else if (wall < 0) add("warning", "Отверстие выходит за край плашки");
+    else if (wall < walls)
       add("warning", `Стенка у отверстия ${mm(wall)} — тоньше двух периметров`);
   }
   if (mount.type === "stake") {

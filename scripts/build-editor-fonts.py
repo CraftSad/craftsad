@@ -6,9 +6,9 @@ and kerning stay at the default master). Every weight is therefore pinned
 offline, subset and saved as its own file; the same file drives the on-screen
 preview through @font-face.
 
-Each output is a modified version under the SIL Open Font License, so it gets
-its own family name "<Name> 3dbirka" (required when the licence reserves the
-original name) and ships with the original licence text.
+Each output is a modified version under the SIL Open Font License and ships
+with the original licence text. Families with Reserved Font Names use distinct
+names that omit the reserved words; the 3dbirka suffix identifies the build.
 
 Sources are the OFL directories of https://github.com/google/fonts, e.g.
 `ofl/rubik/Rubik[wght].ttf` + `ofl/rubik/OFL.txt`.
@@ -27,23 +27,23 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_FONTS = ROOT / "apps/app/public/fonts"
 OUTPUT = PUBLIC_FONTS / "editor"
 
-# id -> (google/fonts file inside its family dir, name, pinned weights)
+# id -> (google/fonts source filename, output family base, pinned weights)
 FONTS = {
     "manrope": (None, "Manrope", [500, 700, 800]),
     "rubik": ("Rubik[wght].ttf", "Rubik", [500, 700, 900]),
     "montserrat": ("Montserrat[wght].ttf", "Montserrat", [600, 800, 900]),
     "unbounded": ("Unbounded[wght].ttf", "Unbounded", [400, 700, 900]),
-    "comfortaa": ("Comfortaa[wght].ttf", "Comfortaa", [400, 700]),
-    "lora": ("Lora[wght].ttf", "Lora", [500, 700]),
+    "comfortaa": ("Comfortaa[wght].ttf", "Garden Round", [400, 700]),
+    "lora": ("Lora[wght].ttf", "Garden Serif", [500, 700]),
     "caveat": ("Caveat[wght].ttf", "Caveat", [400, 700]),
     "jetbrains-mono": (
         "JetBrainsMono[wght].ttf",
         "JetBrains Mono",
         [500, 700],
     ),
-    "pt-sans-narrow": ("PT_Sans-Narrow-Web-Bold.ttf", "PT Sans Narrow", [700]),
-    "russo-one": ("RussoOne-Regular.ttf", "Russo One", [400]),
-    "marck-script": ("MarckScript-Regular.ttf", "Marck Script", [400]),
+    "pt-sans-narrow": ("PT_Sans-Narrow-Web-Bold.ttf", "Garden Condensed", [700]),
+    "russo-one": ("RussoOne-Regular.ttf", "Garden Block", [400]),
+    "marck-script": ("MarckScript-Regular.ttf", "Garden Script", [400]),
 }
 WEIGHT_NAMES = {
     400: "Regular",

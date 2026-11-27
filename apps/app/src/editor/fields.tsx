@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useId, useState } from "react";
+import { type ReactNode, useId, useState } from "react";
 
 const format = (value: number) => String(Math.round(value * 100) / 100);
 
@@ -25,13 +25,9 @@ export function NumberField({
   unit = "мм",
 }: NumberFieldProps) {
   const id = useId();
-  const [text, setText] = useState(format(value));
-  // Follow outside changes without clobbering a number being typed ("2.").
-  useEffect(() => {
-    if (Number(text) !== value) setText(format(value));
-  }, [text, value]);
+  const [draft, setDraft] = useState<string | null>(null);
   const commit = (raw: string) => {
-    setText(raw);
+    setDraft(null);
     const parsed = Number(raw);
     if (raw.trim() && Number.isFinite(parsed))
       onChange(Math.min(max, Math.max(min, parsed)));
@@ -60,9 +56,18 @@ export function NumberField({
             min={min}
             max={max}
             step={step}
-            value={text}
-            onChange={(event) => commit(event.target.value)}
-            onBlur={() => setText(format(value))}
+            value={draft ?? format(value)}
+            onChange={(event) => setDraft(event.currentTarget.value)}
+            onBlur={(event) => {
+              if (draft !== null) commit(event.currentTarget.value);
+              else setDraft(null);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+                event.preventDefault();
+                event.currentTarget.blur();
+              }
+            }}
           />
           <span aria-hidden="true">{unit}</span>
         </span>

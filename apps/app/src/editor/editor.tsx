@@ -63,10 +63,13 @@ export function TagEditor() {
   const [notice, setNotice] = useState("");
   /** Number of the newest model request; older results are dropped. */
   const request = useRef(0);
+  const initialized = useRef(false);
 
   // Open, in order: the setup carried over from the storefront, the project
   // that was last edited, or the first template.
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
     const handed = takeHandoff();
     if (handed) {
       useEditor.getState().replace(handed);
@@ -87,9 +90,8 @@ export function TagEditor() {
   const name = activeName(project, active);
   const tag = project.tag;
   // Retyping the title must not rebuild the model; the design and the
-  // printed line must. The key stands for both.
+  // printed line must.
   const design = designKey(project);
-  const key = `${design}\n${name}`;
   const latest = useRef(tag);
   useEffect(() => {
     latest.current = tag;
@@ -101,8 +103,6 @@ export function TagEditor() {
     if (!ready) return;
     const current = ++request.current;
     const timer = setTimeout(() => {
-      // The key carries the design and the printed line.
-      const [design, name] = key.split("\n") as [string, string];
       const tag = latest.current;
       useEditor.setState({ building: true });
       buildTagAsync(tag, name).then(
@@ -124,7 +124,7 @@ export function TagEditor() {
       clearTimeout(timer);
       request.current++;
     };
-  }, [key, ready]);
+  }, [design, name, ready]);
 
   // Autosave: the work survives a reload or a closed tab.
   const saved = serializeProject(project);

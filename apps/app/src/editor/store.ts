@@ -58,6 +58,9 @@ let lastEdit = 0;
 
 const failed = (message: string): Issue[] => [{ level: "error", message }];
 
+const normalizeActive = (active: number, length: number) =>
+  length ? ((active % length) + length) % length : 0;
+
 export const useEditor = create<EditorState>()((set, get) => ({
   project: structuredClone(defaultTemplate.project),
   past: [],
@@ -87,6 +90,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
     lastEdit = now;
     set({
       project: draft,
+      active: normalizeActive(state.active, batchNames(draft).length),
       past: joined
         ? state.past
         : [...state.past.slice(1 - HISTORY), state.project],
@@ -109,30 +113,37 @@ export const useEditor = create<EditorState>()((set, get) => ({
   },
 
   undo: () => {
-    const { past, project, future } = get();
+    const { active, past, project, future } = get();
     const previous = past.at(-1);
     if (!previous) return;
     lastGroup = undefined;
     set({
       project: previous,
+      active: normalizeActive(active, batchNames(previous).length),
       past: past.slice(0, -1),
       future: [project, ...future],
     });
   },
 
   redo: () => {
-    const { future, project, past } = get();
+    const { active, future, project, past } = get();
     const next = future[0];
     if (!next) return;
     lastGroup = undefined;
-    set({ project: next, future: future.slice(1), past: [...past, project] });
+    set({
+      project: next,
+      active: normalizeActive(active, batchNames(next).length),
+      future: future.slice(1),
+      past: [...past, project],
+    });
   },
 
   setView: (view) => set({ view }),
   setTab: (tab) => set({ tab }),
   setPanel: (panel) => set({ panel }),
   setDialog: (dialog) => set({ dialog }),
-  setActive: (active) => set({ active }),
+  setActive: (active) =>
+    set({ active: normalizeActive(active, batchNames(get().project).length) }),
   selectLayer: (layer) => set({ layer }),
   setBuilt: (built, issues) => set({ built, issues, building: false }),
   setFailed: (message) =>
@@ -157,9 +168,5 @@ export const useEditor = create<EditorState>()((set, get) => ({
 /** The batch line the viewport shows, kept inside the list after edits. */
 export function activeName(project: Project, active: number) {
   const names = batchNames(project);
-  if (!names.length) return project.title;
-  return (
-    names[((active % names.length) + names.length) % names.length] ??
-    project.title
-  );
+  return names[normalizeActive(active, names.length)] ?? project.title;
 }
