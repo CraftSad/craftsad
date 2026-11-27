@@ -1,7 +1,9 @@
 "use client";
 
 import { AnimatePresence, MotionConfig } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { saveHandoff } from "~/editor/model/handoff";
 import { CartDrawer } from "./cart-drawer";
 import { CatalogSection } from "./catalog-section";
 import { ConstructorPreview } from "./constructor-preview";
@@ -55,6 +57,13 @@ export function Storefront() {
   const { price, original } = calculateKit(names.length, shape, mixed);
   const cartCount = cart.reduce((sum, item) => sum + item.names.length, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const router = useRouter();
+
+  // The editor picks the setup up, so the tag is not configured twice.
+  const openEditor = () => {
+    saveHandoff({ shape, color, names });
+    router.push("/editor");
+  };
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior() });
@@ -167,6 +176,7 @@ export function Storefront() {
           onMenuToggle={() => setMenuOpen((open) => !open)}
           onShowLogin={() => setDialog("login")}
           onShowCart={() => setDialog("cart")}
+          onEditor={openEditor}
         />
         <main>
           <HeroSection onNavigate={scrollTo} />
