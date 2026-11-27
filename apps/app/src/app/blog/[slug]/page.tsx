@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { ContactLink } from "~/components/3dbirka/contact-link";
 import { BlogFooter } from "~/components/blog/blog-chrome";
 import { PostBody } from "~/components/blog/post-body";
 import {
+  type BlogPost,
   formatDate,
   getPost,
   postHref,
@@ -65,28 +65,8 @@ export async function generateMetadata(
   };
 }
 
-/** Neutral placeholder while the URL-specific article streams in. */
-function ArticleSkeleton() {
-  return (
-    <div className="birka-container blog-skeleton" aria-hidden="true">
-      <span className="blog-skeleton-pill" />
-      <span className="blog-skeleton-line is-title" />
-      <span className="blog-skeleton-line is-lede" />
-      <span className="blog-skeleton-cover" />
-    </div>
-  );
-}
-
-/**
- * Renders one article. `notFound()` must be called above this boundary: the
- * lookup is synchronous, so a throw inside `<Suspense>` would be swallowed
- * by the boundary instead of reaching the segment's `not-found.tsx`.
- * @see https://nextjs.org/docs/messages/instant-shell-url-data
- */
-function BlogPostContent({ slug }: { slug: string }) {
-  const post = getPost(slug) ?? posts[0];
-  if (!post) throw new Error("Journal is empty: add at least one post");
-
+/** Renders one article; the page has already validated the slug. */
+function BlogPostContent({ post }: { post: BlogPost }) {
   const index = posts.findIndex((item) => item.slug === post.slug);
   const newer = posts[index - 1];
   const older = posts[index + 1];
@@ -192,13 +172,12 @@ function BlogPostContent({ slug }: { slug: string }) {
 
 export default async function BlogPostPage(props: PageProps<"/blog/[slug]">) {
   const { slug } = await props.params;
-  if (!getPost(slug)) notFound();
+  const post = getPost(slug);
+  if (!post) notFound();
 
   return (
     <>
-      <Suspense fallback={<ArticleSkeleton />}>
-        <BlogPostContent slug={slug} />
-      </Suspense>
+      <BlogPostContent post={post} />
       <BlogFooter />
     </>
   );
