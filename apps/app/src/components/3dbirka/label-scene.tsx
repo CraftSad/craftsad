@@ -101,7 +101,7 @@ export default function LabelScene({
   return (
     <SceneBoundary fallback={fallback}>
       <div
-        className="birka-three"
+        className="h-[360px] w-full relative touch-pan-y max-[570px]:h-[270px] max-[800px]:h-[310px] [&_canvas]:[outline:none]"
         role="img"
         aria-label={`Объёмная бирка: ${tagProps.name}. Вращайте мышью или пальцем.`}
       >

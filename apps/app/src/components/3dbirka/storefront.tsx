@@ -165,7 +165,7 @@ export function Storefront() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="birka-site">
+      <div className="[background:radial-gradient(ellipse_at_85%_8%,#dce2d366,transparent_34%),#f5f1e8] text-ink font-craft text-[18px] leading-[1.55] overflow-clip isolate before:content-[''] before:fixed before:inset-0 before:pointer-events-none before:opacity-[.035] before:z-[30] before:bg-grain [&_button]:cursor-pointer [&_button]:touch-manipulation [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-[.6] [&_button:focus-visible]:[outline:3px_solid_#c87d55] [&_button:focus-visible]:outline-offset-[5px] [&_input:focus-visible]:[outline:3px_solid_#b86b43] [&_input:focus-visible]:outline-offset-[3px] [&_textarea:focus-visible]:[outline:3px_solid_#b86b43] [&_textarea:focus-visible]:outline-offset-[3px] [&_h1]:font-display [&_h1]:font-medium [&_h2]:font-display [&_h2]:font-medium [&_h3]:font-display [&_h3]:font-medium [&_section[id]]:scroll-mt-[118px] [&_a:focus-visible]:[outline:3px_solid_#c87d55] [&_a:focus-visible]:outline-offset-[5px] [&_svg]:shrink-0">
         <SiteHeader
           menuOpen={menuOpen}
           cartCount={cartCount}
@@ -181,9 +181,12 @@ export function Storefront() {
         <main>
           <HeroSection onNavigate={scrollTo} />
           <HowSection />
-          <section id="constructor" className="birka-section birka-constructor">
-            <div className="birka-container">
-              <div className="birka-section-top">
+          <section
+            id="constructor"
+            className="py-[90px] px-[0] max-[570px]:py-[55px] max-[570px]:px-[0] max-[800px]:py-[65px] max-[800px]:px-[0] [&_h2]:[font:400_clamp(38px,4vw,56px)/1.15_Georgia,serif] [&_h2]:tracking-[-.035em] [&_h2]:m-0 [&_h2]:text-[clamp(40px,4.3vw,62px)] [&_h2]:leading-[1.03] max-[570px]:[&_h2]:text-[43px] max-[800px]:[&_h2]:text-[43px] [background:#111c18] text-[#f6f4ef] relative pt-[70px] pb-[65px] [&_h2]:text-[52px]"
+          >
+            <div className="w-[min(100%_-_112px,1320px)] mx-auto max-[1150px]:w-[calc(100%_-_64px)] max-[570px]:w-[calc(100%_-_40px)] max-[800px]:w-[min(100%_-_36px,680px)]">
+              <div className="flex justify-between items-center gap-[50px] mb-[36px] max-[570px]:block max-[570px]:mb-[26px] max-[800px]:flex max-[800px]:gap-[24px] [&>p]:max-w-[370px] [&>p]:text-[#b0bdb2] [&>p]:text-[15px] [&>p]:mb-[5px] [&>p]:leading-[1.8] max-[800px]:[&>p]:mt-[18px] max-[800px]:[&>p]:text-[13px] max-[800px]:[&>p]:m-0 max-[800px]:[&>p]:max-w-[240px] max-[570px]:[&>p]:text-[15px] max-[570px]:[&>p]:mt-[18px] max-[570px]:[&>p]:max-w-none">
                 <div>
                   <h2>
                     Ваша маленькая <em>дизайн-студия</em>
@@ -195,7 +198,7 @@ export function Storefront() {
                   Покрутите её — она уже почти настоящая.
                 </p>
               </div>
-              <div className="birka-builder">
+              <div className="grid grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-[0] items-stretch [background:#ffffff04] border border-solid border-[#ffffff12] rounded-[26px] overflow-hidden max-[1100px]:gap-[18px] max-[1150px]:grid-cols-[1.15fr_1fr] max-[570px]:rounded-[20px] max-[800px]:grid-cols-[1fr] [@media((min-width:801px)_and_(max-width:1150px))]:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] [&_textarea]:w-full [&_textarea]:border-[1.5px] [&_textarea]:border-solid [&_textarea]:border-[#c8cec6] [&_textarea]:rounded-[9px] [&_textarea]:[background:white] [&_textarea]:text-ink [&_textarea]:py-[14px] [&_textarea]:px-[16px] [&_textarea]:text-[18px] [&_textarea]:leading-[1.5] [&_textarea]:resize-y [&_textarea]:min-h-[160px]">
                 <ConstructorPreview
                   shape={
                     mixed

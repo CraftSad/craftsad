@@ -60,9 +60,9 @@ export function ConstructorPreview({
   const palette = getPaletteForShape(shape, color);
 
   return (
-    <div className="birka-builder-left">
+    <div className="relative top-auto max-h-[none] overflow-hidden flex flex-col justify-between [background:radial-gradient(ellipse_at_50%_40%,#3d4939,transparent_65%),#1b2721] min-w-0 max-[800px]:relative max-[800px]:top-auto max-[800px]:max-h-[none] [@media((min-width:801px)_and_(min-height:780px))]:sticky [@media((min-width:801px)_and_(min-height:780px))]:top-[20px] [@media((min-width:801px)_and_(min-height:780px))]:max-h-[calc(100dvh_-_24px)] [@media((min-width:801px)_and_(min-height:780px))]:overflow-y-auto">
       <div
-        className="birka-preview-tabs"
+        className="inline-flex self-center gap-[4px] mt-[18px] mr-[16px] ml-[16px] p-[4px] rounded-full [background:#ffffff0a] border border-solid border-[#ffffff14] [&_button]:border-0 [&_button]:[background:transparent] [&_button]:text-[#b7c4b4] [&_button]:rounded-full [&_button]:py-[7px] [&_button]:px-[15px] [&_button]:min-h-[36px] [&_button]:text-[12px] [&_button]:font-semibold [&_button]:[transition:background_0.2s,color_0.2s] [&_button[aria-selected='true']]:[background:#e9dfc6] [&_button[aria-selected='true']]:text-[#182b21]"
         role="tablist"
         aria-label="Режим предпросмотра"
       >
@@ -115,7 +115,7 @@ export function ConstructorPreview({
             {seriesMeta.coverImage ? (
               <>
                 <p>{seriesMeta.description}</p>
-                <figure className="birka-series-photo-figure">
+                <figure className="[&_img]:w-full [&_img]:h-auto [&_img]:rounded-[16px] [&_img]:object-cover">
                   <Image
                     src={seriesMeta.coverImage}
                     alt={`${seriesMeta.fullTitle} — ${palette.name}`}
@@ -153,10 +153,10 @@ export function ConstructorPreview({
           </div>
         ) : (
           <>
-            <div className="birka-builder-preview">
-              <div className="birka-preview-top">
+            <div className="min-h-[440px] flex flex-col items-center justify-between [background:transparent] border-0 rounded-none p-[22px] overflow-hidden flex-[1] relative max-[570px]:min-h-[355px] max-[570px]:p-[17px] max-[800px]:min-h-[400px] max-[800px]:p-[20px]">
+              <div className="w-full flex justify-between gap-[20px] text-[11px] text-[#adbaa9] relative z-[2] max-[570px]:text-[10px] [&>span:first-child]:font-normal [&>span:first-child]:text-[#d2dcc8] [&>span:first-child]:flex [&>span:first-child]:items-center [&>span:first-child]:gap-[8px] [&>span:first-child]:text-[12px] [&>span:first-child]:tracking-[.02em] max-[570px]:[&>span:first-child]:text-[11px]">
                 <span>
-                  <span className="birka-live-dot" />{" "}
+                  <span className="w-[8px] h-[8px] [background:#b6c995] rounded-full shadow-[0_0_12px_#b6c99555]" />{" "}
                   {tryOn
                     ? tryOn === "seedling"
                       ? "🌱 Рассада"
@@ -212,7 +212,7 @@ export function ConstructorPreview({
               )}
 
               {!tryOn && (
-                <div className="birka-preview-pager">
+                <div className="flex items-center justify-center gap-[16px] w-full text-[13px] font-bold text-[#e2e7d9] max-[570px]:text-[12px] [&_span]:text-center [&_span]:min-w-0 [&_span]:max-w-[300px] [&_span]:wrap-anywhere [&_button]:flex-[none] [&_button]:w-[40px] [&_button]:h-[40px] [&_button]:grid [&_button]:place-items-center [&_button]:[background:#ffffff07] [&_button]:border [&_button]:border-solid [&_button]:border-[#ffffff20] [&_button]:rounded-full [&_button]:text-[#d2dcc8] [&_svg]:w-[19px] [&_button:hover]:[background:#ffffff18] max-[570px]:[&_button]:w-[38px] max-[570px]:[&_button]:h-[38px]">
                   <button
                     type="button"
                     aria-label="Предыдущая надпись"
@@ -235,7 +235,7 @@ export function ConstructorPreview({
             </div>
 
             <fieldset
-              className="birka-view-controls"
+              className="flex gap-[0] mt-[16px] flex-wrap border border-solid border-[#ffffff10] min-w-0 p-[4px] justify-center self-center [background:#ffffff08] rounded-[50px] mt-[8px] max-[800px]:mt-[8px] max-[800px]:mb-[18px] [&_button]:border-0 [&_button]:[background:transparent] [&_button]:text-[#bfccba] [&_button]:rounded-full [&_button]:py-[10px] [&_button]:px-[20px] [&_button]:min-h-[44px] [&_button]:font-medium [&_button]:text-[14px] [&_button]:flex [&_button]:items-center [&_button]:gap-[7px] [&_button]:relative [&_button]:isolate [&_svg]:w-[16px] max-[570px]:[&_button]:min-h-[43px] max-[570px]:[&_button]:py-[10px] max-[570px]:[&_button]:px-[17px] max-[570px]:[&_button]:text-[12px]"
               aria-label="Примерить бирку"
             >
               <button
@@ -290,14 +290,14 @@ export function ConstructorPreview({
           </>
         )}
       </div>
-      <p className="birka-preview-note">
+      <p className="text-[#9ba996] text-[10px] mt-[15px] mr-[20px] mb-[24px] ml-[20px] text-center max-w-[350px] self-center max-[800px]:hidden">
         Точный предпросмотр шрифта и переноса строк. Реальный оттенок пластика
         при дневном свете смотрите во вкладке „Живое фото“
       </p>
-      <div className="birka-export-actions">
+      <div className="flex justify-center mt-[-8px] mr-[20px] mb-[20px] ml-[20px]">
         <button
           type="button"
-          className="birka-inline-export"
+          className="inline-flex items-center gap-[6px] py-[6px] px-[13px] rounded-full border border-solid border-[#ffffff1c] [background:#ffffff08] text-[#b7c4b3] text-[11px] font-medium [transition:background_0.2s,color_0.2s,border-color_0.2s] hover:[background:#ffffff16] hover:border-[#ffffff30] hover:text-[#eef3ea] [&_svg]:w-[13px] [&_svg]:h-[13px]"
           onClick={async () => {
             try {
               const { downloadPrintFile } = await import("./print-export");

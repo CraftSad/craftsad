@@ -17,7 +17,7 @@ export function ContactLink({ compact = false }: { compact?: boolean }) {
     <>
       {url ? (
         <a
-          className="birka-contact"
+          className="[&_svg]:w-[16px] [&_svg]:h-[16px] [&>span]:inline"
           href={url}
           target="_blank"
           rel="noopener noreferrer"
@@ -27,7 +27,7 @@ export function ContactLink({ compact = false }: { compact?: boolean }) {
         </a>
       ) : (
         <button
-          className="birka-contact"
+          className="[&_svg]:w-[16px] [&_svg]:h-[16px] [&>span]:inline"
           type="button"
           aria-label="Связаться с мастерской"
           onClick={() => setOpen(true)}
@@ -42,7 +42,7 @@ export function ContactLink({ compact = false }: { compact?: boolean }) {
         >
           <button
             type="button"
-            className="birka-icon-button"
+            className="w-[44px] h-[44px] grid place-items-center border border-solid border-linen [background:white] rounded-full text-ink max-[800px]:[background:#ffffff75] max-[800px]:border-0 [&_svg]:w-[21px] [&_svg]:h-[21px]"
             aria-label="Закрыть контакты"
             onClick={() => setOpen(false)}
           >

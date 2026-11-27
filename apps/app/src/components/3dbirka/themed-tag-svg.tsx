@@ -813,7 +813,7 @@ export function ThemedTagSvg({
       {...scaleViewport}
       ref={svgRef}
       viewBox={scaleViewport ? "14 12 192 244" : "0 0 220 260"}
-      className={scaleViewport ? undefined : "birka-themed-svg"}
+      className={scaleViewport ? undefined : "w-full h-full overflow-visible"}
       preserveAspectRatio={scaleViewport ? "none" : undefined}
       aria-hidden="true"
     >

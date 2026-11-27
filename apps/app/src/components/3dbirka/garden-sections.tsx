@@ -147,9 +147,12 @@ export function GardenSections({
   }
   return (
     <>
-      <section className="birka-section birka-garden" id="garden">
-        <div className="birka-container">
-          <div className="birka-section-top">
+      <section
+        className="py-[90px] px-[0] max-[570px]:py-[55px] max-[570px]:px-[0] max-[800px]:py-[65px] max-[800px]:px-[0] [&_h2]:[font:400_clamp(38px,4vw,56px)/1.15_Georgia,serif] [&_h2]:tracking-[-.035em] [&_h2]:m-0 [&_h2]:text-[clamp(40px,4.3vw,62px)] [&_h2]:leading-[1.03] max-[570px]:[&_h2]:text-[43px] max-[800px]:[&_h2]:text-[43px] birka-garden"
+        id="garden"
+      >
+        <div className="w-[min(100%_-_112px,1320px)] mx-auto max-[1150px]:w-[calc(100%_-_64px)] max-[570px]:w-[calc(100%_-_40px)] max-[800px]:w-[min(100%_-_36px,680px)]">
+          <div className="flex justify-between items-center gap-[50px] mb-[36px] max-[570px]:block max-[570px]:mb-[26px] max-[800px]:flex max-[800px]:gap-[24px] [&>p]:max-w-[370px] [&>p]:text-[#b0bdb2] [&>p]:text-[15px] [&>p]:mb-[5px] [&>p]:leading-[1.8] max-[800px]:[&>p]:mt-[18px] max-[800px]:[&>p]:text-[13px] max-[800px]:[&>p]:m-0 max-[800px]:[&>p]:max-w-[240px] max-[570px]:[&>p]:text-[15px] max-[570px]:[&>p]:mt-[18px] max-[570px]:[&>p]:max-w-none">
             <h2>
               Бирки <em>в деле</em>
             </h2>
@@ -158,7 +161,7 @@ export function GardenSections({
               отзывов; имена и тексты демонстрационные.
             </p>
           </div>
-          <div className="birka-reviews">
+          <div className="grid grid-cols-[repeat(3,1fr)] gap-[32px] mt-[48px] max-[600px]:grid-cols-[1fr] max-[900px]:grid-cols-[repeat(2,1fr)] max-[900px]:gap-[20px] [&_article]:flex [&_article]:flex-col [&_article]:[background:#fffdf8] [&_article]:border [&_article]:border-solid [&_article]:border-[#dcd8ca] [&_article]:rounded-[24px] [&_article]:overflow-hidden [&_article]:[transition:transform_.3s_ease,box-shadow_.3s_ease] [&_article:hover]:[transform:translateY(-8px)] [&_article:hover]:shadow-[0_20px_40px_#203c321a] [&_p]:text-[16px] [&_p]:leading-[1.6] [&_p]:text-[#172b22] [&_p]:mb-[20px] [&_p]:italic [&_p]:relative [&_p::before]:content-['“'] [&_p::before]:absolute [&_p::before]:left-[-15px] [&_p::before]:top-[-10px] [&_p::before]:text-[40px] [&_p::before]:opacity-[.1] [&_p::before]:[font-family:serif] [&_strong]:text-[15px] [&_strong]:text-[#172b22] [&_strong]:mt-auto [&_strong]:block [&_small]:text-[13px] [&_small]:text-[#727d6f] [&_small]:mt-[4px] [&_small]:block">
             {examples.map((review) => (
               <article key={review.name}>
                 <Image
@@ -169,7 +172,9 @@ export function GardenSections({
                   sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
                 />
                 <div>
-                  <span className="birka-demo-badge">Пример отзыва</span>
+                  <span className="inline-block self-start py-[4px] px-[10px] [background:#e9ede2] text-[#2c4a3e] text-[11px] font-semibold uppercase tracking-[.05em] rounded-[6px] mb-[16px]">
+                    Пример отзыва
+                  </span>
                   <p>«{review.text}»</p>
                   <strong>
                     {review.name} · {review.region}
@@ -181,11 +186,16 @@ export function GardenSections({
           </div>
         </div>
       </section>
-      <section className="birka-section birka-faq" id="faq">
-        <div className="birka-container">
-          <div className="birka-faq-grid">
-            <div className="birka-faq-intro">
-              <span className="birka-eyebrow">Мастерская 3D Бирка</span>
+      <section
+        className="py-[90px] px-[0] max-[570px]:py-[55px] max-[570px]:px-[0] max-[800px]:py-[65px] max-[800px]:px-[0] [&_h2]:[font:400_clamp(38px,4vw,56px)/1.15_Georgia,serif] [&_h2]:tracking-[-.035em] [&_h2]:m-0 [&_h2]:text-[clamp(40px,4.3vw,62px)] [&_h2]:leading-[1.03] max-[570px]:[&_h2]:text-[43px] max-[800px]:[&_h2]:text-[43px] pt-[20px]"
+        id="faq"
+      >
+        <div className="w-[min(100%_-_112px,1320px)] mx-auto max-[1150px]:w-[calc(100%_-_64px)] max-[570px]:w-[calc(100%_-_40px)] max-[800px]:w-[min(100%_-_36px,680px)]">
+          <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.25fr)] gap-[56px] items-start max-[1100px]:gap-[36px] max-[1100px]:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)] max-[900px]:grid-cols-[1fr] max-[900px]:gap-[28px]">
+            <div className="sticky top-[124px] max-[900px]:static [&_h2]:mt-[12px] [&_h2]:mb-[16px] [&>p]:m-0 [&>p]:text-hedge [&>p]:text-[16px] [&>p]:leading-[1.75] [&>p]:max-w-[430px] max-[900px]:[&>p]:max-w-none">
+              <span className="inline-flex items-center gap-[10px] uppercase tracking-[.17em] text-[13px] font-extrabold text-[#8b492e]">
+                Мастерская 3D Бирка
+              </span>
               <h2>
                 Частые <em>вопросы</em>
               </h2>
@@ -193,7 +203,7 @@ export function GardenSections({
                 Собрали главное о материале, именной 3D-печати, сроках и
                 доставке в ваш сад.
               </p>
-              <dl className="birka-faq-stats">
+              <dl className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-[12px] my-[26px] mx-[0] max-[570px]:grid-cols-[1fr] max-[570px]:gap-[8px] max-[570px]:my-[20px] max-[570px]:mx-[0] [&>div]:[background:#fffdf8b8] [&>div]:border [&>div]:border-solid [&>div]:border-[#d8d5c8] [&>div]:rounded-[16px] [&>div]:pt-[14px] [&>div]:pr-[14px] [&>div]:pb-[13px] [&>div]:pl-[14px] [&_dt]:font-[600] [&_dt]:text-[24px] [&_dt]:leading-[1.1] [&_dt]:font-display [&_dt]:text-forest [&_dt]:tracking-[-0.02em] [&_dd]:mt-[6px] [&_dd]:text-[12px] [&_dd]:leading-[1.45] [&_dd]:text-hedge max-[570px]:[&>div]:flex max-[570px]:[&>div]:items-baseline max-[570px]:[&>div]:justify-between max-[570px]:[&>div]:gap-[12px] max-[570px]:[&>div]:py-[12px] max-[570px]:[&>div]:px-[16px] max-[570px]:[&_dt]:text-[21px] max-[570px]:[&_dt]:whitespace-nowrap max-[570px]:[&_dd]:m-0 max-[570px]:[&_dd]:text-right">
                 <div>
                   <dt>1–2 дня</dt>
                   <dd>печать и проверка каждого макета</dd>
@@ -207,18 +217,18 @@ export function GardenSections({
                   <dd>выгода на большие наборы от 30 бирок</dd>
                 </div>
               </dl>
-              <div className="birka-faq-card">
+              <div className="[background:linear-gradient(155deg,#214439,#152e26)] text-[#f4f1e7] border border-solid border-[#b5965c4d] rounded-[22px] p-[24px] shadow-[0_18px_40px_#152e2618] max-[570px]:p-[20px] max-[570px]:rounded-[18px] [&>strong]:block [&>strong]:font-[500] [&>strong]:text-[24px] [&>strong]:leading-[1.2] [&>strong]:font-display [&>strong]:text-[#fbf8f0] [&>strong]:tracking-[-0.015em] [&>p]:mt-[10px] [&>p]:mb-[18px] [&>p]:text-[14px] [&>p]:leading-[1.65] [&>p]:text-[#cbd5c7] max-[570px]:[&>strong]:text-[21px]">
                 <strong>Нужен нестандартный размер или совет мастера?</strong>
                 <p>
                   Поможем подобрать форму под ваши грядки и кашпо или проверим
                   большой список сортов перед заказом.
                 </p>
-                <div className="birka-faq-card-actions">
+                <div className="flex flex-wrap items-center gap-[10px]">
                   <ContactLink />
                   {onNavigate && (
                     <button
                       type="button"
-                      className="birka-faq-link"
+                      className="inline-flex items-center gap-[7px] [background:#ffffff12] text-[#f4f1e7] border border-solid border-[#ffffff26] rounded-full py-[10px] px-[16px] min-h-[44px] text-[13px] font-medium [transition:background_0.2s] hover:[background:#ffffff22] [&_svg]:w-[15px] [&_svg]:h-[15px]"
                       onClick={() => onNavigate("constructor")}
                     >
                       Перейти в конструктор <ArrowRight />
@@ -227,13 +237,13 @@ export function GardenSections({
                 </div>
                 <Link
                   href={paths.legal.delivery}
-                  className="birka-faq-legal-link"
+                  className="inline-block mt-[16px] text-[12px] text-[#d6c59d] underline [text-underline-offset:4px] hover:text-[#fff8e6]"
                 >
                   Подробнее об условиях оплаты, доставки и возврата →
                 </Link>
               </div>
             </div>
-            <div className="birka-faq-list">
+            <div className="flex flex-col gap-[12px] [&_details]:[background:#fffdf8cc] [&_details]:border [&_details]:border-solid [&_details]:border-[#dcd8ca] [&_details]:rounded-[20px] [&_details]:p-0 [&_details]:[transition:background_0.25s,border-color_0.25s,box-shadow_0.25s] [&_details:hover]:border-[#bfb9a4] [&_details:hover]:[background:#fffef9] [&_details[open]]:[background:#fffef9] [&_details[open]]:border-[#a58b5980] [&_details[open]]:shadow-[0_14px_34px_#203c320d] [&_summary]:list-none [&_summary]:grid [&_summary]:grid-cols-[auto_minmax(0,1fr)_auto] [&_summary]:items-center [&_summary]:gap-[16px] [&_summary]:py-[20px] [&_summary]:px-[24px] [&_summary]:cursor-pointer [&_summary]:select-none [&_summary::-webkit-details-marker]:hidden [&_summary:focus-visible]:[outline:3px_solid_#c87d55] [&_summary:focus-visible]:outline-offset-[3px] [&_summary:focus-visible]:rounded-[20px] max-[570px]:[&_summary]:p-[16px] max-[570px]:[&_summary]:gap-[12px]">
               {questions.map((item, index) => (
                 <details
                   name="garden-faq"
@@ -241,20 +251,23 @@ export function GardenSections({
                   open={index === 0 ? true : undefined}
                 >
                   <summary>
-                    <span className="birka-faq-num">
+                    <span className="w-[38px] h-[38px] rounded-[12px] [background:#ece8dc] border border-solid border-[#d7d2c2] text-[#5b6659] grid place-items-center font-[600] text-[15px] leading-[1] font-display [transition:background_0.25s,color_0.25s,border-color_0.25s] max-[570px]:w-[32px] max-[570px]:h-[32px] max-[570px]:rounded-[10px] max-[570px]:text-[13px]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <span className="birka-faq-heading">
+                    <span className="flex flex-col gap-[4px] min-w-0 [&_small]:text-[11px] [&_small]:uppercase [&_small]:tracking-[0.12em] [&_small]:text-[#727d6f] [&_small]:font-semibold [&>span]:text-[17px] [&>span]:font-semibold [&>span]:leading-[1.38] [&>span]:text-ink max-[570px]:[&>span]:text-[15px]">
                       <small>{item.category}</small>
                       <span>{item.question}</span>
                     </span>
-                    <span className="birka-faq-icon" aria-hidden="true">
+                    <span
+                      className="w-[36px] h-[36px] rounded-full border border-solid border-[#d5d0c0] [background:#f6f3ea] text-forest grid place-items-center [transition:transform_0.25s,background_0.25s,color_0.25s,border-color_0.25s] max-[570px]:w-[32px] max-[570px]:h-[32px] [&_svg]:w-[17px] [&_svg]:h-[17px]"
+                      aria-hidden="true"
+                    >
                       <Plus />
                     </span>
                   </summary>
-                  <div className="birka-faq-body">
+                  <div className="pr-[24px] pb-[22px] pl-[78px] max-[570px]:pr-[16px] max-[570px]:pb-[18px] max-[570px]:pl-[16px] [&_p]:m-0 [&_p]:text-[15px] [&_p]:leading-[1.75] [&_p]:text-[#46544b] [&_p]:max-w-[680px] max-[570px]:[&_p]:text-[14px]">
                     <p>{item.answer}</p>
-                    <div className="birka-faq-chips">
+                    <div className="flex flex-wrap gap-[8px] mt-[14px] [&_span]:text-[12px] [&_span]:font-medium [&_span]:text-[#2c4a3e] [&_span]:[background:#e9ede2] [&_span]:border [&_span]:border-solid [&_span]:border-[#d2dac8] [&_span]:rounded-full [&_span]:py-[5px] [&_span]:px-[12px]">
                       {item.chips.map((chip) => (
                         <span key={chip}>{chip}</span>
                       ))}
@@ -266,16 +279,19 @@ export function GardenSections({
           </div>
         </div>
       </section>
-      <section className="birka-section birka-newsletter" id="newsletter">
-        <div className="birka-container">
-          <div className="birka-newsletter-shell">
-            <div className="birka-newsletter-grid">
-              <div className="birka-newsletter-lead">
-                <div className="birka-newsletter-topline">
-                  <span className="birka-eyebrow">
+      <section
+        className="py-[90px] px-[0] max-[570px]:py-[55px] max-[570px]:px-[0] max-[800px]:py-[65px] max-[800px]:px-[0] [&_h2]:[font:400_clamp(38px,4vw,56px)/1.15_Georgia,serif] [&_h2]:tracking-[-.035em] [&_h2]:m-0 [&_h2]:text-[clamp(40px,4.3vw,62px)] [&_h2]:leading-[1.03] max-[570px]:[&_h2]:text-[43px] max-[800px]:[&_h2]:text-[43px] pt-[24px] pb-[100px] max-[570px]:pt-[12px] max-[570px]:pb-[64px]"
+        id="newsletter"
+      >
+        <div className="w-[min(100%_-_112px,1320px)] mx-auto max-[1150px]:w-[calc(100%_-_64px)] max-[570px]:w-[calc(100%_-_40px)] max-[800px]:w-[min(100%_-_36px,680px)]">
+          <div className="relative overflow-hidden rounded-[30px] border border-solid border-[#c9ba96] [background:radial-gradient(ellipse_at_92%_10%,#dce4d0b3,transparent_48%),radial-gradient(ellipse_at_8%_95%,#eadcc680,transparent_46%),linear-gradient(145deg,#fffef9,#f3ede0)] p-[44px] shadow-[0_24px_56px_#203c3210,inset_0_1px_0#ffffffcc] after:content-[''] after:absolute after:inset-[14px] after:border after:border-dashed after:border-[#a58b5938] after:rounded-[22px] after:pointer-events-none max-[1100px]:p-[34px] max-[570px]:py-[22px] max-[570px]:px-[18px] max-[570px]:rounded-[22px] max-[570px]:after:inset-[9px] max-[570px]:after:rounded-[16px]">
+            <div className="relative z-[1] grid grid-cols-[minmax(0,1.28fr)_minmax(340px,0.92fr)] gap-[40px] items-stretch max-[1100px]:gap-[28px] max-[1100px]:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.95fr)] max-[900px]:grid-cols-[1fr] max-[900px]:gap-[24px]">
+              <div className="flex flex-col [&_h2]:my-[14px] [&_h2]:mx-[0] [&_h2]:text-[clamp(34px,3.6vw,48px)] [&_h2]:leading-[1.1] [&>p]:m-0 [&>p]:text-hedge [&>p]:text-[16px] [&>p]:leading-[1.7] [&>p]:max-w-[580px] max-[900px]:[&>p]:max-w-none max-[570px]:[&_h2]:text-[32px] max-[570px]:[&>p]:text-[14px]">
+                <div className="flex flex-wrap items-center gap-[12px]">
+                  <span className="inline-flex items-center gap-[10px] uppercase tracking-[.17em] text-[13px] font-extrabold text-[#8b492e]">
                     Продолжение вашей коллекции
                   </span>
-                  <span className="birka-newsletter-pill">
+                  <span className="inline-flex items-center gap-[6px] py-[5px] px-[12px] rounded-full [background:#e6ece0] border border-solid border-[#cdd8c3] text-forest text-[11px] font-semibold tracking-[0.02em] [&_svg]:w-[13px] [&_svg]:h-[13px] [&_svg]:text-brass">
                     <Sparkles aria-hidden="true" /> Анонс мастерской
                   </span>
                 </div>
@@ -288,15 +304,15 @@ export function GardenSections({
                   пришлём приглашение на первый тираж.
                 </p>
 
-                <div className="birka-newsletter-previews">
+                <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-[14px] mt-[24px] max-[570px]:grid-cols-[1fr] max-[570px]:gap-[12px] max-[570px]:mt-[18px]">
                   {upcomingItems.map((item) => (
                     <article
                       key={item.id}
-                      className="birka-newsletter-preview-card"
+                      className="[background:#fffdf8d9] border border-solid border-[#dcd6c4] rounded-[20px] py-[18px] px-[20px] flex flex-col shadow-[0_8px_22px_#203c3208] [transition:border-color_0.25s_ease,transform_0.25s_ease,box-shadow_0.25s_ease] hover:border-[#b7a379] hover:[transform:translateY(-2px)] hover:shadow-[0_14px_30px_#203c3212] max-[570px]:p-[16px] max-[570px]:rounded-[16px] [&_h3]:font-[600] [&_h3]:text-[22px] [&_h3]:leading-[1.18] [&_h3]:font-display [&_h3]:text-ink [&_h3]:m-0 [&_h3]:tracking-[-0.015em] [&>small]:block [&>small]:mt-[3px] [&>small]:text-[12px] [&>small]:font-semibold [&>small]:text-forest [&>p]:mt-[10px] [&>p]:mb-[14px] [&>p]:text-[13px] [&>p]:leading-[1.6] [&>p]:text-[#4b584f] [&>p]:flex-[1]"
                     >
-                      <div className="birka-newsletter-preview-head">
+                      <div className="flex flex-wrap items-center justify-between gap-[12px] mb-[12px]">
                         <div
-                          className="birka-newsletter-sketch"
+                          className="w-[46px] h-[46px] rounded-[14px] [background:radial-gradient(circle_at_30%_25%,#f4efe2,#e2e7d8)] border border-solid border-[#ced6c3] text-forest grid place-items-center shrink-0 [&_svg]:w-[26px] [&_svg]:h-[26px]"
                           aria-hidden="true"
                         >
                           {item.id === "trellis" ? (
@@ -335,11 +351,11 @@ export function GardenSections({
                             </svg>
                           )}
                         </div>
-                        <div className="birka-newsletter-preview-meta">
-                          <span className="birka-newsletter-badge">
+                        <div className="flex items-center gap-[8px]">
+                          <span className="inline-flex items-center py-[4px] px-[10px] rounded-full [background:#f2ecde] border border-solid border-[#dfd5bf] text-[#655233] text-[11px] font-semibold tracking-[0.02em]">
                             {item.badge}
                           </span>
-                          <span className="birka-newsletter-num">
+                          <span className="font-[600] text-[13px] leading-[1] font-display text-[#7d8678]">
                             № {item.num}
                           </span>
                         </div>
@@ -347,7 +363,7 @@ export function GardenSections({
                       <h3>{item.title}</h3>
                       <small>{item.subtitle}</small>
                       <p>{item.description}</p>
-                      <div className="birka-newsletter-specs">
+                      <div className="flex flex-wrap gap-[6px] mt-auto [&_span]:py-[4px] [&_span]:px-[10px] [&_span]:rounded-[8px] [&_span]:[background:#eff2e9] [&_span]:border [&_span]:border-solid [&_span]:border-[#d8e0cf] [&_span]:text-[#2f473c] [&_span]:text-[11px] [&_span]:font-semibold">
                         {item.specs.map((spec) => (
                           <span key={spec}>{spec}</span>
                         ))}
@@ -356,8 +372,11 @@ export function GardenSections({
                   ))}
                 </div>
 
-                <div className="birka-newsletter-palette">
-                  <div className="birka-newsletter-swatches" aria-hidden="true">
+                <div className="mt-[18px] py-[12px] px-[16px] rounded-[16px] [background:#fffdf8b3] border border-solid border-[#ded9c9] flex flex-wrap items-center gap-[12px] text-[13px] text-[#4a574e] max-[570px]:py-[11px] max-[570px]:px-[14px] max-[570px]:text-[12px] [&_strong]:text-forest [&_strong]:font-bold">
+                  <div
+                    className="inline-flex items-center [&_span]:w-[22px] [&_span]:h-[22px] [&_span]:rounded-full [&_span]:border-[1.5px] [&_span]:border-solid [&_span]:shadow-[0_2px_5px_#00000014]"
+                    aria-hidden="true"
+                  >
                     {colorPairs.map((pair) => (
                       <span
                         key={pair.name}
@@ -376,10 +395,10 @@ export function GardenSections({
                 </div>
               </div>
 
-              <div className="birka-newsletter-panel">
-                <div className="birka-newsletter-panel-top">
+              <div className="[background:radial-gradient(ellipse_at_85%_0%,#315e4e80,transparent_55%),linear-gradient(160deg,#214539,#132b23)] text-[#f5f1e7] border border-solid border-[#b5965c59] rounded-[24px] py-[30px] px-[28px] flex flex-col justify-between shadow-[0_22px_48px_#132b2324] max-[570px]:py-[22px] max-[570px]:px-[18px] max-[570px]:rounded-[18px]">
+                <div className="flex items-start gap-[14px] [&_strong]:block [&_strong]:font-[500] [&_strong]:text-[24px] [&_strong]:leading-[1.18] [&_strong]:font-display [&_strong]:text-[#fbf8f0] [&_strong]:tracking-[-0.015em] [&_span]:block [&_span]:mt-[4px] [&_span]:text-[13px] [&_span]:text-[#c4d0c2] max-[570px]:[&_strong]:text-[21px]">
                   <span
-                    className="birka-newsletter-panel-icon"
+                    className="w-[44px] h-[44px] rounded-[14px] [background:#e4cf9f1f] border border-solid border-[#e4cf9f4d] text-[#e4cf9f] grid place-items-center shrink-0 [&_svg]:w-[20px] [&_svg]:h-[20px]"
                     aria-hidden="true"
                   >
                     <BellRing />
@@ -390,7 +409,7 @@ export function GardenSections({
                   </div>
                 </div>
 
-                <ul className="birka-newsletter-perks">
+                <ul className="list-none my-[20px] mx-[0] py-[16px] px-[0] border-top-[1px] border-top-[#ffffff17] border-bottom-[1px] border-bottom-[#ffffff17] flex flex-col gap-[10px] [&_li]:flex [&_li]:items-start [&_li]:gap-[10px] [&_li]:text-[13px] [&_li]:leading-[1.5] [&_li]:text-[#dce4d9]">
                   <li>
                     <Check aria-hidden="true" />
                     <span>Ранний доступ к первой партии и выбору оттенков</span>
@@ -403,9 +422,12 @@ export function GardenSections({
                   </li>
                 </ul>
 
-                <form onSubmit={subscribe} className="birka-newsletter-form">
+                <form
+                  onSubmit={subscribe}
+                  className="flex flex-col gap-[10px] [&>label:first-child]:text-[12px] [&>label:first-child]:font-semibold [&>label:first-child]:tracking-[0.08em] [&>label:first-child]:uppercase [&>label:first-child]:text-[#d6c59d]"
+                >
                   <label htmlFor="newsletter-email">Электронная почта</label>
-                  <div className="birka-subscribe-row">
+                  <div className="[&_input]:w-full [&_input]:min-h-[52px] [&_input]:py-[13px] [&_input]:px-[16px] [&_input]:rounded-[14px] [&_input]:border [&_input]:border-solid [&_input]:border-[#ffffff29] [&_input]:[background:#ffffff12] [&_input]:text-[#fbf8f0] [&_input]:text-[15px] [&_input]:[transition:border-color_0.2s,background_0.2s] [&_input::placeholder]:text-[#9fb0a4] [&_input:focus]:[background:#ffffff1c] [&_input:focus]:border-[#e4cf9f]">
                     <input
                       type="email"
                       id="newsletter-email"
@@ -417,13 +439,13 @@ export function GardenSections({
                     />
                     <button
                       type="submit"
-                      className="birka-button birka-button-primary"
+                      className="min-h-[59px] py-[17px] px-[25px] rounded-full inline-flex items-center justify-center gap-[17px] font-semibold no-underline border border-solid border-[transparent] [transition:background_.3s,box-shadow_.3s,transform_.3s] whitespace-nowrap text-[16px] relative overflow-hidden hover:[transform:translateY(-2px)] [&_svg]:w-[15px] [&_svg]:h-[15px] [background:#23483e] text-[white] before:content-[''] before:absolute before:inset-[-50%auto_-50%_-70%] before:w-[35%] before:[transform:rotate(25deg)] before:[background:linear-gradient(90deg,transparent,#ffffff35,transparent)] before:[transition:left_.75s] hover:[background:#15372e] hover:shadow-[0_12px_26px_#1b433225] hover:before:left-[140%]"
                       disabled={pending}
                     >
                       {pending ? "Отправляем…" : "Сообщить о новинках"}
                     </button>
                   </div>
-                  <label className="birka-consent">
+                  <label className="[&_input]:w-[16px] [&_input]:h-[16px] [&_input]:mt-[2px] [&_input]:[accent-color:#e4cf9f] [&_input]:shrink-0 [&_input]:cursor-pointer">
                     <input type="checkbox" name="consent" required />
                     <span>
                       Согласен получать письма о новинках 3D Бирка на указанную
@@ -433,7 +455,7 @@ export function GardenSections({
                   <p
                     role="status"
                     aria-live="polite"
-                    className={`birka-newsletter-status ${status ? (statusOk ? "is-success" : "is-error") : ""}`}
+                    className={`m-0 min-h-[20px] text-[13px] leading-[1.45] text-[#fadbd2] py-[10px] px-[13px] rounded-[12px] [background:#5c281e73] border border-solid border-[#ffffff24] border-[#e29b8759] ${status ? (statusOk ? "is-success" : "is-error") : ""}`}
                   >
                     {status}
                   </p>

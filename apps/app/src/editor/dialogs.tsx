@@ -40,7 +40,11 @@ function Modal({
     // biome-ignore lint/a11y/useKeyWithClickEvents: the dialog already closes on Escape
     <dialog
       ref={ref}
-      className={wide ? "brk-modal wide" : "brk-modal"}
+      className={
+        wide
+          ? "m-[auto] max-w-[calc(100vw_-_32px)] p-0 border-0 rounded-[16px] [background:#10241c80] text-ink shadow-[0_24px_60px_#10241c66] w-[520px] [backdrop-filter:blur(3px)] wide"
+          : "m-[auto] max-w-[calc(100vw_-_32px)] p-0 border-0 rounded-[16px] [background:#10241c80] text-ink shadow-[0_24px_60px_#10241c66] w-[520px] [backdrop-filter:blur(3px)]"
+      }
       aria-label={title}
       onCancel={(event) => {
         event.preventDefault();
@@ -50,8 +54,8 @@ function Modal({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="brk-modal-card">
-        <header className="brk-modal-head">
+      <div className="p-[20px]">
+        <header className="flex items-center justify-between gap-[12px] mb-[8px] [&_svg]:w-[18px] [&_svg]:h-[18px] [&_h2]:m-0 [&_h2]:text-forest [&_h2]:[font-family:var(--serif)] [&_h2]:text-[26px] [&_h2]:font-medium [&_button]:grid [&_button]:place-items-center [&_button]:w-[36px] [&_button]:h-[36px] [&_button]:border-0 [&_button]:rounded-full [&_button]:[background:#f5f1e8]">
           <h2>{title}</h2>
           <button type="button" aria-label="Закрыть" onClick={onClose}>
             <X />
@@ -96,7 +100,7 @@ function TemplatePicture({ template }: { template: Template }) {
       width={width}
       height={height}
       aria-hidden="true"
-      className="brk-template-picture"
+      className="self-center mb-[6px]"
     >
       {stake && (
         <path
@@ -164,16 +168,16 @@ export function TemplatesDialog() {
       wide
       onClose={() => useEditor.getState().setDialog(null)}
     >
-      <p className="brk-modal-note">
+      <p className="mb-[14px] text-hedge">
         Заготовка — готовая бирка: форма, крепление, шрифт и цвет. Выберите
         близкую и поправьте под себя. Текущий проект будет заменён.
       </p>
-      <div className="brk-templates">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-[12px]">
         {templates.map((template) => (
           <button
             type="button"
             key={template.id}
-            className="brk-template"
+            className="flex flex-col items-start gap-[2px] p-[14px] border border-solid border-linen rounded-[14px] [background:#f5f1e8] text-left hover:border-forest hover:[transform:translateY(-2px)] hover:[transition:translate_0.12s]"
             onClick={() => {
               useEditor.getState().replace(structuredClone(template.project));
               useEditor.getState().setDialog(null);
@@ -217,7 +221,7 @@ function PrintSummary() {
       })
     : null;
   return (
-    <dl className="brk-facts">
+    <dl className="grid flex-wrap gap-[4px_16px] py-[8px] px-[16px] border-top-[1px] border-top-[#e6e2da] text-hedge tabular-nums grid-cols-[auto_1fr] mb-[14px] [&_dt]:text-hedge [&_dd]:m-0 [&_dd]:font-semibold">
       <div>
         <dt>Принтер</dt>
         <dd>
@@ -293,9 +297,15 @@ export function ExportDialog() {
   return (
     <Modal title="Печать на QIDI Plus 5" onClose={close}>
       <PrintSummary />
-      <div className="brk-field">
-        <span className="brk-field-label">Формат файла</span>
-        <div className="brk-seg" role="radiogroup" aria-label="Формат файла">
+      <div className="block my-[10px] mx-[0]">
+        <span className="block mb-[5px] text-hedge text-[13px]">
+          Формат файла
+        </span>
+        <div
+          className="inline-flex p-[3px] border border-solid border-linen rounded-[10px] [background:#f5f1e8] [&>button]:min-h-[30px] [&>button]:py-[4px] [&>button]:px-[12px] [&>button]:border-0 [&>button]:rounded-[8px] [&>button]:[background:none] [&>button]:text-hedge [&>button]:whitespace-nowrap [&>button]:flex-[1] [&>button[aria-pressed=true]]:[background:#23483e] [&>button[aria-pressed=true]]:text-[#fff] [&>button[aria-checked=true]]:[background:#23483e] [&>button[aria-checked=true]]:text-[#fff] [&>button[aria-selected=true]]:[background:#23483e] [&>button[aria-selected=true]]:text-[#fff] [&>button:hover:not(:disabled]:text-ink"
+          role="radiogroup"
+          aria-label="Формат файла"
+        >
           <button
             type="button"
             role="radio"
@@ -314,7 +324,7 @@ export function ExportDialog() {
           </button>
         </div>
       </div>
-      <ol className="brk-steps">
+      <ol className="mb-[12px] pl-[20px] [&_li]:my-[6px] [&_li]:mx-[0]">
         {format === "3mf" ? (
           <li>
             <strong>Откройте файл в QIDI Studio.</strong> Бирки уже расставлены
@@ -351,45 +361,57 @@ export function ExportDialog() {
         </li>
       </ol>
       {issues.length > 0 && (
-        <ul className="brk-issues">
+        <ul className="grid gap-[6px] max-h-[160px] mb-[12px] p-0 overflow-y-auto list-none">
           {issues.map((issue) => (
-            <li key={issue.message} className={`brk-issue ${issue.level}`}>
+            <li
+              key={issue.message}
+              className={`[background:#c4663d26] py-[6px] px-[10px] rounded-[8px] ${issue.level}`}
+            >
               {issue.message}
             </li>
           ))}
         </ul>
       )}
       {!fits && (
-        <p className="brk-warning" role="alert">
+        <p
+          className="my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#c4663d26]"
+          role="alert"
+        >
           Партия не помещается на стол: {count}{" "}
           {plural(count, "бирка", "бирки", "бирок")}, а влезает {capacity}.
           Уменьшите зазор или число экземпляров на вкладке «Партия».
         </p>
       )}
       {error && (
-        <p className="brk-warning" role="alert">
+        <p
+          className="my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#c4663d26]"
+          role="alert"
+        >
           {error}
         </p>
       )}
       {progress !== null && (
         <progress
-          className="brk-progress"
+          className="w-full my-[8px] mx-[0] [accent-color:#23483e]"
           max={1}
           value={progress}
           aria-label="Подготовка файла"
         />
       )}
       {result && (
-        <p className="brk-summary" role="status">
+        <p
+          className="my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#23483e0d] tabular-nums"
+          role="status"
+        >
           Готово: {result.filename} скачан — {result.count}{" "}
           {plural(result.count, "бирка", "бирки", "бирок")}
           {result.twoColour ? ", надпись отдельным цветом" : ""}.
         </p>
       )}
-      <div className="brk-modal-actions">
+      <div className="flex flex-wrap gap-[10px] mt-[14px]">
         <button
           type="button"
-          className="brk-button primary"
+          className="inline-flex items-center justify-center gap-[8px] min-h-[38px] py-[8px] px-[16px] border border-solid border-linen rounded-[10px] [background:#23483e] whitespace-nowrap border-forest text-[#fff] hover:disabled:border-forest hover:disabled:[background:#15372e] [&_svg]:w-[18px] [&_svg]:h-[18px] primary"
           disabled={blocked || progress !== null}
           onClick={prepare}
         >
@@ -397,7 +419,7 @@ export function ExportDialog() {
         </button>
         <button
           type="button"
-          className="brk-button"
+          className="inline-flex items-center justify-center gap-[8px] min-h-[38px] py-[8px] px-[16px] border border-solid border-linen rounded-[10px] [background:#23483e] whitespace-nowrap border-forest text-[#fff] hover:disabled:border-forest hover:disabled:[background:#15372e] [&_svg]:w-[18px] [&_svg]:h-[18px]"
           onClick={() =>
             downloadText(
               serializeProject(project),

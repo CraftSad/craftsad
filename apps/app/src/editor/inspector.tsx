@@ -75,14 +75,14 @@ function ShapePanel() {
         aside={
           <button
             type="button"
-            className="brk-link"
+            className="inline-flex items-center gap-[4px] p-0 border-0 [background:none] text-forest font-semibold underline [text-underline-offset:3px] [&_svg]:w-[16px] [&_svg]:h-[16px]"
             onClick={() => useEditor.getState().setDialog("templates")}
           >
             Сменить
           </button>
         }
       >
-        <p className="brk-note">
+        <p className="my-[6px] mx-[0] text-hedge text-[13px]">
           {origin}. Любой параметр можно изменить — надписи сами перестроятся
           под новые размеры.
         </p>
@@ -165,7 +165,7 @@ function ShapePanel() {
             }, "reliefDepth")
           }
         />
-        <p className="brk-note">
+        <p className="my-[6px] mx-[0] text-hedge text-[13px]">
           Рельеф —{" "}
           {(tag.reliefDepth / printer.layerHeight).toLocaleString("ru-RU")}{" "}
           слоёв по {printer.layerHeight} мм.
@@ -354,8 +354,10 @@ function ColorPanel() {
   });
   return (
     <Section title="Цвет">
-      <div className="brk-field">
-        <span className="brk-field-label">Пластик плашки</span>
+      <div className="block my-[10px] mx-[0]">
+        <span className="block mb-[5px] text-hedge text-[13px]">
+          Пластик плашки
+        </span>
         <Swatches
           value={colors.body}
           options={PLASTICS}
@@ -366,8 +368,10 @@ function ColorPanel() {
           }
         />
       </div>
-      <div className="brk-field">
-        <span className="brk-field-label">Цвет надписи</span>
+      <div className="block my-[10px] mx-[0]">
+        <span className="block mb-[5px] text-hedge text-[13px]">
+          Цвет надписи
+        </span>
         <Swatches
           value={colors.relief}
           options={INKS}
@@ -379,7 +383,7 @@ function ColorPanel() {
         />
       </div>
       {samePlastic && (
-        <p className="brk-note">
+        <p className="my-[6px] mx-[0] text-hedge text-[13px]">
           Все буквы углублены и печатаются тем же пластиком, что и плашка. Цвет
           надписи нужен только выпуклым буквам и рамке.
         </p>
@@ -421,22 +425,33 @@ function LayerCard({
     }, "layer.order");
   const sample = layer.text.split(NAME_TOKEN).join(shown);
   return (
-    <article className={selected ? "brk-layer selected" : "brk-layer"}>
-      <div className="brk-layer-row">
+    <article
+      className={
+        selected
+          ? "border border-solid border-linen rounded-[12px] [background:#f5f1e8] selected"
+          : "border border-solid border-linen rounded-[12px] [background:#f5f1e8]"
+      }
+    >
+      <div className="flex items-center gap-[4px] p-[4px]">
         <button
           type="button"
-          className="brk-layer-head"
+          className="flex flex-[1] items-center gap-[10px] min-w-0 min-h-[44px] py-[4px] px-[8px] border-0 [background:none] text-left"
           aria-expanded={selected}
           onClick={() =>
             useEditor.getState().selectLayer(selected ? null : layer.id)
           }
         >
-          <span className="brk-layer-badge">{index + 1}</span>
-          <span className="brk-layer-sample" style={preview}>
+          <span className="grid shrink-0 place-items-center w-[22px] h-[22px] rounded-full [background:#23483e] text-[#fff] text-[12px] font-bold">
+            {index + 1}
+          </span>
+          <span
+            className="flex-[1] min-w-0 overflow-hidden text-[16px] text-ellipsis whitespace-nowrap"
+            style={preview}
+          >
             {sample || "Пустая надпись"}
           </span>
           {text && text.lines > 0 && (
-            <span className="brk-layer-meta">
+            <span className="shrink-0 text-hedge text-[12px] tabular-nums">
               {text.fontSize.toLocaleString("ru-RU", {
                 maximumFractionDigits: 1,
               })}{" "}
@@ -445,7 +460,7 @@ function LayerCard({
             </span>
           )}
         </button>
-        <div className="brk-layer-actions">
+        <div className="flex shrink-0 [&_svg]:w-[18px] [&_svg]:h-[18px] [&_button]:grid [&_button]:place-items-center [&_button]:w-[32px] [&_button]:h-[32px] [&_button]:border-0 [&_button]:rounded-[8px] [&_button]:[background:none] [&_button]:text-hedge [&_button:hover:not(:disabled)]:[background:#23483e14] [&_button:hover:not(:disabled)]:text-ink">
           <button
             type="button"
             aria-label="Сдвинуть выше"
@@ -478,9 +493,9 @@ function LayerCard({
         </div>
       </div>
       {selected && (
-        <div className="brk-layer-body">
-          <label className="brk-field">
-            <span className="brk-field-label">Текст</span>
+        <div className="pt-[4px] pr-[12px] pb-[12px] pl-[12px] border-top-[1px] border-top-[#e6e2da]">
+          <label className="block my-[10px] mx-[0]">
+            <span className="block mb-[5px] text-hedge text-[13px]">Текст</span>
             <input
               type="text"
               maxLength={80}
@@ -493,7 +508,7 @@ function LayerCard({
               }
             />
           </label>
-          <p className="brk-note">
+          <p className="my-[6px] mx-[0] text-hedge text-[13px]">
             <code>{NAME_TOKEN}</code> превращается в строку из списка: по одной
             бирке на каждое название.
             {!layer.text.includes(NAME_TOKEN) && (
@@ -501,7 +516,7 @@ function LayerCard({
                 {" "}
                 <button
                   type="button"
-                  className="brk-link"
+                  className="inline-flex items-center gap-[4px] p-0 border-0 [background:none] text-forest font-semibold underline [text-underline-offset:3px] [&_svg]:w-[16px] [&_svg]:h-[16px]"
                   onClick={() =>
                     edit((draft) => {
                       draft.text = `${draft.text} ${NAME_TOKEN}`.trim();
@@ -514,8 +529,8 @@ function LayerCard({
             )}
           </p>
 
-          <label className="brk-field">
-            <span className="brk-field-label">Шрифт</span>
+          <label className="block my-[10px] mx-[0]">
+            <span className="block mb-[5px] text-hedge text-[13px]">Шрифт</span>
             <select
               className="brk-select"
               value={layer.font}
@@ -653,7 +668,7 @@ function LayerCard({
               }, "relief")
             }
           />
-          <details className="brk-more">
+          <details className="my-[10px] mx-[0] text-hedge [&>summary]:cursor-pointer [&>summary]:font-semibold">
             <summary>Между строками и разрядка</summary>
             <NumberField
               label="Между строками"
@@ -683,7 +698,10 @@ function LayerCard({
             />
           </details>
           {text && (text.overflow || text.missing.length > 0) && (
-            <p className="brk-warning" role="status">
+            <p
+              className="my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#c4663d26]"
+              role="status"
+            >
               {text.overflow
                 ? "Не помещается: сократите текст, уменьшите кегль или увеличьте плашку."
                 : `В шрифте нет символов: ${text.missing.join(" ")}`}
@@ -734,7 +752,7 @@ function TextPanel() {
         aside={
           <button
             type="button"
-            className="brk-link"
+            className="inline-flex items-center gap-[4px] p-0 border-0 [background:none] text-forest font-semibold underline [text-underline-offset:3px] [&_svg]:w-[16px] [&_svg]:h-[16px]"
             onClick={add}
             disabled={full}
           >
@@ -742,17 +760,21 @@ function TextPanel() {
           </button>
         }
       >
-        <p className="brk-note">
+        <p className="my-[6px] mx-[0] text-hedge text-[13px]">
           Каждая надпись занимает свою полосу на плашке и сама подбирает размер,
           чтобы поместиться. Выберите надпись, чтобы настроить её.
         </p>
       </Section>
       {layers.length === 0 && (
-        <button type="button" className="brk-empty" onClick={add}>
+        <button
+          type="button"
+          className="flex items-center justify-center gap-[8px] w-full min-h-[52px] mt-[12px] border border-dashed border-forest rounded-[12px] [background:var(--paper)] text-forest font-semibold"
+          onClick={add}
+        >
           <Layers /> Добавить первую надпись
         </button>
       )}
-      <div className="brk-layers">
+      <div className="flex flex-col gap-[8px] mt-[12px]">
         {layers.map((layer, index) => (
           <LayerCard
             key={layer.id}
@@ -781,12 +803,12 @@ function BatchPanel() {
   return (
     <>
       <Section title="Список бирок">
-        <label className="brk-field">
-          <span className="brk-field-label">
+        <label className="block my-[10px] mx-[0]">
+          <span className="block mb-[5px] text-hedge text-[13px]">
             Названия сортов, по одному в строке
           </span>
           <textarea
-            className="brk-textarea"
+            className="min-h-[150px] leading-[1.6] resize-y"
             rows={10}
             value={names.join("\n")}
             placeholder={"Томат Бычье сердце\nОгурец Зозуля\nПерец Сладкий"}
@@ -805,13 +827,13 @@ function BatchPanel() {
             }}
           />
         </label>
-        <p className="brk-note">
+        <p className="my-[6px] mx-[0] text-hedge text-[13px]">
           Одна строка — одна бирка. Вставьте готовый список из заметок или
           таблицы.
         </p>
         {list.length > 0 && (
           <div
-            className="brk-chips"
+            className="flex flex-wrap gap-[6px] [&>button]:max-w-[100%] [&>button]:py-[4px] [&>button]:px-[10px] [&>button]:overflow-hidden [&>button]:border [&>button]:border-solid [&>button]:border-linen [&>button]:rounded-full [&>button]:[background:var(--paper)] [&>button]:text-hedge [&>button]:text-ellipsis [&>button]:whitespace-nowrap [&>button[aria-pressed=true]]:border-forest [&>button[aria-pressed=true]]:[background:#23483e] [&>button[aria-pressed=true]]:text-[#fff]"
             role="group"
             aria-label="Какая бирка показана"
           >
@@ -864,14 +886,21 @@ function BatchPanel() {
             }, "batch.margin")
           }
         />
-        <p className={fits ? "brk-summary" : "brk-warning"} role="status">
+        <p
+          className={
+            fits
+              ? "my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#23483e0d] tabular-nums"
+              : "my-[8px] mx-[0] py-[8px] px-[10px] rounded-[8px] [background:#c4663d26]"
+          }
+          role="status"
+        >
           {fits
             ? `${list.length} ${plural(list.length, "бирка", "бирки", "бирок")} · на стол ${printer.name} помещается ${plate.capacity}`
             : `Не поместится: в партии ${list.length}, а на столе ${plate.capacity}. Уменьшите зазор или число экземпляров.`}
         </p>
         <button
           type="button"
-          className="brk-button"
+          className="inline-flex items-center justify-center gap-[8px] min-h-[38px] py-[8px] px-[16px] border border-solid border-linen rounded-[10px] [background:#23483e] whitespace-nowrap border-forest text-[#fff] hover:disabled:border-forest hover:disabled:[background:#15372e] [&_svg]:w-[18px] [&_svg]:h-[18px]"
           onClick={() => useEditor.getState().setView("bed")}
         >
           Показать на столе принтера
@@ -894,9 +923,12 @@ export function Inspector() {
     state.issues.some((issue) => issue.level !== "info"),
   );
   return (
-    <aside className="brk-inspector" aria-label="Параметры бирки">
+    <aside
+      className="flex flex-col min-h-0 border-left-[1px] border-left-[#e6e2da] [background:var(--paper)] max-[700px]:border-top-[1px] max-[700px]:border-top-[#e6e2da] max-[700px]:[border-left:0]"
+      aria-label="Параметры бирки"
+    >
       <div
-        className="brk-tabs"
+        className="flex p-[8px] gap-[4px] border-bottom-[1px] border-bottom-[#e6e2da] [&>button]:relative [&>button]:flex-[1] [&>button]:min-h-[38px] [&>button]:border-0 [&>button]:rounded-[8px] [&>button]:[background:none] [&>button]:text-hedge [&>button]:font-semibold [&>button:hover]:text-ink [&>button[aria-selected=true]]:[background:#23483e] [&>button[aria-selected=true]]:text-[#fff]"
         role="tablist"
         aria-label="Разделы редактора"
         onBlur={(event) => {
@@ -910,7 +942,7 @@ export function Inspector() {
             return;
           const tabs = Array.from(
             event.currentTarget.querySelectorAll<HTMLButtonElement>(
-              '[role="tab"]',
+              "[role=tab]",
             ),
           );
           const index = tabs.indexOf(event.target);
@@ -931,12 +963,18 @@ export function Inspector() {
           >
             {label}
             {id === "shape" && warnings && (
-              <span className="brk-tab-dot" aria-hidden="true" />
+              <span
+                className="absolute top-[7px] right-[10px] w-[8px] h-[8px] rounded-full [background:#a57d46]"
+                aria-hidden="true"
+              />
             )}
           </button>
         ))}
       </div>
-      <div className="brk-inspector-body" role="tabpanel">
+      <div
+        className="flex-[1] min-h-0 pt-[4px] pr-[16px] pb-[24px] pl-[16px] overflow-y-auto"
+        role="tabpanel"
+      >
         {tab === "shape" && <ShapePanel />}
         {tab === "text" && <TextPanel />}
         {tab === "batch" && <BatchPanel />}
