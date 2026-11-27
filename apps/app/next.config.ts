@@ -12,9 +12,11 @@ import "./src/env";
  */
 const isDev = process.env.NODE_ENV === "development";
 
+// 'wasm-unsafe-eval' lets the 3D editor's Manifold geometry kernel (WASM)
+// instantiate; it does not permit JavaScript evaluation.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",

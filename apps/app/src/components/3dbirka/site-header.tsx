@@ -18,6 +18,7 @@ export function SiteHeader({
   onMenuToggle,
   onShowLogin,
   onShowCart,
+  onEditor,
 }: {
   menuOpen: boolean;
   cartCount: number;
@@ -28,6 +29,8 @@ export function SiteHeader({
   onMenuToggle: () => void;
   onShowLogin: () => void;
   onShowCart: () => void;
+  /** Opens the 3D editor, carrying the current constructor setup along. */
+  onEditor: () => void;
 }) {
   return (
     <header className="birka-header">
@@ -68,6 +71,13 @@ export function SiteHeader({
           </div>
           <button type="button" onClick={() => onNavigate("constructor")}>
             Конструктор
+          </button>
+          <button
+            type="button"
+            title="Настроить бирку и распечатать на своём принтере"
+            onClick={onEditor}
+          >
+            3D-редактор
           </button>
           <button type="button" onClick={() => onNavigate("faq")}>
             Вопросы
