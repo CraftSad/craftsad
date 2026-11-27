@@ -350,7 +350,7 @@ export function CatalogSection({
 
                   <div className="grid grid-cols-[1.25fr_1fr] gap-[8px] mt-[14px] max-[1100px]:grid-cols-[1fr] max-[570px]:grid-cols-[1.2fr_1fr]">
                     <button
-                      className="min-h-[59px] py-[17px] px-[25px] rounded-full inline-flex items-center justify-center gap-[17px] font-semibold no-underline border border-solid border-[transparent] [transition:background_.3s,box-shadow_.3s,transform_.3s] whitespace-nowrap text-[16px] relative overflow-hidden hover:[transform:translateY(-2px)] [&_svg]:w-[15px] [&_svg]:h-[15px] [background:#23483e] text-[white] before:content-[''] before:absolute before:inset-[-50%auto_-50%_-70%] before:w-[35%] before:[transform:rotate(25deg)] before:[background:linear-gradient(90deg,transparent,#ffffff35,transparent)] before:[transition:left_.75s] hover:[background:#15372e] hover:shadow-[0_12px_26px_#1b433225] hover:before:left-[140%]"
+                      className="min-h-[46px] py-[10px] px-[14px] rounded-[14px] inline-flex items-center justify-center gap-[7px] font-semibold no-underline border border-solid border-[transparent] [transition:background_.3s,box-shadow_.3s,transform_.3s] whitespace-nowrap text-[13px] relative overflow-hidden hover:[transform:translateY(-2px)] [&_svg]:w-[15px] [&_svg]:h-[15px] [background:#23483e] text-[white] before:content-[''] before:absolute before:inset-[-50%auto_-50%_-70%] before:w-[35%] before:[transform:rotate(25deg)] before:[background:linear-gradient(90deg,transparent,#ffffff35,transparent)] before:[transition:left_.75s] hover:[background:#15372e] hover:shadow-[0_12px_26px_#1b433225] hover:before:left-[140%]"
                       type="button"
                       onClick={() => onApplyPreset(preset)}
                     >
@@ -358,7 +358,7 @@ export function CatalogSection({
                       Настроить список
                     </button>
                     <button
-                      className="min-h-[59px] py-[17px] px-[25px] rounded-full inline-flex items-center justify-center gap-[17px] font-semibold no-underline border border-solid border-[transparent] [transition:background_.3s,box-shadow_.3s,transform_.3s] whitespace-nowrap text-[16px] relative overflow-hidden hover:[transform:translateY(-2px)] [&_svg]:w-[15px] [&_svg]:h-[15px] [background:#ffffffeb] text-forest border-[#ffffff6b] hover:[background:white]"
+                      className="min-h-[46px] py-[10px] px-[14px] rounded-[14px] inline-flex items-center justify-center gap-[7px] font-semibold no-underline border border-solid border-[transparent] [transition:background_.3s,box-shadow_.3s,transform_.3s] whitespace-nowrap text-[13px] relative overflow-hidden hover:[transform:translateY(-2px)] [&_svg]:w-[15px] [&_svg]:h-[15px] [background:#ffffffeb] text-forest border-[#ffffff6b] hover:[background:white]"
                       type="button"
                       onClick={() => onAddPreset(preset)}
                     >

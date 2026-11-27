@@ -217,8 +217,8 @@ export function TagEditor() {
       <main
         className={
           panel
-            ? "grid grid-cols-[minmax(0,1fr)] flex-[1] min-h-0 max-[700px]:grid-cols-[minmax(0,1fr)]"
-            : "grid grid-cols-[minmax(0,1fr)] flex-[1] min-h-0 max-[700px]:grid-cols-[minmax(0,1fr)] no-panel"
+            ? "grid grid-cols-[minmax(0,1fr)_380px] flex-[1] min-h-0 [@media(max-width:700px)]:grid-cols-[minmax(0,1fr)]"
+            : "grid grid-cols-[minmax(0,1fr)] flex-[1] min-h-0 no-panel"
         }
       >
         <section className="flex flex-col min-w-0 min-h-0" aria-label="3D-вид">
